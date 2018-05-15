@@ -1,50 +1,18 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
-#include <nanovg.h>
-#define NANOVG_GL2_IMPLEMENTATION
-#include "nanovg_gl.h"
-
 #include "../layout/layout.h"
+#include "../framework/application.h"
 
 constexpr int window_width = 640;
 constexpr int window_height = 480;
 
+auto rand_bright() {
+	return rand() % 128 + 127;
+};
+
 int main(void)
 {
-	GLFWwindow* window;
+	application app(window_width, window_height, "Hello World", nullptr, nullptr);
+	auto& vg = app.vg;
 
-	/* Initialize the library */
-	if (!glfwInit())
-		return -1;
-
-	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(window_width, window_height, "Hello World", NULL, NULL);
-	if (!window)
-	{
-		glfwTerminate();
-		return -1;
-	}
-
-	/* Make the window's context current */
-	glfwMakeContextCurrent(window);
-
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-		return -1;
-
-	auto vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
-
-
-	int fb_width, fb_height;
-	glfwGetFramebufferSize(window, &fb_width, &fb_height);
-	auto const pixel_ratio = (float)fb_width / (float)window_width;
-
-
-
-
-	auto rand_bright = []() {
-		return rand() % 128 +127;
-	};
 
 	auto draw_rect = [&](rectangle const& rect) {
 		nvgBeginPath(vg);
@@ -84,33 +52,14 @@ int main(void)
 
 	box.layout();
 
-	/* Loop until the user closes the window */
-	while (!glfwWindowShouldClose(window))
+	// Loop until the user closes the window
+	app.run([&]()
 	{
-		/* Render here */
-		glClear(GL_COLOR_BUFFER_BIT);
-
-
-		nvgBeginFrame(vg, window_width, window_height, pixel_ratio);
-
-
 		srand(0);
 
 		draw_rect(el0);
 		for (auto const& child : el0.children) {
 			draw_rect(child);
 		}
-
-		nvgEndFrame(vg);
-
-
-		/* Swap front and back buffers */
-		glfwSwapBuffers(window);
-
-		/* Poll for and process events */
-		glfwPollEvents();
-	}
-
-	glfwTerminate();
-	return 0;
+	});
 }
