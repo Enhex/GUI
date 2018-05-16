@@ -5,8 +5,11 @@
 #include <boost/qvm/vec.hpp>
 #include <boost/qvm/vec_access.hpp>
 #include <boost/qvm/vec_operations.hpp>
-#include <vector>
 #include <functional>
+#include <memory>
+#include <vector>
+
+#include <nanovg.h>
 
 namespace qvm = boost::qvm;
 
@@ -19,10 +22,6 @@ struct rectangle
 	vector2 size{ 0,0 };
 };
 
-// node in the layout tree
-struct node
-{
-};
 
 namespace layout
 {
@@ -32,24 +31,28 @@ namespace layout
 		count
 	};
 
+
+	template <typename derived_element>
 	struct base;
-}
 
-struct element : node, rectangle
-{
-	std::vector<element> children; //TODO should be layout base pointer?
-	layout::base* layout = nullptr;
-	std::array<bool, layout::orientation::count> expand{false};
-};
-
-namespace layout
-{
-	struct base : node
+	template <typename derived>
+	struct element : rectangle
 	{
-		element* parent = nullptr;
+		std::vector<std::unique_ptr<derived>> children; //TODO should be layout base pointer?
+		layout::base<derived>* layout = nullptr;
+		std::array<bool, layout::orientation::count> expand{false};
 	};
 
-	struct box : base
+
+	// layout base class
+	template <typename derived_element>
+	struct base
+	{
+		derived_element* parent = nullptr;
+	};
+
+	template <typename derived_element>
+	struct box : base<derived_element>
 	{
 		orientation orient = vertical;
 
@@ -62,10 +65,10 @@ namespace layout
 			for (auto const& child : parent->children)
 			{
 				// find free space for expansion
-				if (child.expand[orient])
+				if (child->expand[orient])
 					++num_expanders;
 				else
-					free_space -= child.size.a[orient];
+					free_space -= child->size.a[orient];
 			}
 
 			auto const expander_size = free_space / num_expanders;
@@ -75,15 +78,15 @@ namespace layout
 			for (auto& child : parent->children)
 			{
 				//TODO min size
-				if (child.expand[horizontal])
-					X(child.size) = orient == horizontal ? expander_size : X(parent->size);
-				if (child.expand[vertical])
-					Y(child.size) = orient == vertical ? expander_size : Y(parent->size);
+				if (child->expand[horizontal])
+					X(child->size) = orient == horizontal ? expander_size : X(parent->size);
+				if (child->expand[vertical])
+					Y(child->size) = orient == vertical ? expander_size : Y(parent->size);
 
-				X(child.position) = orient == horizontal ? last_orient_position : X(parent->position);
-				Y(child.position) = orient == vertical ? last_orient_position : Y(parent->position);
+				X(child->position) = orient == horizontal ? last_orient_position : X(parent->position);
+				Y(child->position) = orient == vertical ? last_orient_position : Y(parent->position);
 
-				last_orient_position += child.size.a[orient]; // advance to the current child's edge
+				last_orient_position += child->size.a[orient]; // advance to the current child's edge
 			}
 		}
 	};
