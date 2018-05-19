@@ -9,7 +9,7 @@ for now should only create 1 instance since it initializes libraries.
 */
 struct application
 {
-	application(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share);
+	application(int width, int height, const char* title, GLFWmonitor* monitor = nullptr, GLFWwindow* share = nullptr);
 
 	~application();
 

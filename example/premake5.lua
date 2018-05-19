@@ -8,30 +8,32 @@ if not _OPTIONS["location"] then
    _OPTIONS["location"] = "./"
 end
 
-include(_OPTIONS["location"] .. "conanpremake.lua")
+-- include GUI lib's dependencies
+include("../../build/conanpremake.lua")
 
-workspace("GUI")
+workspace("GUI example")
 	location(_OPTIONS["location"])
 	configurations { conan_build_type }
 	architecture(conan_arch)
+	startproject "gui_example"
 
-	project("GUI")
-		kind "StaticLib"
+	project("gui_example")
+		kind "ConsoleApp"
 		language "C++"
 		cppdialect "C++17"
 		targetdir = "bin/%{cfg.buildcfg}"
-
+		
 		files{
 			"src/**",
 		}
 
 		includedirs{
-			conan_includedirs
+			conan_includedirs,
+			"../src"
 		}
 		libdirs{conan_libdirs}
-		links{conan_libs}
+		links{"GUI"}
 		defines{conan_cppdefines, "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"}
-		bindirs{conan_bindirs}
 
 		filter "configurations:Debug"
 			defines { "DEBUG" }
@@ -40,3 +42,8 @@ workspace("GUI")
 		filter "configurations:Release"
 			defines { "NDEBUG" }
 			optimize "On"
+
+	externalproject "GUI"
+		location "../../build/"
+		kind "StaticLib"
+		language "C++"
