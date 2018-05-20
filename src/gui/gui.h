@@ -38,18 +38,43 @@ struct text : element
 	int font = -1;
 	NVGcolor color;
 
-	void draw(NVGcontext* vg) override
+	void update_bounds(NVGcontext* vg)
+	{
+		nvgSave(vg);
+
+		init_font(vg);
+
+		float bounds[4];
+		nvgTextBounds(vg, 0, 0, str.c_str(), nullptr, bounds);
+		
+		float ascender, descender, lineh;
+		nvgTextMetrics(vg, &ascender, &descender, &lineh);
+
+		// using local space with position 0, can directly use max point instead of calculating bounding box size
+		X(min_size) = bounds[2];
+		Y(min_size) = bounds[3] + descender;
+
+
+		nvgRestore(vg);
+	}
+
+	void init_font(NVGcontext* vg)
 	{
 		nvgFontSize(vg, font_size);
 		nvgFontFaceId(vg, font);
-		nvgFillColor(vg, color);
 		nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+	}
 
-		float ascender = 0;
-		float descender = 0;
-		float lineh = 0;
+	void draw(NVGcontext* vg) override
+	{
+		init_font(vg);
+		nvgFillColor(vg, color);
+
+		float ascender, descender, lineh;
 		nvgTextMetrics(vg, &ascender, &descender, &lineh);
 
 		nvgText(vg, X(position), Y(position) + descender, str.c_str(), nullptr);
+
+		update_bounds(vg);
 	}
 };

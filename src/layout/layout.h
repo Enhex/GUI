@@ -64,6 +64,7 @@ namespace layout
 	template <typename element_derived>
 	struct base
 	{
+		// owning element which uses this layout for its children
 		element<element_derived>* parent = nullptr;
 
 		virtual void operator()() = 0;
@@ -77,8 +78,11 @@ namespace layout
 		void operator()() override
 		{
 			//TODO can be pre-calcualted when adding/removing children
-			auto free_space = parent->size.a[orient]; // parent should already be layed-out at this point
+			float taken_space = 0;
 			size_t num_expanders = 0;
+
+			auto const non_orient = orient == horizontal ? vertical : horizontal;
+			float non_orient_max_size = parent->min_size.a[non_orient];
 
 			for (auto const& child : parent->children)
 			{
@@ -86,25 +90,35 @@ namespace layout
 				if (child->expand[orient])
 					++num_expanders;
 				else
-					free_space -= child->min_size.a[orient];
+					taken_space += child->min_size.a[orient];
+
+				if(!child->expand[non_orient])
+					non_orient_max_size = std::max(non_orient_max_size, child->min_size.a[non_orient]);
 			}
 
+			// fit around children
+			if (!parent->expand[orient])
+				parent->size.a[orient] = std::max(parent->min_size.a[orient], taken_space);
+			if (!parent->expand[non_orient])
+				parent->size.a[non_orient] = non_orient_max_size;
+
+			auto const free_space = parent->size.a[orient] - taken_space;
 			auto const expander_size = free_space / num_expanders;
 
 			// size & position the children
 			auto last_orient_position = parent->position.a[orient];
 			for (auto& child : parent->children)
 			{
-				//TODO min size
-				if (child->expand[horizontal])
-					X(child->size) = orient == horizontal ? expander_size : X(parent->size);
-				if (child->expand[vertical])
-					Y(child->size) = orient == vertical ? expander_size : Y(parent->size);
+				if (child->expand[orient])
+					child->size.a[orient] = expander_size;
+				if (child->expand[non_orient])
+					child->size.a[non_orient] = parent->size.a[non_orient];
 				
 				// min size
 				X(child->size) = std::max(X(child->size), X(child->min_size));
 				Y(child->size) = std::max(Y(child->size), Y(child->min_size));
 
+				// position relative to parent/previous child
 				X(child->position) = orient == horizontal ? last_orient_position : X(parent->position);
 				Y(child->position) = orient == vertical ? last_orient_position : Y(parent->position);
 
