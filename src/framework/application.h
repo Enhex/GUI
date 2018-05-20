@@ -40,7 +40,7 @@ inline void application::run(F loop_function)
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		nvgBeginFrame(vg, win_width, win_height, pixel_ratio);
+		nvgBeginFrame(vg, (float)win_width, (float)win_height, pixel_ratio);
 
 		// user defined function
 		loop_function();
