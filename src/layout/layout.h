@@ -67,6 +67,7 @@ namespace layout
 		// owning element which uses this layout for its children
 		element<element_derived>* parent = nullptr;
 
+		virtual void fit() = 0;
 		virtual void operator()() = 0;
 	};
 
@@ -75,32 +76,47 @@ namespace layout
 	{
 		orientation orient = vertical;
 
+		float taken_space = 0;
+
+		// fit around children
+		void fit() override
+		{
+			taken_space = 0;
+			
+			auto const non_orient = orient == horizontal ? vertical : horizontal;
+			float non_orient_max_size = parent->min_size.a[non_orient];
+
+			for (auto& child : parent->children)
+			{
+				if(child->child_layout != nullptr)
+					child->child_layout->fit();
+
+				if (!child->expand[orient])
+					taken_space += std::max(child->size.a[orient], child->min_size.a[orient]);
+				if (!child->expand[non_orient])
+					non_orient_max_size = std::max(non_orient_max_size, child->min_size.a[non_orient]);
+			}
+
+			if (!parent->expand[orient])
+				parent->size.a[orient] = std::max(parent->min_size.a[orient], taken_space);
+			if (!parent->expand[non_orient])
+				parent->size.a[non_orient] = non_orient_max_size; // already started from min_size
+		}
+
+		// perform layout
 		void operator()() override
 		{
 			//TODO can be pre-calcualted when adding/removing children
-			float taken_space = 0;
 			size_t num_expanders = 0;
 
 			auto const non_orient = orient == horizontal ? vertical : horizontal;
-			float non_orient_max_size = parent->min_size.a[non_orient];
 
 			for (auto const& child : parent->children)
 			{
 				// find free space for expansion
 				if (child->expand[orient])
 					++num_expanders;
-				else
-					taken_space += child->min_size.a[orient];
-
-				if(!child->expand[non_orient])
-					non_orient_max_size = std::max(non_orient_max_size, child->min_size.a[non_orient]);
 			}
-
-			// fit around children
-			if (!parent->expand[orient])
-				parent->size.a[orient] = std::max(parent->min_size.a[orient], taken_space);
-			if (!parent->expand[non_orient])
-				parent->size.a[non_orient] = non_orient_max_size;
 
 			auto const free_space = parent->size.a[orient] - taken_space;
 			auto const expander_size = free_space / num_expanders;
@@ -115,6 +131,7 @@ namespace layout
 					child->size.a[non_orient] = parent->size.a[non_orient];
 				
 				// min size
+				//TODO duplication with fit()? though fit only does min_size if the element has layout.
 				X(child->size) = std::max(X(child->size), X(child->min_size));
 				Y(child->size) = std::max(Y(child->size), Y(child->min_size));
 
@@ -122,7 +139,7 @@ namespace layout
 				X(child->position) = orient == horizontal ? last_orient_position : X(parent->position);
 				Y(child->position) = orient == vertical ? last_orient_position : Y(parent->position);
 
-				last_orient_position += child->size.a[orient]; // advance to the current child's edge
+				last_orient_position += child->size.a[orient]; // advance to the current child's end position
 
 				if (child->child_layout != nullptr)
 					(*child->child_layout)();

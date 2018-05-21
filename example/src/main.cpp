@@ -64,7 +64,6 @@ int main()
 	}
 	{
 		auto& el = emplace_back_derived<panel>(root.children);
-		//el.min_size = { 100,100 };
 		el.expand = { true, true };
 		el.color = nvgRGBA(rand_bright(), rand_bright(), rand_bright(), 255);
 	}
@@ -74,7 +73,9 @@ int main()
 		el.color = nvgRGBA(rand_bright(), rand_bright(), rand_bright(), 255);
 	}
 
-	box();
+
+	root.child_layout->fit();
+	(*root.child_layout)();
 
 
 	// Loop until the user closes the window

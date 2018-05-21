@@ -36,7 +36,7 @@ struct text : element
 	std::string str;
 	float font_size = 12;
 	int font = -1;
-	NVGcolor color;
+	NVGcolor color = nvgRGBA(255,255,255,255);
 
 	void update_bounds(NVGcontext* vg)
 	{
@@ -51,8 +51,8 @@ struct text : element
 		nvgTextMetrics(vg, &ascender, &descender, &lineh);
 
 		// using local space with position 0, can directly use max point instead of calculating bounding box size
-		X(min_size) = bounds[2];
-		Y(min_size) = bounds[3] + descender;
+		X(size) = X(min_size) = bounds[2];
+		Y(size) = Y(min_size) = bounds[3] + descender;
 
 
 		nvgRestore(vg);
