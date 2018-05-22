@@ -22,7 +22,7 @@ application::~application()
 void application::create_window(int width, int height, const char * title, GLFWmonitor * monitor, GLFWwindow * share)
 {
 	// Create a windowed mode window and its OpenGL context
-	window = glfwCreateWindow(width, height, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(width, height, title, NULL, NULL);
 	if (!window)
 		throw std::runtime_error("GLAD loading failed.");
 
