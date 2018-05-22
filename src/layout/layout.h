@@ -44,6 +44,12 @@ namespace layout
 
 		vector2 min_size{ 0,0 };
 
+		void apply_min_size()
+		{
+			X(size) = std::max(X(size), X(min_size));
+			Y(size) = std::max(Y(size), Y(min_size));
+		}
+
 		template <typename T>
 		T& create_layout()
 		{
@@ -88,13 +94,15 @@ namespace layout
 
 			for (auto& child : parent->children)
 			{
-				if(child->child_layout != nullptr)
+				if (child->child_layout != nullptr)
 					child->child_layout->fit();
+				else
+					child->apply_min_size(); // make sure the size is updated
 
 				if (!child->expand[orient])
-					taken_space += std::max(child->size.a[orient], child->min_size.a[orient]);
+					taken_space += std::max(child->size.a[orient], child->size.a[orient]);
 				if (!child->expand[non_orient])
-					non_orient_max_size = std::max(non_orient_max_size, child->min_size.a[non_orient]);
+					non_orient_max_size = std::max(non_orient_max_size, child->size.a[non_orient]);
 			}
 
 			if (!parent->expand[orient])
@@ -129,11 +137,6 @@ namespace layout
 					child->size.a[orient] = expander_size;
 				if (child->expand[non_orient])
 					child->size.a[non_orient] = parent->size.a[non_orient];
-				
-				// min size
-				//TODO duplication with fit()? though fit only does min_size if the element has layout.
-				X(child->size) = std::max(X(child->size), X(child->min_size));
-				Y(child->size) = std::max(Y(child->size), Y(child->min_size));
 
 				// position relative to parent/previous child
 				X(child->position) = orient == horizontal ? last_orient_position : X(parent->position);
