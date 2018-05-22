@@ -28,6 +28,15 @@ int main()
 	}
 
 
+	// Test alignment issues with text at the very top of the window
+	text txt;
+	txt.str = "TopText";
+	txt.font = font;
+	txt.font_size = 14;
+	txt.color = nvgRGBA(255, 255, 255, 255);
+	txt.update_bounds(vg);
+
+
 	panel root;
 	root.position = { 200,50 };
 	root.min_size = { 200,400 };
@@ -81,6 +90,7 @@ int main()
 	// Loop until the user closes the window
 	app.run([&]()
 	{
+		txt.draw_recursive(vg);
 		root.draw_recursive(vg);
 	});
 }

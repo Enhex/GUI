@@ -52,7 +52,7 @@ struct text : element
 
 		// using local space with position 0, can directly use max point instead of calculating bounding box size
 		X(size) = X(min_size) = bounds[2];
-		Y(size) = Y(min_size) = bounds[3] + descender;
+		Y(size) = Y(min_size) = bounds[3] + ascender;
 
 
 		nvgRestore(vg);
@@ -62,7 +62,7 @@ struct text : element
 	{
 		nvgFontSize(vg, font_size);
 		nvgFontFaceId(vg, font);
-		nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_TOP);
+		//nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
 	}
 
 	void draw(NVGcontext* vg) override
@@ -72,8 +72,7 @@ struct text : element
 
 		float ascender, descender, lineh;
 		nvgTextMetrics(vg, &ascender, &descender, &lineh);
-
-		nvgText(vg, X(position), Y(position) + descender, str.c_str(), nullptr);
+		nvgText(vg, X(position), Y(position) + ascender, str.c_str(), nullptr);
 
 		update_bounds(vg);
 	}
