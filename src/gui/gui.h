@@ -1,8 +1,9 @@
 #pragma once
 
+#include "../input/input.h"
 #include "../layout/layout.h"
 
-struct element : layout::element<element>
+struct element : layout::element<element>, input::element
 {
 	virtual void draw(NVGcontext* vg) {}
 	void draw_recursive(NVGcontext* vg) {

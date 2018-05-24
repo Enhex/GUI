@@ -1,26 +1,12 @@
 #pragma once
 
+#include "../math/math.h"
 #include <algorithm>
 #include <array>
-#include <boost/qvm/vec.hpp>
-#include <boost/qvm/vec_access.hpp>
-#include <boost/qvm/vec_operations.hpp>
 #include <functional>
 #include <memory>
-#include <vector>
-
 #include <nanovg.h>
-
-namespace qvm = boost::qvm;
-
-using vector2 = qvm::vec<float, 2>;
-
-
-struct rectangle
-{
-	vector2 position{ 0,0 };
-	vector2 size{ 0,0 };
-};
+#include <vector>
 
 
 namespace layout

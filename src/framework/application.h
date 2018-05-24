@@ -4,6 +4,8 @@
 #include <GLFW/glfw3.h>
 #include <nanovg.h>
 
+#include "../gui/gui.h"
+
 /*
 for now should only create 1 instance since it initializes libraries.
 */
@@ -16,21 +18,35 @@ struct application
 	GLFWwindow* window = nullptr;
 	NVGcontext* vg = nullptr;
 
+	element* root = nullptr;//TODO hardcode the root element as a panel, and automatically size it to the screen so it acts as the background?
+
+	input::manager input_manager;
+
+	vector2 mouse_pos;
+
 	template<typename F>
 	void run(F loop_function);
 
 protected:
 	void initialize();
 	void create_window(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share);
+
+	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void character_callback(GLFWwindow* window, unsigned int codepoint);
+
+	static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos);
+	static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 };
 
 
 template<typename F>
 inline void application::run(F loop_function)
 {
+	// get window size
 	int win_width, win_height;
 	glfwGetWindowSize(window, &win_width, &win_height);
 
+	// calculate pixel ratio
 	int fb_width, fb_height;
 	glfwGetFramebufferSize(window, &fb_width, &fb_height);
 	auto const pixel_ratio = (float)fb_width / (float)win_width;
@@ -52,5 +68,6 @@ inline void application::run(F loop_function)
 
 		// Poll for and process events
 		glfwPollEvents();
+		//TODO use glfwWaitEventsTimeout(framerate); instead?
 	}
 }
