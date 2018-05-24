@@ -1,19 +1,18 @@
 newoption {
-   trigger     = "location",
-   value       = "./",
-   description = "Where to generate the project.",
+	trigger     = "location",
+	value       = "./",
+	description = "Where to generate the project.",
 }
 
 if not _OPTIONS["location"] then
-   _OPTIONS["location"] = "./"
+	_OPTIONS["location"] = "./"
 end
 
 include(_OPTIONS["location"] .. "conanpremake.lua")
 
 workspace("GUI")
 	location(_OPTIONS["location"])
-	configurations { conan_build_type }
-	architecture(conan_arch)
+	conan_basic_setup()
 
 	project("GUI")
 		kind "StaticLib"
@@ -25,13 +24,7 @@ workspace("GUI")
 			"src/**",
 		}
 
-		includedirs{
-			conan_includedirs
-		}
-		libdirs{conan_libdirs}
-		links{conan_libs}
-		defines{conan_cppdefines, "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"}
-		bindirs{conan_bindirs}
+		defines{"_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"}
 
 		filter "configurations:Debug"
 			defines { "DEBUG" }
