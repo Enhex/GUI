@@ -23,7 +23,7 @@ namespace input
 		struct key_release : base
 		{
 			static constexpr size_t id = 0;
-			static size_t get_id() { return id; }
+			size_t get_id() const { return id; }
 
 			// key, mods
 			using params = std::tuple<int, int>;
@@ -32,7 +32,7 @@ namespace input
 		struct key_press : base
 		{
 			static constexpr size_t id = 1;
-			static size_t get_id() { return id; }
+			size_t get_id() const { return id; }
 
 			// key, mods
 			using params = std::tuple<int, int>;
@@ -41,7 +41,7 @@ namespace input
 		struct hover_start : base
 		{
 			static constexpr size_t id = 2;
-			static size_t get_id() { return id; }
+			size_t get_id() const { return id; }
 
 			// mouse_position
 			using params = std::tuple<vector2 const&>;
@@ -50,7 +50,7 @@ namespace input
 		struct hover_end : base
 		{
 			static constexpr size_t id = 3;
-			static size_t get_id() { return id; }
+			size_t get_id() const { return id; }
 
 			// mouse_position
 			//using params = std::tuple<vector2 const&>;
