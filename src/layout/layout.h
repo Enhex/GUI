@@ -73,6 +73,8 @@ namespace layout
 		// fit around children
 		void fit() override
 		{
+			auto& parent = this->parent; // conformance: https://isocpp.org/wiki/faq/templates#nondependent-name-lookup-members
+
 			taken_space = 0;
 			
 			auto const non_orient = orient == horizontal ? vertical : horizontal;
@@ -100,6 +102,8 @@ namespace layout
 		// perform layout
 		void operator()() override
 		{
+			auto& parent = this->parent;
+
 			//TODO can be pre-calcualted when adding/removing children
 			size_t num_expanders = 0;
 
@@ -112,7 +116,7 @@ namespace layout
 					++num_expanders;
 			}
 
-			auto const free_space = parent->size.a[orient] - taken_space;
+			auto const free_space{ parent->size.a[orient] - taken_space };
 			auto const expander_size = free_space / num_expanders;
 
 			// size & position the children

@@ -92,7 +92,7 @@ int main()
 
 	// test global event
 	app.input_manager.subscribe_global<input::event::key_press>(&root, [](std::any&& args) {
-		auto&[key, mods] = std::any_cast<input::event::key_press::params>(args);
+		auto&[key, mods] = std::any_cast<input::event::key_press::params&>(args);
 		std::cout << "key pressed! " << key << "\n";
 	});
 
