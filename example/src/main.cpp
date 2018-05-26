@@ -93,7 +93,7 @@ int main()
 	// test global event
 	app.input_manager.subscribe_global<input::event::key_press>(&root, [](std::any&& args) {
 		auto&[key, mods] = std::any_cast<input::event::key_press::params&>(args);
-		std::cout << "key pressed! " << key << "\n";
+		std::cout << "key pressed: " << key << "\n";
 	});
 
 	// test focused hover events
@@ -104,6 +104,11 @@ int main()
 	app.input_manager.subscribe<input::event::hover_end>(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](std::any&& args) {
 		el->color = nvgRGBA(255, 255, 255, 255);
 		std::cout << "hover end\n";
+	});
+	app.input_manager.subscribe<input::event::mouse_press>(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](std::any&& args) {
+		auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+		el->color = nvgRGBA(0, 255, 0, 255);
+		std::cout << "mouse press: " << button << "\n";
 	});
 
 	// Loop until the user closes the window

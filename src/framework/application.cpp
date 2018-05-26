@@ -112,25 +112,23 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 
 	if(!find_hoevered_element(app.root))
 		input_manager.set_hovered_element(nullptr);
-
-	//for (auto const& child : app.root->children) {
-	//	// check if element subscribed to hover event
-	//	auto iter = input_manager.focused_events.find(input_manager.hovered_element);
-	//	if (iter != input_manager.focused_events.end()) {
-	//		auto& subscribed_events = iter->second;
-	//		auto event_iter = subscribed_events.find(input::event::hover_start::id);
-	//		if (event_iter != subscribed_events.end()) {
-	//			// check if cursor is inside the element rectangle
-	//			if (child->is_inside(app.mouse_pos)) {
-	//				// call callback
-	//				event_iter->second(std::tuple<vector2 const&>{ app.mouse_pos });
-	//			}
-	//		}
-	//	}
-	//}
 }
 
 void application::mouse_button_callback(GLFWwindow * window, int button, int action, int mods)
 {
-	//TODO
+	auto const event_id = [&]() {
+		if (action == GLFW_RELEASE)
+			return input::event::mouse_release::id;
+		if (action == GLFW_PRESS)
+			return input::event::mouse_press::id;
+	}();
+
+	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
+
+	if (input_manager.hovered_element != nullptr) {
+		input_manager.send_focused_event(input_manager.hovered_element, event_id, std::tuple{ button, mods });
+	}
+	else {
+		input_manager.send_global_event(event_id, std::tuple{ button, mods });
+	}
 }

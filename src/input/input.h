@@ -55,6 +55,24 @@ namespace input
 			// mouse_position
 			//using params = std::tuple<vector2 const&>;
 		};
+
+		struct mouse_release : base
+		{
+			static constexpr size_t id = 4;
+			size_t get_id() const { return id; }
+
+			// button, mods
+			using params = std::tuple<int, int>;
+		};
+
+		struct mouse_press : base
+		{
+			static constexpr size_t id = 5;
+			size_t get_id() const { return id; }
+
+			// button, mods
+			using params = std::tuple<int, int>;
+		};
 	}
 
 	struct element
