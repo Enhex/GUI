@@ -3,10 +3,10 @@
 #include <iostream>
 
 // return reference to the original type instead of the base class
-template <typename T, typename Container>
-T& emplace_back_derived(Container& container)
+template <typename T, typename Container, typename... Args>
+T& emplace_back_derived(Container& container, Args& ... args)
 {
-	return static_cast<T&>(*container.emplace_back(std::make_unique<T>()).get());
+	return static_cast<T&>(*container.emplace_back(std::make_unique<T>(args...)).get());
 }
 
 constexpr int window_width = 640;
@@ -38,7 +38,31 @@ int main()
 	txt.update_bounds(vg);
 
 
-	panel root;
+	// editable text
+	{
+		auto& root = emplace_back_derived<panel>(app.root.children);
+		root.position = { 50,100 };
+		root.color = nvgRGBA(100,100,100, 255);
+		
+		root.create_layout<gui::layout::box>();
+
+
+		auto& txt_edit = emplace_back_derived<text_edit>(root.children, vg, app.input_manager);
+		txt_edit.min_size = { 200,50 };
+		txt_edit.str = "editable text";
+		txt_edit.font = font;
+		txt_edit.font_size = 18;
+		txt_edit.color = nvgRGBA(255, 255, 255, 255);
+		txt_edit.update_bounds(vg);
+
+		root.child_layout->fit();
+		(*root.child_layout)();
+
+	}
+
+
+	// element tree test
+	auto& root = emplace_back_derived<panel>(app.root.children);
 	root.position = { 200,50 };
 	root.min_size = { 200,400 };
 	root.color = nvgRGBA(rand_bright(), rand_bright(), rand_bright(), 255);
@@ -88,8 +112,6 @@ int main()
 	(*root.child_layout)();
 
 
-	app.root = &root;
-
 	// test global event
 	app.input_manager.subscribe_global<input::event::key_press>(&root, [](std::any&& args) {
 		auto&[key, mods] = std::any_cast<input::event::key_press::params&>(args);
@@ -115,6 +137,6 @@ int main()
 	app.run([&]()
 	{
 		txt.draw_recursive(vg);
-		root.draw_recursive(vg);
+		app.root.draw_recursive(vg);
 	});
 }

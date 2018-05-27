@@ -18,11 +18,9 @@ struct application
 	GLFWwindow* window = nullptr;
 	NVGcontext* vg = nullptr;
 
-	element* root = nullptr;//TODO hardcode the root element as a panel, and automatically size it to the screen so it acts as the background?
+	element root;//TODO hardcode the root element as a panel, and automatically size it to the screen so it acts as the background?
 
 	input::manager input_manager;
-
-	vector2 mouse_pos;
 
 	template<typename F>
 	void run(F loop_function);

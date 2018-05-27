@@ -38,6 +38,15 @@ namespace input
 			using params = std::tuple<int, int>;
 		};
 
+		struct key_repeat : base
+		{
+			static constexpr size_t id = 7;
+			size_t get_id() const { return id; }
+
+			// key, mods
+			using params = std::tuple<int, int>;
+		};
+
 		struct hover_start : base
 		{
 			static constexpr size_t id = 2;
@@ -72,6 +81,15 @@ namespace input
 
 			// button, mods
 			using params = std::tuple<int, int>;
+		};
+
+		struct character : base
+		{
+			static constexpr size_t id = 6;
+			size_t get_id() const { return id; }
+
+			// codepoint
+			using params = std::tuple<unsigned int>;
 		};
 	}
 }

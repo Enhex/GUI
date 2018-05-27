@@ -24,11 +24,13 @@ namespace input
 	using any_callback = std::function<void(std::any&&)>;
 
 	/*TODO
-	- global events context
+	- global events context that the user can switch between
 	- unsub from events
 	*/
 	struct manager
 	{
+		vector2 mouse_pos;
+
 		element* focused_element = nullptr; // keyboard focus
 		element* hovered_element = nullptr; // mouse focus
 

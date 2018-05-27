@@ -12,6 +12,8 @@ application::application(int width, int height, const char* title, GLFWmonitor* 
 
 	create_window(width, height, title, monitor, share);
 
+	root.min_size = { (float)width, (float)height };
+
 	vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 }
 
@@ -57,7 +59,8 @@ void application::key_callback(GLFWwindow * window, int key, int scancode, int a
 			return input::event::key_release::id;
 		if (action == GLFW_PRESS)
 			return input::event::key_press::id;
-
+		if (action == GLFW_REPEAT)
+			return input::event::key_repeat::id;
 		//throw std::invalid_argument("unknown action");
 		return input::event::invalid_id;
 	}();
@@ -72,13 +75,20 @@ void application::key_callback(GLFWwindow * window, int key, int scancode, int a
 
 void application::character_callback(GLFWwindow * window, unsigned int codepoint)
 {
-	//TODO
+	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
+
+	if (input_manager.focused_element != nullptr) {
+		input_manager.send_focused_event(input_manager.focused_element, input::event::character::id, std::tuple{ codepoint });
+	}
+	else {
+		input_manager.send_global_event(input::event::character::id, std::tuple { codepoint });
+	}
 }
 
 void application::cursor_pos_callback(GLFWwindow * window, double xpos, double ypos)
 {
 	auto& app = *static_cast<application*>(glfwGetWindowUserPointer(window));
-	app.mouse_pos = { (float)xpos, (float)ypos };
+	app.input_manager.mouse_pos = { (float)xpos, (float)ypos };
 
 	/*TODO
 	- hover event
@@ -99,7 +109,7 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 					return true;
 			}
 
-			if (parent->is_inside(app.mouse_pos)) {
+			if (parent->is_inside(app.input_manager.mouse_pos)) {
 				input_manager.set_hovered_element(parent);
 				return true;
 			}
@@ -110,7 +120,7 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 		return recurse_impl(parent, recurse_impl);
 	};
 
-	if(!find_hoevered_element(app.root))
+	if(!find_hoevered_element(&app.root))
 		input_manager.set_hovered_element(nullptr);
 }
 
@@ -121,11 +131,15 @@ void application::mouse_button_callback(GLFWwindow * window, int button, int act
 			return input::event::mouse_release::id;
 		if (action == GLFW_PRESS)
 			return input::event::mouse_press::id;
+		return input::event::invalid_id;
 	}();
 
 	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
 
 	if (input_manager.hovered_element != nullptr) {
+		//TODO allow controlling if an element auto gains focus on click
+		input_manager.focused_element = input_manager.hovered_element;
+
 		input_manager.send_focused_event(input_manager.hovered_element, event_id, std::tuple{ button, mods });
 	}
 	else {
