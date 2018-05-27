@@ -1,25 +1,13 @@
 #pragma once
 
+#include "../event/base.h"
 #include "../math/math.h"
-#include <any>
-#include <array>
-#include <functional>
-#include <limits>
-#include <unordered_map>
-#include <unordered_set>
+#include <tuple>
 
 namespace input
 {
 	namespace event
 	{
-		auto static constexpr invalid_id = std::numeric_limits<size_t>::max();
-
-		struct base
-		{
-			virtual size_t get_id() = 0;
-			//TODO name could be useful, especially for interpreting events from data files
-		};
-
 		struct key_release : base
 		{
 			static constexpr size_t id = 0;
