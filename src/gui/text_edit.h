@@ -1,7 +1,7 @@
 #pragma once
 
+#include "../include_glfw.h"
 #include "text.h"
-#include <GLFW/glfw3.h>
 
 // editable text
 /*TODO

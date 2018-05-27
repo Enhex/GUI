@@ -1,9 +1,7 @@
 #pragma once
 
-#include <glad/glad.h> // must be included before GLFW
-#include <GLFW/glfw3.h>
-
 #include "../gui/gui.h"
+#include "../include_glfw.h"
 
 /*
 for now should only create 1 instance since it initializes libraries.
