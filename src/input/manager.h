@@ -39,8 +39,9 @@ namespace input
 		}
 
 		// global
+		//TODO context
 		template<typename Event>
-		void subscribe_global(element* subscriber, std::function<void(std::any&&)>&& callback)
+		void subscribe_global(std::function<void(std::any&&)>&& callback)
 		{
 			//TODO check if element is already subscribed?
 			global_events[Event::id].emplace_back(std::move(callback));

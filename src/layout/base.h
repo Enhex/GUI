@@ -12,6 +12,7 @@ namespace layout
 		element<element_derived>* parent = nullptr;
 
 		virtual void fit() = 0;
-		virtual void operator()() = 0;
+		virtual void lay() = 0;
+		virtual void perform() = 0;
 	};
 }
