@@ -20,6 +20,7 @@ namespace input
 
 		element* focused_element = nullptr; // keyboard focus
 		element* hovered_element = nullptr; // mouse focus
+		element* pressed_element = nullptr; // element which was hovered when mouse press happened
 
 		// map from element to subscribed events
 		std::unordered_map<element*, std::unordered_map<size_t, any_callback>> focused_events;
@@ -59,8 +60,12 @@ namespace input
 				if (event_iter != subscribed_events.end()) {
 					// call callback
 					event_iter->second(std::move(args));
+					return;
 				}
 			}
+
+			// no focused callback was found, propagate into a global event
+			send_global_event(event_id, std::move(args));
 		}
 
 		void send_global_event(size_t event_id, std::any&& args)

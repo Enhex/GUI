@@ -57,6 +57,25 @@ int main()
 	}
 
 
+	// button test
+	{
+		auto& el = app.root.create_child<button>(app.input_manager);
+		el.position = { 500,200 };
+		el.background_color = el.color = nvgRGBA(80, 80, 80, 255);
+		el.hover_color = nvgRGBA(120, 120, 120, 255);
+		el.press_color = nvgRGBA(0, 120, 210, 255);
+
+		el.label.str = "button";
+		el.label.font = font;
+		el.label.font_size = 18;
+		el.label.update_bounds(vg);
+
+		el.child_layout->perform();
+
+		el.callback = []() { std::cout << "button clicked\n"; };
+	}
+
+
 	// extended element fit around children
 	{
 		auto& root = app.root.create_child<panel>();
@@ -67,7 +86,7 @@ int main()
 		root.create_layout<gui::layout::box>();
 
 		auto& expander = root.create_child<panel>();
-		expander.min_size = { 55,0 };
+		expander.min_size = { 60,0 };
 		expander.expand = {false, true};
 		expander.color = random_color();
 
@@ -140,11 +159,11 @@ int main()
 	// test global event
 	app.input_manager.subscribe_global<input::event::key_press>([](std::any&& args) {
 		auto&[key, mods] = std::any_cast<input::event::key_press::params&>(args);
-		std::cout << "key pressed: " << key << "\n";
+		std::cout << "(global) key pressed: " << key << "\n";
 	});
 
 	// test focused hover events
-	/*app.input_manager.subscribe<input::event::hover_start>(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](std::any&& args) {
+	app.input_manager.subscribe<input::event::hover_start>(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](std::any&& args) {
 		el->color = nvgRGBA(255,0,0,255);
 		std::cout << "hover start\n";
 	});
@@ -156,7 +175,7 @@ int main()
 		auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
 		el->color = nvgRGBA(0, 255, 0, 255);
 		std::cout << "mouse press: " << button << "\n";
-	});*/
+	});
 
 	// Loop until the user closes the window
 	app.run([&]()

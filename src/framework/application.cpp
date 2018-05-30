@@ -126,23 +126,34 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 
 void application::mouse_button_callback(GLFWwindow * window, int button, int action, int mods)
 {
+	using namespace input;
+
 	auto const event_id = [&]() {
 		if (action == GLFW_RELEASE)
-			return input::event::mouse_release::id;
+			return event::mouse_release::id;
 		if (action == GLFW_PRESS)
-			return input::event::mouse_press::id;
-		return input::event::invalid_id;
+			return event::mouse_press::id;
+		return event::invalid_id;
 	}();
 
+
 	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
+
 
 	if (input_manager.hovered_element != nullptr) {
 		//TODO allow controlling if an element auto gains focus on click
 		input_manager.focused_element = input_manager.hovered_element;
+
+		if(event_id == event::mouse_press::id)
+			input_manager.pressed_element = input_manager.hovered_element;
 
 		input_manager.send_focused_event(input_manager.hovered_element, event_id, std::tuple{ button, mods });
 	}
 	else {
 		input_manager.send_global_event(event_id, std::tuple{ button, mods });
 	}
+
+	// reset pressed element after release event was sent, so the callback can know which element was pressed
+	if (event_id == event::mouse_release::id)
+		input_manager.pressed_element = nullptr;
 }
