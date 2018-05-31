@@ -8,14 +8,15 @@ struct button : panel
 	NVGcolor background_color;
 	NVGcolor hover_color;
 	NVGcolor press_color;
-	text& label;
+	text& label = create_child<text>();
 
 	std::function<void()> callback;
 
-	button(input::manager& input_manager) :
-		label(create_child<text>())
+	button()
 	{
 		create_layout<gui::layout::box>();
+
+		auto& input_manager = context->input_manager;
 
 		input_manager.subscribe<input::event::hover_start>(&label, [this](std::any&& args) {
 			color = hover_color;

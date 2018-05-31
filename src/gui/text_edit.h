@@ -10,10 +10,10 @@
 */
 struct text_edit : text
 {
-	text_edit(NVGcontext* vg, input::manager& input_manager) :
-		input_manager(input_manager),
-		vg(vg)
+	text_edit()
 	{
+		auto& input_manager = context->input_manager;
+
 		input_manager.subscribe<input::event::mouse_press>(this, [this](std::any&& args) {
 			on_mouse_press();
 		});
@@ -31,15 +31,14 @@ struct text_edit : text
 		});
 	}
 
-	input::manager& input_manager;
-	NVGcontext* vg = nullptr;
-
 	size_t cursor_pos = 0;
 
 	std::unique_ptr<NVGglyphPosition[]> glyphs;
 
 	int update_glyphs()
 	{
+		auto& vg = context->vg;
+
 		nvgSave(vg);
 
 		init_font(vg); // for correct font size
@@ -67,7 +66,9 @@ struct text_edit : text
 			auto const x_min = glyphs[i].x; // current glyph start position
 			auto const x_max = i + 1 < num_glyphs ? glyphs[i + 1].x : X(position) + X(size); // next glyph start position
 
-																							 // check if the glyph was clicked
+			auto& input_manager = context->input_manager;
+
+			// check if the glyph was clicked
 			if (X(input_manager.mouse_pos) >= x_min &&
 				X(input_manager.mouse_pos) <= x_max) {
 				cursor_pos = i;
@@ -113,6 +114,8 @@ struct text_edit : text
 		//TODO draw selection background
 
 		text::draw(vg);
+
+		auto& input_manager = context->input_manager;
 
 		// draw cursor
 		if (this == input_manager.focused_element)

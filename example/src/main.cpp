@@ -17,6 +17,8 @@ auto random_color() {
 int main()
 {
 	application app(window_width, window_height, "GUI example", nullptr, nullptr);
+	element::context = &app;
+
 	auto& vg = app.vg;
 
 
@@ -30,6 +32,7 @@ int main()
 	auto& text_style = app.style_manager.styles["text"];
 	text_style.emplace(std::make_pair("font", font));
 	text_style.emplace(std::make_pair("font_size", 18.f));
+	text_style.emplace(std::make_pair("color", nvgRGBA(255, 255, 255, 255)));
 
 
 	// Test alignment issues with text at the very top of the window
@@ -38,40 +41,38 @@ int main()
 	txt.font = font;
 	txt.font_size = 14;
 	txt.color = nvgRGBA(255, 255, 255, 255);
-	txt.update_bounds(vg);
+	txt.update_bounds();
 
 
 	// editable text
 	{
-		auto& root = app.root.create_child<panel>();
-		root.position = { 50,100 };
-		root.color = nvgRGBA(100,100,100, 255);
+		auto& background = app.root.create_child<panel>();
+		background.position = { 50,100 };
+		background.color = nvgRGBA(100,100,100, 255);
 		
-		root.create_layout<gui::layout::box>();
+		background.create_layout<gui::layout::box>();
 
 
-		auto& txt_edit = root.create_child<text_edit>(vg, app.input_manager);
+		auto& txt_edit = background.create_child<text_edit>();
 		txt_edit.min_size = { 200,50 };
-		txt_edit.set_style(text_style);
 		txt_edit.str = "editable text";
-		txt_edit.color = nvgRGBA(255, 255, 255, 255);
-		txt_edit.update_bounds(vg);
+		txt_edit.set_style(text_style);
 
-		root.child_layout->perform();
+		background.child_layout->perform();
 	}
 
 
 	// button test
 	{
-		auto& el = app.root.create_child<button>(app.input_manager);
+		auto& el = app.root.create_child<button>();
 		el.position = { 500,200 };
-		el.background_color = el.color = nvgRGBA(80, 80, 80, 255);
+		el.background_color = nvgRGBA(80, 80, 80, 255);
 		el.hover_color = nvgRGBA(120, 120, 120, 255);
 		el.press_color = nvgRGBA(0, 120, 210, 255);
+		el.color = el.background_color;
 
 		el.label.str = "button";
 		el.label.set_style(text_style);
-		el.label.update_bounds(vg);
 
 		el.child_layout->perform();
 
@@ -138,11 +139,7 @@ int main()
 			el.color = nvgRGBA(0,0,0, 100);
 
 			auto& txt = el.create_child<text>();
-			txt.str = "Testing";
-			txt.font = font;
-			txt.font_size = 50;
-			txt.color = nvgRGBA(255, 255, 255, 255);
-			txt.update_bounds(vg);
+			txt.set_text(font, 50, "Testing");
 		}
 	}
 	{
@@ -183,7 +180,7 @@ int main()
 	// Loop until the user closes the window
 	app.run([&]()
 	{
-		txt.draw_recursive(vg);
-		app.root.draw_recursive(vg);
+		txt.draw_recursive();
+		app.root.draw_recursive();
 	});
 }

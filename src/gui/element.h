@@ -2,6 +2,7 @@
 
 #include "../input/input.h"
 #include "../layout/layout.h"
+#include "context.h"
 #include <nanovg.h>
 
 
@@ -15,6 +16,8 @@ T& emplace_back_derived(Container& container, Args& ... args)
 
 struct element : layout::element<element>, input::element
 {
+	inline static gui::context* context = nullptr;
+
 	element* parent = nullptr;
 
 	template<typename T, typename... Args>
@@ -24,7 +27,10 @@ struct element : layout::element<element>, input::element
 		return child;
 	}
 
+	void draw() { draw(context->vg); }
 	virtual void draw(NVGcontext* vg) {}
+
+	void draw_recursive() { draw_recursive(context->vg); }
 	void draw_recursive(NVGcontext* vg) {
 		draw(vg);
 		for (auto const& child : children)

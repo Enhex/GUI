@@ -10,6 +10,20 @@ struct text : element
 	NVGcolor color = nvgRGBA(255, 255, 255, 255);
 
 
+	void set_text(int new_font, float new_font_size, std::string const& new_str)
+	{
+		set_text(context->vg, new_font, new_font_size, new_str);
+	}
+
+	void set_text(NVGcontext* vg, int new_font, float new_font_size, std::string const& new_str)
+	{
+		font = new_font;
+		font_size = new_font_size;
+		str = new_str;
+
+		update_bounds(vg);
+	}
+
 	void set_style(style::style_t const& style)
 	{
 		auto read = [&](auto& property, std::string&& name)
@@ -19,13 +33,18 @@ struct text : element
 			auto iter = style.find(name);
 			if (iter != style.end()) {
 				property = std::any_cast<property_t>(iter->second);
+				return true;
 			}
+			return false;
 		};
 
-		read(font, "font");
-		read(font_size, "font_size");
+		if (read(font, "font") | read(font_size, "font_size")) {
+			update_bounds();
+		}
+		read(color, "color");
 	}
 
+	void update_bounds() { update_bounds(context->vg); }
 	void update_bounds(NVGcontext* vg)
 	{
 		nvgSave(vg);
