@@ -2,13 +2,29 @@
 
 #include "element.h"
 
-//TODO set min size to text bounds
 struct text : element
 {
 	std::string str;
-	float font_size = 12;
 	int font = -1;
+	float font_size = 12;
 	NVGcolor color = nvgRGBA(255, 255, 255, 255);
+
+
+	void set_style(style::style_t const& style)
+	{
+		auto read = [&](auto& property, std::string&& name)
+		{
+			using property_t = std::remove_reference_t<decltype(property)>;
+
+			auto iter = style.find(name);
+			if (iter != style.end()) {
+				property = std::any_cast<property_t>(iter->second);
+			}
+		};
+
+		read(font, "font");
+		read(font_size, "font_size");
+	}
 
 	void update_bounds(NVGcontext* vg)
 	{

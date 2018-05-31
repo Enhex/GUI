@@ -6,18 +6,15 @@
 /*
 for now should only create 1 instance since it initializes libraries.
 */
-struct application
+struct application : gui::context
 {
 	application(int width, int height, const char* title, GLFWmonitor* monitor = nullptr, GLFWwindow* share = nullptr);
 
 	~application();
 
 	GLFWwindow* window = nullptr;
-	NVGcontext* vg = nullptr;
 
 	element root;//TODO hardcode the root element as a panel, and automatically size it to the screen so it acts as the background?
-
-	input::manager input_manager;
 
 	template<typename F>
 	void run(F loop_function);

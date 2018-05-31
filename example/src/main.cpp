@@ -27,6 +27,11 @@ int main()
 	}
 
 
+	auto& text_style = app.style_manager.styles["text"];
+	text_style.emplace(std::make_pair("font", font));
+	text_style.emplace(std::make_pair("font_size", 18.f));
+
+
 	// Test alignment issues with text at the very top of the window
 	text txt;
 	txt.str = "TopText";
@@ -47,9 +52,8 @@ int main()
 
 		auto& txt_edit = root.create_child<text_edit>(vg, app.input_manager);
 		txt_edit.min_size = { 200,50 };
+		txt_edit.set_style(text_style);
 		txt_edit.str = "editable text";
-		txt_edit.font = font;
-		txt_edit.font_size = 18;
 		txt_edit.color = nvgRGBA(255, 255, 255, 255);
 		txt_edit.update_bounds(vg);
 
@@ -66,8 +70,7 @@ int main()
 		el.press_color = nvgRGBA(0, 120, 210, 255);
 
 		el.label.str = "button";
-		el.label.font = font;
-		el.label.font_size = 18;
+		el.label.set_style(text_style);
 		el.label.update_bounds(vg);
 
 		el.child_layout->perform();
