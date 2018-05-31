@@ -10,18 +10,31 @@ struct text : element
 	NVGcolor color = nvgRGBA(255, 255, 255, 255);
 
 
-	void set_text(int new_font, float new_font_size, std::string const& new_str)
+	text()
 	{
-		set_text(context->vg, new_font, new_font_size, new_str);
+		auto iter = context->style_manager.styles.find("text");
+		if (iter != context->style_manager.styles.end()) {
+			set_style(iter->second);
+		}
 	}
 
-	void set_text(NVGcontext* vg, int new_font, float new_font_size, std::string const& new_str)
+	void setup(int new_font, float new_font_size, std::string const& new_str)
+	{
+		setup(context->vg, new_font, new_font_size, new_str);
+	}
+
+	void setup(NVGcontext* vg, int new_font, float new_font_size, std::string const& new_str)
 	{
 		font = new_font;
 		font_size = new_font_size;
 		str = new_str;
 
 		update_bounds(vg);
+	}
+
+	void set_text(std::string const& new_str) {
+		str = new_str;
+		update_bounds(context->vg);
 	}
 
 	void set_style(style::style_t const& style)

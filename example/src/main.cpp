@@ -139,7 +139,7 @@ int main()
 			el.color = nvgRGBA(0,0,0, 100);
 
 			auto& txt = el.create_child<text>();
-			txt.set_text(font, 50, "Testing");
+			txt.setup(font, 50, "Testing");
 		}
 	}
 	{
