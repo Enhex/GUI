@@ -14,6 +14,11 @@ struct button : panel
 
 	button()
 	{
+		auto iter = context->style_manager.styles.find("button");
+		if (iter != context->style_manager.styles.end()) {
+			set_style(iter->second);
+		}
+
 		create_layout<gui::layout::box>();
 
 		auto& input_manager = context->input_manager;
@@ -36,5 +41,28 @@ struct button : panel
 			if(input_manager.pressed_element == &this->label)
 				callback();
 		});
+	}
+
+
+	void set_style(style::style_t const& style)
+	{
+		auto read = [&](auto& property, std::string&& name)
+		{
+			using property_t = std::remove_reference_t<decltype(property)>;
+
+			auto iter = style.find(name);
+			if (iter != style.end()) {
+				property = std::any_cast<property_t>(iter->second);
+				return true;
+			}
+			return false;
+		};
+
+		if (read(background_color, "background_color")) {
+			color = background_color;
+		}
+
+		read(hover_color, "hover_color");
+		read(press_color, "press_color");
 	}
 };
