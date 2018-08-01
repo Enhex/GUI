@@ -32,7 +32,7 @@ workspace("GUI example")
 			"../src"
 		}
 		libdirs{conan_libdirs}
-		links{"GUI"}
+		links{"GUI", conan_libs}
 		defines{conan_cppdefines, "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"}
 
 		filter "configurations:Debug"
