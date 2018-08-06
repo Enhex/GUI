@@ -8,6 +8,8 @@ namespace layout
 	template <typename element_derived>
 	struct base
 	{
+		virtual ~base() = default;
+
 		// owning element which uses this layout for its children
 		element<element_derived>* parent = nullptr;
 

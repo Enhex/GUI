@@ -67,7 +67,7 @@ namespace layout
 		}
 
 		// position, top-down (children need to know the parent's position to be relative to it)
-		void lay()
+		void lay() override
 		{
 			auto& parent = this->parent;
 
