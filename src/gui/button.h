@@ -23,22 +23,22 @@ struct button : panel
 
 		auto& input_manager = context->input_manager;
 
-		input_manager.subscribe<input::event::hover_start>(&label, [this](std::any&& args) {
+		input_manager.subscribe<input::event::hover_start>(this, [this](std::any&& args) {
 			color = hover_color;
 		});
 
-		input_manager.subscribe<input::event::hover_end>(&label, [this](std::any&& args) {
+		input_manager.subscribe<input::event::hover_end>(this, [this](std::any&& args) {
 			color = background_color;
 		});
 
-		input_manager.subscribe<input::event::mouse_press>(&label, [this](std::any&& args) {
+		input_manager.subscribe<input::event::mouse_press>(this, [this](std::any&& args) {
 			color = press_color;
 		});
 
-		input_manager.subscribe<input::event::mouse_release>(&label, [this, &input_manager](std::any&& args) {
+		input_manager.subscribe<input::event::mouse_release>(this, [this, &input_manager](std::any&& args) {
 			color = hover_color;
 			//execute callback if the button was pressed before release event
-			if(input_manager.pressed_element == &this->label)
+			if(input_manager.pressed_element == this)
 				callback();
 		});
 	}

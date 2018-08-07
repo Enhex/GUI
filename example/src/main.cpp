@@ -78,6 +78,7 @@ int main()
 		el.label.set_style(text_style);
 
 		el.child_layout->perform();
+		el.size = { 100,50 };
 
 		el.callback = []() { std::cout << "button clicked\n"; };
 	}

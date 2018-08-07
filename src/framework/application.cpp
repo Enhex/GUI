@@ -100,17 +100,20 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 	*/
 	auto& input_manager = app.input_manager;
 
+	// recursively search for the leaf-most element that the mouse fits inside
 	auto find_hoevered_element = [&](element* parent)
 	{
-		auto recurse_impl = [&](element* parent, auto& func) -> bool
+		auto recurse_impl = [&](element* el, auto& func) -> bool
 		{
-			for (auto const& child : parent->children) {
+			for (auto const& child : el->children) {
 				if (func(child.get(), func))
 					return true;
 			}
 
-			if (parent->is_inside(app.input_manager.mouse_pos)) {
-				input_manager.set_hovered_element(parent);
+			auto test = input_manager.focused_events.find(el) != input_manager.focused_events.end();
+			if (input_manager.focused_events.find(el) != input_manager.focused_events.end() &&	// if the element doesn't do something with the event, propagate it to the parent.
+				el->is_inside(app.input_manager.mouse_pos)) {
+				input_manager.set_hovered_element(el);
 				return true;
 			}
 
