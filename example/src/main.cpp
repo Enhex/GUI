@@ -165,6 +165,15 @@ int main()
 		auto&[key, mods] = std::any_cast<input::event::key_press::params&>(args);
 		std::cout << "(global) key pressed: " << key << "\n";
 	});
+	app.input_manager.subscribe_global<input::event::key_press>([&root](std::any&& args) {
+		auto&[key, mods] = std::any_cast<input::event::key_press::params&>(args);
+		if (key != 67)
+			return;
+
+		root.children.clear();
+
+		std::cout << "cleared!\n";
+	});
 
 	// test focused hover events
 	app.input_manager.subscribe<input::event::hover_start>(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](std::any&& args) {

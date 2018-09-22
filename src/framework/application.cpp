@@ -110,8 +110,8 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 					return true;
 			}
 
-			auto test = input_manager.focused_events.find(el) != input_manager.focused_events.end();
-			if (input_manager.focused_events.find(el) != input_manager.focused_events.end() &&	// if the element doesn't do something with the event, propagate it to the parent.
+			auto const& focused_events = input_manager.get_focused_events();
+			if (focused_events.find(el) != focused_events.end() &&	// if the element doesn't do something with the event, propagate it to the parent.
 				el->is_inside(app.input_manager.mouse_pos)) {
 				input_manager.set_hovered_element(el);
 				return true;

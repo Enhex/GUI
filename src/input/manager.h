@@ -8,6 +8,8 @@
 
 namespace input
 {
+	struct element;
+
 	using any_callback = std::function<void(std::any&&)>;
 
 	/*TODO
@@ -16,17 +18,16 @@ namespace input
 	*/
 	struct manager
 	{
+		using event_ID = size_t;
+
 		vector2 mouse_pos;
 
 		element* focused_element = nullptr; // keyboard focus
 		element* hovered_element = nullptr; // mouse focus
 		element* pressed_element = nullptr; // element which was hovered when mouse press happened
 
-		// map from element to subscribed events
-		std::unordered_map<element*, std::unordered_map<size_t, any_callback>> focused_events;
-
 		// map from event to callbacks
-		std::unordered_map<size_t, std::vector<any_callback>> global_events;
+		std::unordered_map<event_ID, std::vector<any_callback>> global_events;
 		//TODO keep track of which callback belongs to which element, in a separate container
 		//global_subscribers;
 
@@ -35,7 +36,14 @@ namespace input
 		template<typename Event>
 		void subscribe(element* subscriber, std::function<void(std::any&&)>&& callback)
 		{
-			//TODO check if element is already subscribed?
+			// add removal callback
+			if (focused_events.find(subscriber) != focused_events.end())
+			{
+				subscriber->destructor_callbacks.emplace_back([this, subscriber]() {
+					focused_events.erase(subscriber);
+				});
+			}
+
 			focused_events[subscriber][Event::id] = std::move(callback);
 		}
 
@@ -94,5 +102,15 @@ namespace input
 					send_focused_event(hovered_element, event::hover_start::id, {});
 			}
 		}
+
+		auto const& get_focused_events()
+		{
+			return focused_events;
+		}
+
+	protected:
+		// map from element to subscribed events
+		//TODO need to remove elements from this container when they're deleted
+		std::unordered_map<element*, std::unordered_map<event_ID, any_callback>> focused_events;
 	};
 }
