@@ -19,6 +19,7 @@ class GuiConan(ConanFile):
 		"glfw/3.2.1@bincrafters/stable",
 		"glad/0.1.24@bincrafters/stable",
 		"nanovg/master@enhex/stable",
+		"Deco/master@enhex/stable",
 		"premake_generator/master@enhex/stable"
 	)
 	

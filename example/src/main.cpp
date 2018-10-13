@@ -1,6 +1,88 @@
+#include <deco/all.h>
 #include <framework/application.h>
+#include <fstream>
 #include <gui/gui.h>
 #include <iostream>
+#include <typeinfo>
+
+
+std::map<std::string, std::type_info const&> style_properties {
+	{"font", typeid(int)},
+	{"font_size", typeid(float)},
+	{"color", typeid(NVGcolor)}
+};
+
+
+namespace deco
+{
+	template<typename Stream>
+	void serialize(Stream& stream, NVGcolor& value)
+	{
+		serialize(stream, value.r);
+		serialize(stream, value.g);
+		serialize(stream, value.b);
+		serialize(stream, value.a);
+	}
+
+	template<typename Stream>
+	void write(Stream& stream, style::style_st& value)
+	{
+		for (auto& [name, value] : value)
+		{
+			// checking typeid instead of property name means less duplicate casts (in case multiple properties use the same type)
+			auto iter = style_properties.find(name);
+			if (iter == style_properties.end())
+				throw std::logic_error("property name not found");
+
+			auto& proerty_typeid = iter->second;
+		
+			if (proerty_typeid == typeid(int)) {
+				serialize(stream, make_list(name, std::any_cast<int&>(value)));
+			}
+			else if (proerty_typeid == typeid(float)) {
+				serialize(stream, make_list(name, std::any_cast<float&>(value)));
+			}
+			else if (proerty_typeid == typeid(NVGcolor)) {
+				serialize(stream, make_list(name, std::any_cast<NVGcolor&>(value)));
+			}
+		}
+	}
+
+	template<typename Stream>
+	void read(Stream& stream, style::style_st& value)
+	{
+		std::string name;
+		std::any property_value;
+
+		while (!stream.peek_list_end())
+		{
+			serialize(stream, begin_list(name));
+
+			auto iter = style_properties.find(name);
+			if (iter == style_properties.end())
+				throw std::logic_error("property name not found");
+
+			auto& proerty_typeid = iter->second;
+
+			if (proerty_typeid == typeid(int)) {
+				int input;
+				serialize(stream, input);
+				value.emplace(name, input);
+			}
+			else if (proerty_typeid == typeid(float)) {
+				float input;
+				serialize(stream, input);
+				value.emplace(name, input);
+			}
+			else if (proerty_typeid == typeid(NVGcolor)) {
+				NVGcolor input;
+				serialize(stream, input);
+				value.emplace(name, input);
+			}
+			serialize(stream, end_list);
+		}
+	}
+}
 
 
 constexpr int window_width = 640;
@@ -32,11 +114,47 @@ int main()
 	}
 
 
-	auto& text_style = app.style_manager.styles["text"];
-	text_style.emplace(std::make_pair("font", font));
-	text_style.emplace(std::make_pair("font_size", 18.f));
-	text_style.emplace(std::make_pair("color", nvgRGBA(255, 255, 255, 255)));
+	{
+		auto& text_style = app.style_manager.styles["text"];
+		text_style.emplace(std::make_pair("font", font));
+		text_style.emplace(std::make_pair("font_size", 18.f));
+		text_style.emplace(std::make_pair("color", nvgRGBA(255, 255, 255, 255)));
+	}
 
+
+	// Test using style file
+	{
+		deco::OutputStream_indent stream;
+
+		for (auto&[name, properties] : app.style_manager.styles) {
+			deco::serialize(stream, deco::make_list(name, properties));
+		}
+
+		std::ofstream file("style.deco", std::ios::binary);
+		file << stream.str;
+	}
+
+	app.style_manager.styles.clear();
+
+	{
+		auto file = std::ifstream("style.deco", std::ios::binary);
+		std::string file_str{
+			std::istreambuf_iterator<char>(file),
+			std::istreambuf_iterator<char>() };
+
+		auto stream = deco::make_InputStream(file_str.cbegin());
+
+		while (stream.position != file_str.cend() && !stream.peek_list_end())
+		{
+			std::string name;
+			style::style_st properties;
+			deco::serialize(stream, deco::begin_list(name));
+			deco::serialize(stream, properties);
+			deco::serialize(stream, deco::end_list);
+
+			app.style_manager.styles.emplace(name, properties);
+		}
+	}
 
 	// Test alignment issues with text at the very top of the window
 	text txt;
@@ -52,14 +170,11 @@ int main()
 		auto& background = app.root.create_child<panel>();
 		background.position = { 50,100 };
 		background.color = nvgRGBA(100,100,100, 255);
-		
+		background.min_size = { 200,0 };
 		background.create_layout<gui::layout::box>();
 
-
 		auto& txt_edit = background.create_child<text_edit>();
-		txt_edit.min_size = { 200,50 };
 		txt_edit.str = "editable text";
-		txt_edit.set_style(text_style);
 
 		background.child_layout->perform();
 	}
@@ -75,7 +190,6 @@ int main()
 		el.color = el.background_color;
 
 		el.label.str = "button";
-		el.label.set_style(text_style);
 
 		el.child_layout->perform();
 		el.size = { 100,50 };
