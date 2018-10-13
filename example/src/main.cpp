@@ -24,9 +24,9 @@ int main()
 	auto& vg = app.vg;
 
 
-	auto font = nvgCreateFont(vg, "sans", "../core-gui/example/font/Roboto-Regular.ttf"); // in case of running from build folder
+	auto font = nvgCreateFont(vg, "sans", "../GUI/example/font/Roboto-Regular.ttf"); // in case of running from build folder
 	if (font == -1) {
-		font = nvgCreateFont(vg, "sans", "../../../core-gui/example/font/Roboto-Regular.ttf"); // in case of running from bin folder
+		font = nvgCreateFont(vg, "sans", "../../../GUI/example/font/Roboto-Regular.ttf"); // in case of running from bin folder
 		if (font == -1) {
 			printf("Could not add font.\n");
 			return 1;
