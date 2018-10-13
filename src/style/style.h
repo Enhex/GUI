@@ -7,8 +7,6 @@
 
 namespace style
 {
-	//STRONG_TYPE(any, std::any); // used for template specialization
-
 	// property name to value
 	using style_t = std::unordered_map<std::string, std::any>;
 

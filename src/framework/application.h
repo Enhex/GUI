@@ -2,6 +2,7 @@
 
 #include "../gui/gui.h"
 #include "../include_glfw.h"
+#include "serialization.h"
 
 /*
 for now should only create 1 instance since it initializes libraries.
