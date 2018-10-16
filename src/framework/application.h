@@ -35,18 +35,19 @@ protected:
 template<typename F>
 inline void application::run(F loop_function)
 {
-	// get window size
-	int win_width, win_height;
-	glfwGetWindowSize(window, &win_width, &win_height);
-
-	// calculate pixel ratio
-	int fb_width, fb_height;
-	glfwGetFramebufferSize(window, &fb_width, &fb_height);
-	auto const pixel_ratio = (float)fb_width / (float)win_width;
-
 	// main loop
 	while (!glfwWindowShouldClose(window))
 	{
+		// get window size
+		int win_width, win_height;
+		glfwGetWindowSize(window, &win_width, &win_height);
+
+		// calculate pixel ratio
+		int fb_width, fb_height;
+		glfwGetFramebufferSize(window, &fb_width, &fb_height);
+		auto const pixel_ratio = (float)fb_width / (float)win_width;
+
+		glViewport(0, 0, fb_width, fb_height);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		nvgBeginFrame(vg, (float)win_width, (float)win_height, pixel_ratio);
