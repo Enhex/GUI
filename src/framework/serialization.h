@@ -4,6 +4,9 @@
 #include <nanovg.h>
 #include <typeinfo>
 
+#include "../gui/element.h"
+#include "../layout/element.h"
+
 
 static std::map<std::string, std::type_info const&> style_properties{
 	{"font", typeid(int)},
@@ -80,5 +83,36 @@ namespace deco
 			}
 			serialize(stream, end_list);
 		}
+	}
+
+
+	template<typename Stream>
+	void serialize(Stream& stream, vector2& value)
+	{
+		serialize(stream, value.a[0]);
+		serialize(stream, value.a[1]);
+	}
+
+	template<typename Stream>
+	void serialize(Stream& stream, rectangle& value)
+	{
+		serialize(stream, make_list("position", value.position));
+		serialize(stream, make_list("size", value.size));
+	}
+
+	// elements
+	template<typename Stream>
+	void serialize(Stream& stream, element& value)
+	{
+		//TODO should serialize members as optional, with default value
+		serialize(stream, static_cast<rectangle&>(value));
+		serialize(stream, make_list("min_size", value.min_size));
+	}
+
+	template<typename Stream>
+	void serialize(Stream& stream, panel& value)
+	{
+		serialize(stream, static_cast<element&>(value));
+		serialize(stream, value.color);
 	}
 }

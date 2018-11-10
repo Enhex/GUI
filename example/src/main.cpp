@@ -4,7 +4,6 @@
 #include <gui/gui.h>
 #include <iostream>
 
-
 constexpr int window_width = 640;
 constexpr int window_height = 480;
 
@@ -73,6 +72,56 @@ int main()
 			deco::serialize(stream, deco::end_list);
 
 			app.style_manager.styles.emplace(name, properties);
+		}
+	}
+
+	// test using layout file
+	{
+		//TODO write to file
+		auto& root = app.root.create_child<panel>();
+		root.position = { 200,50 };
+		root.min_size = { 200,400 };
+		root.color = random_color();
+	}
+	{
+		// read from file
+		auto file = std::ifstream("layout.deco", std::ios::binary);
+		std::string file_str{
+			std::istreambuf_iterator<char>(file),
+			std::istreambuf_iterator<char>() };
+		auto stream = deco::make_InputStream(file_str.cbegin());
+
+		while (stream.position != file_str.cend() && !stream.peek_list_end())
+		{
+			//TODO put in a GUI element serialization function
+			std::string name;
+
+			//while (!stream.peek_list_end())
+			{
+				using namespace deco;
+
+				serialize(stream, begin_list(name));
+
+				if (name == "element") {
+					auto& child = emplace_back_derived<element>(app.root.children);
+					serialize(stream, child);
+				}
+				else if (name == "panel") {
+					auto& child = emplace_back_derived<panel>(app.root.children);
+					serialize(stream, child);
+				}
+				/*else if (name == "text") {
+					auto& child = emplace_back_derived<text>(app.root.children);
+					serialize(stream, child);
+				}
+				else if (name == "button") {
+					auto& child = emplace_back_derived<button>(app.root.children);
+					serialize(stream, child);
+				}*/
+				//TODO else not found, throw?
+
+				serialize(stream, end_list);
+			}
 		}
 	}
 
