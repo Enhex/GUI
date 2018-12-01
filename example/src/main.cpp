@@ -75,53 +75,54 @@ int main()
 		}
 	}
 
+
 	// test using layout file
+
+	// write to file
 	{
-		//TODO write to file
 		auto& root = app.root.create_child<panel>();
-		root.position = { 200,50 };
-		root.min_size = { 200,400 };
-		root.color = random_color();
+		root.position = { 50,50 };
+		root.min_size = { 20,25 };
+		root.size = { 20,25 };
+		root.color = { 0, 1, 0, 1 };
+
+		deco::OutputStream_indent stream;
+		deco::serialize(stream, deco::make_list("panel", root));
+
+		auto file = std::ofstream("layout.deco", std::ios::binary);
+		file << stream.str;
 	}
+	// read from file
 	{
-		// read from file
 		auto file = std::ifstream("layout.deco", std::ios::binary);
 		std::string file_str{
 			std::istreambuf_iterator<char>(file),
 			std::istreambuf_iterator<char>() };
-		auto stream = deco::make_InputStream(file_str.cbegin());
 
-		while (stream.position != file_str.cend() && !stream.peek_list_end())
+		/*
+		use pre-parsed Deco objects approach to simplify serialization
+		specifically polymorphic serialization
+		*/
+		auto entries = deco::parse(file_str.begin(), file_str.end());
+		
+		for (auto& entry : entries)
 		{
-			//TODO put in a GUI element serialization function
-			std::string name;
+			using namespace deco;
 
-			//while (!stream.peek_list_end())
-			{
-				using namespace deco;
+			auto const& name = entry.content;
 
-				serialize(stream, begin_list(name));
-
-				if (name == "element") {
-					auto& child = emplace_back_derived<element>(app.root.children);
-					serialize(stream, child);
-				}
-				else if (name == "panel") {
-					auto& child = emplace_back_derived<panel>(app.root.children);
-					serialize(stream, child);
-				}
-				/*else if (name == "text") {
-					auto& child = emplace_back_derived<text>(app.root.children);
-					serialize(stream, child);
-				}
-				else if (name == "button") {
-					auto& child = emplace_back_derived<button>(app.root.children);
-					serialize(stream, child);
-				}*/
-				//TODO else not found, throw?
-
-				serialize(stream, end_list);
+			if (name == "element") {
+				auto& child = emplace_back_derived<element>(app.root.children);
+				read(entry, child);
 			}
+			else if (name == "panel") {
+				auto& child = emplace_back_derived<panel>(app.root.children);
+				read(entry, child);
+			}
+			/*else if (name == "text") {
+				auto& child = emplace_back_derived<text>(app.root.children);
+				read(entry, child);
+			}*/
 		}
 	}
 

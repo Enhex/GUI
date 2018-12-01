@@ -3,10 +3,13 @@
 #include <map>
 #include <nanovg.h>
 #include <typeinfo>
+#include <charconv>
 
-#include "../gui/element.h"
+#include "../gui/gui.h"
 #include "../layout/element.h"
 
+#include <deco/Deco.h>
+#include <deco/types/arithmetic.h>
 
 static std::map<std::string, std::type_info const&> style_properties{
 	{"font", typeid(int)},
@@ -25,6 +28,8 @@ namespace deco
 		serialize(stream, value.b);
 		serialize(stream, value.a);
 	}
+
+	void read(EntryObject const& entry, NVGcolor& value);
 
 	template<typename Stream>
 	void write(Stream& stream, style::style_st& value)
@@ -93,26 +98,105 @@ namespace deco
 		serialize(stream, value.a[1]);
 	}
 
+	void read(EntryObject const& entry, vector2& value);
+
+
 	template<typename Stream>
-	void serialize(Stream& stream, rectangle& value)
+	void read_unordered_properties(Stream& stream, std::vector<std::pair<std::string, std::function<void(Stream&)>>> names_funcs)
+	{
+		std::string list_name;
+
+		while (!stream.peek_list_end())
+		{
+			serialize(stream, begin_list(list_name));
+
+			for (auto&[name, func] : names_funcs)
+			{
+				if (list_name == name)
+					func(stream);
+			}
+
+			serialize(stream, end_list);
+		}
+	}
+
+
+	template<typename Stream>
+	void write(Stream& stream, rectangle& value)
 	{
 		serialize(stream, make_list("position", value.position));
 		serialize(stream, make_list("size", value.size));
 	}
 
+	template<typename Stream>
+	void read(Stream& stream, rectangle& value)
+	{
+		/*
+		- need to dynamically choose type based on property name.
+			- start with a simple if-else
+				- also allows overriding
+		*/
+		std::string name;
+
+		while (!stream.peek_list_end())
+		{
+			serialize(stream, begin_list(name));
+
+			if(name == "position")
+				serialize(stream, value.position);
+			else if(name == "size")
+				serialize(stream, value.size);
+
+			serialize(stream, end_list);
+		}
+	}
+
+	void read(deco::EntryObject& entry, rectangle& value);
+
 	// elements
 	template<typename Stream>
-	void serialize(Stream& stream, element& value)
+	void write(Stream& stream, element& value)
 	{
-		//TODO should serialize members as optional, with default value
 		serialize(stream, static_cast<rectangle&>(value));
 		serialize(stream, make_list("min_size", value.min_size));
 	}
 
 	template<typename Stream>
-	void serialize(Stream& stream, panel& value)
+	void read(Stream& stream, element& value)
+	{
+		read(stream, static_cast<rectangle&>(value));
+		serialize(stream, make_list("min_size", value.min_size));
+	}
+
+	void read(deco::EntryObject& entry, element& value);
+
+
+	template<typename Stream>
+	void write(Stream& stream, panel& value)
 	{
 		serialize(stream, static_cast<element&>(value));
+		serialize(stream, make_list("color", value.color));
+	}
+
+	template<typename Stream>
+	void read(Stream& stream, panel& value)
+	{
+		read(stream, static_cast<element&>(value));
+		serialize(stream, make_list("color", value.color));
+	}
+
+	void read(deco::EntryObject& entry, panel& value);
+
+
+	template<typename Stream>
+	void serialize(Stream& stream, text& value)
+	{
+		serialize(stream, static_cast<element&>(value));
+
+		serialize(stream, value.str);
+		//TODO convert font ID to name? directly store font name?
+		//int font = -1;
+		serialize(stream, value.font_size);
 		serialize(stream, value.color);
 	}
 }
