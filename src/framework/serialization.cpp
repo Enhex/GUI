@@ -73,4 +73,32 @@ namespace deco
 				read(entry, value.color);
 		}
 	}
+
+	void read(deco::EntryObject & entry, text & value)
+	{
+		read(entry, static_cast<element&>(value));
+
+		for (auto const& entry : entry.entries)
+		{
+			auto const& name = entry.content;
+
+			if (name == "string") {
+				for (auto const& line : entry.entries) {
+					value.str += line.content;
+					value.str += '\n';
+				}
+			}
+			else if (name == "font") {
+				//TODO convert font ID to name? directly store font name?
+				auto& content = entry.entries[0].content;
+				std::from_chars(content.data(), content.data() + content.size(), value.font);
+			}
+			else if (name == "font size") {
+				auto& content = entry.entries[0].content;
+				std::from_chars(content.data(), content.data() + content.size(), value.font_size);
+			}
+			else if (name == "color")
+					read(entry, value.color);
+		}
+	}
 }

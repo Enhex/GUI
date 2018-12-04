@@ -80,14 +80,22 @@ int main()
 
 	// write to file
 	{
-		auto& root = app.root.create_child<panel>();
-		root.position = { 50,50 };
-		root.min_size = { 20,25 };
-		root.size = { 20,25 };
-		root.color = { 0, 1, 0, 1 };
-
 		deco::OutputStream_indent stream;
-		deco::serialize(stream, deco::make_list("panel", root));
+
+		panel el;
+		el.position = { 50,50 };
+		el.min_size = { 20,25 };
+		el.size = { 20,25 };
+		el.color = { 0, 1, 0, 1 };
+
+		deco::serialize(stream, deco::make_list("panel", el));
+
+		text el2;
+		el2.str = "hi";
+		el2.position = { 55,50 };
+		el2.color = { 1, 0, 0, 1 };
+
+		deco::serialize(stream, deco::make_list("text", el2));
 
 		auto file = std::ofstream("layout.deco", std::ios::binary);
 		file << stream.str;
@@ -119,10 +127,10 @@ int main()
 				auto& child = emplace_back_derived<panel>(app.root.children);
 				read(entry, child);
 			}
-			/*else if (name == "text") {
+			else if (name == "text") {
 				auto& child = emplace_back_derived<text>(app.root.children);
 				read(entry, child);
-			}*/
+			}
 		}
 	}
 

@@ -155,16 +155,9 @@ namespace deco
 
 	// elements
 	template<typename Stream>
-	void write(Stream& stream, element& value)
+	void serialize(Stream& stream, element& value)
 	{
 		serialize(stream, static_cast<rectangle&>(value));
-		serialize(stream, make_list("min_size", value.min_size));
-	}
-
-	template<typename Stream>
-	void read(Stream& stream, element& value)
-	{
-		read(stream, static_cast<rectangle&>(value));
 		serialize(stream, make_list("min_size", value.min_size));
 	}
 
@@ -172,31 +165,25 @@ namespace deco
 
 
 	template<typename Stream>
-	void write(Stream& stream, panel& value)
+	void serialize(Stream& stream, panel& value)
 	{
 		serialize(stream, static_cast<element&>(value));
-		serialize(stream, make_list("color", value.color));
-	}
-
-	template<typename Stream>
-	void read(Stream& stream, panel& value)
-	{
-		read(stream, static_cast<element&>(value));
 		serialize(stream, make_list("color", value.color));
 	}
 
 	void read(deco::EntryObject& entry, panel& value);
 
 
+
 	template<typename Stream>
 	void serialize(Stream& stream, text& value)
 	{
-		serialize(stream, static_cast<element&>(value));
-
-		serialize(stream, value.str);
-		//TODO convert font ID to name? directly store font name?
-		//int font = -1;
-		serialize(stream, value.font_size);
-		serialize(stream, value.color);
+		serialize(stream, make_list("position", value.position));
+		serialize(stream, make_list("string", value.str));
+		serialize(stream, make_list("font", value.font));//TODO convert font ID to name? directly store font name?
+		serialize(stream, make_list("font size", value.font_size));
+		serialize(stream, make_list("color", value.color));
 	}
+
+	void read(deco::EntryObject& entry, text& value);
 }
