@@ -4,6 +4,8 @@
 
 struct text : element
 {
+	std::type_info const& type_info() const override { return typeid(text); }
+
 	std::string str;
 	int font = -1;
 	float font_size = 12;

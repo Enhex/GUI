@@ -16,6 +16,8 @@ T& emplace_back_derived(Container& container, Args& ... args)
 
 struct element : layout::element<element>, input::element
 {
+	virtual std::type_info const& type_info() const { return typeid(element); }
+
 	inline static gui::context* context = nullptr;
 
 	element* parent = nullptr;

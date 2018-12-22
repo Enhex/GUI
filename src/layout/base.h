@@ -10,6 +10,8 @@ namespace layout
 	{
 		virtual ~base() = default;
 
+		virtual std::type_info const& type_info() const = 0;
+
 		// owning element which uses this layout for its children
 		element<element_derived>* parent = nullptr;
 

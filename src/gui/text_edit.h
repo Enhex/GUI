@@ -10,6 +10,8 @@
 */
 struct text_edit : text
 {
+	std::type_info const& type_info() const override { return typeid(text_edit); }
+
 	text_edit()
 	{
 		auto& input_manager = context->input_manager;

@@ -4,6 +4,8 @@
 
 struct panel : element
 {
+	std::type_info const& type_info() const override { return typeid(panel); }
+
 	NVGcolor color;
 
 	void draw(NVGcontext* vg) override

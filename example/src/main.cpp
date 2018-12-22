@@ -87,12 +87,17 @@ int main()
 		el.min_size = { 20,25 };
 		el.size = { 20,25 };
 		el.color = { 0, 1, 0, 1 };
+		el.create_layout<gui::layout::box>();
+
+		auto& child = emplace_back_derived<text>(el.children);
+		child.str = "I'm a child element";
+		child.color = { 1, 0, 0, 1 };
 
 		deco::serialize(stream, deco::make_list("panel", el));
 
 		text el2;
 		el2.str = "hi";
-		el2.position = { 55,50 };
+		el2.position = { 55,30 };
 		el2.color = { 1, 0, 0, 1 };
 
 		deco::serialize(stream, deco::make_list("text", el2));

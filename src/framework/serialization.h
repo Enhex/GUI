@@ -153,12 +153,47 @@ namespace deco
 
 	void read(deco::EntryObject& entry, rectangle& value);
 
+
+	template<typename Stream>
+	void serialize(Stream& stream, gui::layout::box& value)
+	{
+		//TODO serialize orientation as a string. would be useful to have some enum-to-string utility
+		serialize(stream, make_list("orient", reinterpret_cast<int&>(value.orient)));
+	}
+
+	void read(deco::EntryObject& entry, gui::layout::box& value);
+
+
 	// elements
 	template<typename Stream>
 	void serialize(Stream& stream, element& value)
 	{
 		serialize(stream, static_cast<rectangle&>(value));
 		serialize(stream, make_list("min_size", value.min_size));
+		//TODO won't compile:
+		if(value.child_layout)
+			serialize(stream, make_list("child_layout", /*TODO temporary hack for testing:*/static_cast<gui::layout::box&>(*value.child_layout)));
+
+		if (!value.children.empty())
+		{
+			serialize(stream, begin_list("children"));
+			
+			for (auto& child : value.children)
+			{
+				//TODO need to cast to the derived class
+				if (child->type_info() == typeid(element)) {
+					serialize(stream, make_list("element", static_cast<element&>(*child)));
+				}
+				else if (child->type_info() == typeid(panel)) {
+					serialize(stream, make_list("panel", static_cast<panel&>(*child)));
+				}
+				else if (child->type_info() == typeid(text)) {
+					serialize(stream, make_list("text", static_cast<text&>(*child)));
+				}
+			}
+
+			serialize(stream, end_list);
+		}
 	}
 
 	void read(deco::EntryObject& entry, element& value);

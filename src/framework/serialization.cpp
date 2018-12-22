@@ -47,16 +47,48 @@ namespace deco
 		}
 	}
 
+	void read(deco::EntryObject & entry, gui::layout::box & value)
+	{
+		auto const& content = entry.entries[0].content;
+		std::from_chars(content.data(), content.data() + content.size(), reinterpret_cast<int&>(value.orient));
+	}
+
 	void read(deco::EntryObject& entry, element& value)
 	{
 		read(entry, static_cast<rectangle&>(value));
 
-		for (auto const& entry : entry.entries)
+		for (auto& entry : entry.entries)
 		{
 			auto const& name = entry.content;
 
 			if (name == "min_size")
 				read(entry, value.min_size);
+			else if (name == "child_layout") {
+				auto& child_layout = value.create_layout<gui::layout::box>();//TODO hack for testing, need to handle different layout types
+				read(entry, child_layout);
+			}
+			else if (name == "children")
+			{
+				for(auto& child : entry.entries)
+				{
+					if (child.content == "element") {
+						auto& child_element = emplace_back_derived<element>(value.children);
+						read(child, child_element);
+					}
+					else if (child.content == "panel") {
+						auto& child_element = emplace_back_derived<panel>(value.children);
+						read(child, child_element);
+					}
+					else if (child.content == "text") {
+						auto& child_element = emplace_back_derived<text>(value.children);
+						read(child, child_element);
+					}
+				}
+			}
+
+			// perform layout after children are created
+			if(value.child_layout)
+				value.child_layout->perform();
 		}
 	}
 

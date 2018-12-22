@@ -8,6 +8,8 @@ namespace layout
 	template <typename derived_element>
 	struct box : base<derived_element>
 	{
+		std::type_info const& type_info() const override { return typeid(box); }
+
 		orientation orient = vertical;
 
 		// fit around children
