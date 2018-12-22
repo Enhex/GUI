@@ -24,6 +24,10 @@ workspace("GUI")
 			"src/**",
 		}
 
+		pchheader "precompiled.h"
+		pchsource "src/framework/precompiled.cpp"
+		forceincludes  { "precompiled.h" }
+
 		defines{"_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"}
 
 		filter "configurations:Debug"
