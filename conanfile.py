@@ -15,7 +15,7 @@ class GuiConan(ConanFile):
 	exports_sources = "src/*"
 	
 	requires = (
-		"boost_qvm/1.66.0@bincrafters/stable",
+		"boost_qvm/1.67.0@bincrafters/stable",
 		"glfw/3.2.1@bincrafters/stable",
 		"glad/0.1.24@bincrafters/stable",
 		"nanovg/master@enhex/stable",
