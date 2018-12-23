@@ -5,10 +5,9 @@
 
 struct button : panel
 {
-	NVGcolor background_color;
-	NVGcolor hover_color;
-	NVGcolor press_color;
-	text& label = create_child<text>();
+	NVGcolor background_color{ 0,0,0,1 };
+	NVGcolor hover_color{ 0.5,0.5,0.5,1 };
+	NVGcolor press_color{ 1,1,1,1 };
 
 	std::function<void()> callback;
 

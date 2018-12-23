@@ -172,7 +172,8 @@ int main()
 		el.press_color = nvgRGBA(0, 120, 210, 255);
 		el.color = el.background_color;
 
-		el.label.str = "button";
+		auto& label = el.create_child<text>();
+		label.str = "button";
 
 		el.child_layout->perform();
 		el.size = { 100,50 };
