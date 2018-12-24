@@ -85,7 +85,6 @@ int main()
 		panel el;
 		el.position = { 50,50 };
 		el.min_size = { 20,25 };
-		el.size = { 20,25 };
 		el.color = { 0, 1, 0, 1 };
 		el.create_layout<gui::layout::box>();
 

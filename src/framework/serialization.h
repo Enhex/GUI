@@ -124,8 +124,10 @@ namespace deco
 	template<typename Stream>
 	void write(Stream& stream, rectangle& value)
 	{
-		serialize(stream, make_list("position", value.position));
-		serialize(stream, make_list("size", value.size));
+		if(value.position != rectangle().position)
+			serialize(stream, make_list("position", value.position));
+		if (value.size != rectangle().size)
+			serialize(stream, make_list("size", value.size));
 	}
 
 	template<typename Stream>
@@ -166,11 +168,13 @@ namespace deco
 
 	// elements
 	template<typename Stream>
-	void serialize(Stream& stream, element& value)
+	void write(Stream& stream, element& value)
 	{
 		serialize(stream, static_cast<rectangle&>(value));
-		serialize(stream, make_list("min_size", value.min_size));
-		//TODO won't compile:
+
+		if (value.min_size != element().min_size) // if not default value
+			serialize(stream, make_list("min_size", value.min_size));
+		
 		if(value.child_layout)
 			serialize(stream, make_list("child_layout", /*TODO temporary hack for testing:*/static_cast<gui::layout::box&>(*value.child_layout)));
 
@@ -213,8 +217,11 @@ namespace deco
 	template<typename Stream>
 	void serialize(Stream& stream, text& value)
 	{
-		serialize(stream, make_list("position", value.position));
-		serialize(stream, make_list("string", value.str));
+		if(value.position != text().position)
+			serialize(stream, make_list("position", value.position));
+		if (value.str != text().str)
+			serialize(stream, make_list("string", value.str));
+
 		serialize(stream, make_list("font", value.font));//TODO convert font ID to name? directly store font name?
 		serialize(stream, make_list("font size", value.font_size));
 		serialize(stream, make_list("color", value.color));
