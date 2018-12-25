@@ -34,10 +34,18 @@ int main()
 
 
 	{
-		auto& text_style = app.style_manager.styles["text"];
-		text_style.emplace(std::make_pair("font", font));
-		text_style.emplace(std::make_pair("font_size", 18.f));
-		text_style.emplace(std::make_pair("color", nvgRGBA(255, 255, 255, 255)));
+		auto& style = app.style_manager.styles["text"];
+		style.emplace(std::make_pair("font", font));
+		style.emplace(std::make_pair("font_size", 18.f));
+		style.emplace(std::make_pair("color", nvgRGBA(255, 255, 255, 255)));
+	}
+	{
+		auto& style = app.style_manager.styles["green"];
+		style.emplace(std::make_pair("color", nvgRGBA(0, 255, 0, 255)));
+	}
+	{
+		auto& style = app.style_manager.styles["red"];
+		style.emplace(std::make_pair("color", nvgRGBA(255, 0, 0, 255)));
 	}
 
 
@@ -85,19 +93,18 @@ int main()
 		panel el;
 		el.position = { 50,50 };
 		el.min_size = { 20,25 };
-		el.color = { 0, 1, 0, 1 };
+		el.style = "green";
 		el.create_layout<gui::layout::box>();
 
 		auto& child = emplace_back_derived<text>(el.children);
 		child.str = "I'm a child element";
-		child.color = { 1, 0, 0, 1 };
+		child.style = "red";
 
 		deco::serialize(stream, deco::make_list("panel", el));
 
 		text el2;
 		el2.str = "hi";
 		el2.position = { 55,30 };
-		el2.color = { 1, 0, 0, 1 };
 
 		deco::serialize(stream, deco::make_list("text", el2));
 

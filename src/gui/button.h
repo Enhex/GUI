@@ -5,6 +5,9 @@
 
 struct button : panel
 {
+	inline static constexpr auto element_name{ "button" };
+	std::string get_element_name() override { return element_name; }
+
 	NVGcolor background_color{ 0,0,0,1 };
 	NVGcolor hover_color{ 0.5,0.5,0.5,1 };
 	NVGcolor press_color{ 1,1,1,1 };
@@ -13,10 +16,8 @@ struct button : panel
 
 	button()
 	{
-		auto iter = context->style_manager.styles.find("button");
-		if (iter != context->style_manager.styles.end()) {
-			set_style(iter->second);
-		}
+		style = element_name;
+		apply_style();
 
 		create_layout<gui::layout::box>();
 
@@ -43,7 +44,7 @@ struct button : panel
 	}
 
 
-	void set_style(style::style_t const& style)
+	void set_style(style::style_t const& style) override
 	{
 		auto read = [&](auto& property, std::string&& name)
 		{

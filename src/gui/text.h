@@ -4,6 +4,9 @@
 
 struct text : element
 {
+	inline static constexpr auto element_name{ "text" };
+	std::string get_element_name() override { return element_name; }
+
 	std::type_info const& type_info() const override { return typeid(text); }
 
 	std::string str;
@@ -14,10 +17,8 @@ struct text : element
 
 	text()
 	{
-		auto iter = context->style_manager.styles.find("text");
-		if (iter != context->style_manager.styles.end()) {
-			set_style(iter->second);
-		}
+		style = element_name;
+		apply_style();
 	}
 
 	void setup(int new_font, float new_font_size, std::string const& new_str)
@@ -39,7 +40,7 @@ struct text : element
 		update_bounds(context->vg);
 	}
 
-	void set_style(style::style_t const& style)
+	void set_style(style::style_t const& style) override
 	{
 		auto read = [&](auto& property, std::string&& name)
 		{

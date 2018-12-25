@@ -14,7 +14,7 @@ namespace layout
 	template <typename derived>
 	struct element : rectangle
 	{
-		std::vector<std::unique_ptr<derived>> children; //TODO should be layout base pointer?
+		std::vector<std::unique_ptr<derived>> children;
 		std::unique_ptr<layout::base<derived>> child_layout;
 		std::array<bool, layout::orientation::count> expand{ false };
 

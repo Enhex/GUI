@@ -172,6 +172,9 @@ namespace deco
 	{
 		serialize(stream, static_cast<rectangle&>(value));
 
+		if (value.style != value.get_element_name())
+			serialize(stream, make_list("style", value.style));
+
 		if (value.min_size != element().min_size) // if not default value
 			serialize(stream, make_list("min_size", value.min_size));
 		
@@ -184,7 +187,7 @@ namespace deco
 			
 			for (auto& child : value.children)
 			{
-				//TODO need to cast to the derived class
+				// need to cast to the derived class
 				if (child->type_info() == typeid(element)) {
 					serialize(stream, make_list("element", static_cast<element&>(*child)));
 				}
@@ -207,24 +210,20 @@ namespace deco
 	void serialize(Stream& stream, panel& value)
 	{
 		serialize(stream, static_cast<element&>(value));
-		serialize(stream, make_list("color", value.color));
 	}
 
 	void read(deco::EntryObject& entry, panel& value);
 
 
-
 	template<typename Stream>
 	void serialize(Stream& stream, text& value)
 	{
+		if (value.style != value.get_element_name())
+			serialize(stream, make_list("style", value.style));
 		if(value.position != text().position)
 			serialize(stream, make_list("position", value.position));
 		if (value.str != text().str)
 			serialize(stream, make_list("string", value.str));
-
-		serialize(stream, make_list("font", value.font));//TODO convert font ID to name? directly store font name?
-		serialize(stream, make_list("font size", value.font_size));
-		serialize(stream, make_list("color", value.color));
 	}
 
 	void read(deco::EntryObject& entry, text& value);

@@ -16,11 +16,27 @@ T& emplace_back_derived(Container& container, Args& ... args)
 
 struct element : layout::element<element>, input::element
 {
+	inline static constexpr auto element_name{ "element" };
+	virtual std::string get_element_name() { return element_name; }
+
 	virtual std::type_info const& type_info() const { return typeid(element); }
 
 	inline static gui::context* context = nullptr;
 
 	element* parent = nullptr;
+
+	std::string style = element_name;
+
+
+	virtual void set_style(style::style_t const& style) {}
+
+	inline void apply_style()
+	{
+		auto iter = context->style_manager.styles.find(style);
+		if (iter != context->style_manager.styles.end()) {
+			set_style(iter->second);
+		}
+	}
 
 	template<typename T, typename... Args>
 	T& create_child(Args&... args) {

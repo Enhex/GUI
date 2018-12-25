@@ -10,10 +10,15 @@
 */
 struct text_edit : text
 {
+	inline static constexpr auto element_name{ "text_edit" };
+	std::string get_element_name() override { return element_name; }
+
 	std::type_info const& type_info() const override { return typeid(text_edit); }
 
 	text_edit()
 	{
+		style = element_name;
+
 		auto& input_manager = context->input_manager;
 
 		input_manager.subscribe<input::event::mouse_press>(this, [this](std::any&& args) {

@@ -61,7 +61,10 @@ namespace deco
 		{
 			auto const& name = entry.content;
 
-			if (name == "min_size")
+			if (name == "style") {
+				value.style = entry.entries[0].content;
+			}
+			else if (name == "min_size")
 				read(entry, value.min_size);
 			else if (name == "child_layout") {
 				auto& child_layout = value.create_layout<gui::layout::box>();//TODO hack for testing, need to handle different layout types
@@ -86,6 +89,9 @@ namespace deco
 				}
 			}
 
+			// apply style before layouting (needed for things like font size)
+			value.apply_style();
+
 			// perform layout after children are created
 			if(value.child_layout)
 				value.child_layout->perform();
@@ -100,9 +106,6 @@ namespace deco
 		for (auto const& entry : entry.entries)
 		{
 			auto const& name = entry.content;
-
-			if (name == "color")
-				read(entry, value.color);
 		}
 	}
 
@@ -120,17 +123,6 @@ namespace deco
 					value.str += '\n';
 				}
 			}
-			else if (name == "font") {
-				//TODO convert font ID to name? directly store font name?
-				auto& content = entry.entries[0].content;
-				std::from_chars(content.data(), content.data() + content.size(), value.font);
-			}
-			else if (name == "font size") {
-				auto& content = entry.entries[0].content;
-				std::from_chars(content.data(), content.data() + content.size(), value.font_size);
-			}
-			else if (name == "color")
-					read(entry, value.color);
 		}
 	}
 }
