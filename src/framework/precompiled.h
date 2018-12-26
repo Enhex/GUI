@@ -3,6 +3,7 @@
 #include <boost/qvm/all.hpp>
 #include <charconv>
 #include <deco/all.h>
+#include <filesystem>
 #include <functional>
 #include <map>
 #include <memory>

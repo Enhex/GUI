@@ -54,9 +54,21 @@ struct text : element
 			return false;
 		};
 
-		if (read(font, "font") | read(font_size, "font_size")) {
-			update_bounds();
+		bool bounds_need_update = false;
+		
+		std::string font_name;
+		if (read(font_name, "font")) {
+			font = context->style_manager.font_name_to_id(font_name);
+			bounds_need_update = true;
 		}
+
+		if(read(font_size, "font_size")) {
+			bounds_need_update = true;	
+		}
+
+		if(bounds_need_update)
+			update_bounds();
+
 		read(color, "color");
 	}
 

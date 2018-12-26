@@ -12,7 +12,7 @@
 #include <deco/types/arithmetic.h>
 
 static std::map<std::string, std::type_info const&> style_properties{
-	{"font", typeid(int)},
+	{"font", typeid(std::string)},
 	{"font_size", typeid(float)},
 	{"color", typeid(NVGcolor)}
 };
@@ -49,6 +49,9 @@ namespace deco
 			else if (proerty_typeid == typeid(float)) {
 				serialize(stream, make_list(name, std::any_cast<float&>(value)));
 			}
+			else if (proerty_typeid == typeid(std::string)) {
+				serialize(stream, make_list(name, std::any_cast<std::string&>(value)));
+			}
 			else if (proerty_typeid == typeid(NVGcolor)) {
 				serialize(stream, make_list(name, std::any_cast<NVGcolor&>(value)));
 			}
@@ -78,6 +81,11 @@ namespace deco
 			}
 			else if (proerty_typeid == typeid(float)) {
 				float input;
+				serialize(stream, input);
+				value.emplace(name, input);
+			}
+			else if (proerty_typeid == typeid(std::string)) {
+				std::string input;
 				serialize(stream, input);
 				value.emplace(name, input);
 			}

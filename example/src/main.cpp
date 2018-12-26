@@ -23,9 +23,9 @@ int main()
 	auto& vg = app.vg;
 
 
-	auto font = nvgCreateFont(vg, "sans", "../GUI/example/font/Roboto-Regular.ttf"); // in case of running from build folder
+	auto font = app.style_manager.create_font(vg, "../GUI/example/font/Roboto-Regular.ttf"); // in case of running from build folder
 	if (font == -1) {
-		font = nvgCreateFont(vg, "sans", "../../../GUI/example/font/Roboto-Regular.ttf"); // in case of running from bin folder
+		font = app.style_manager.create_font(vg, "../../../GUI/example/font/Roboto-Regular.ttf"); // in case of running from bin folder
 		if (font == -1) {
 			printf("Could not add font.\n");
 			return 1;
@@ -34,8 +34,10 @@ int main()
 
 
 	{
+		auto const& font_name = app.style_manager.font_id_to_name(font);
+
 		auto& style = app.style_manager.styles["text"];
-		style.emplace(std::make_pair("font", font));
+		style.emplace(std::make_pair("font", font_name));
 		style.emplace(std::make_pair("font_size", 18.f));
 		style.emplace(std::make_pair("color", nvgRGBA(255, 255, 255, 255)));
 	}
