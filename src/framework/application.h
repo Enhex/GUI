@@ -20,6 +20,9 @@ struct application : gui::context
 	template<typename F>
 	void run(F loop_function);
 
+	void save_style_file(std::string const& filepath);
+	void load_style_file(std::string const& filepath);
+
 protected:
 	void initialize();
 	void create_window(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share);

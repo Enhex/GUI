@@ -52,38 +52,9 @@ int main()
 
 
 	// Test using style file
-	{
-		deco::OutputStream_indent stream;
-
-		for (auto&[name, properties] : app.style_manager.styles) {
-			deco::serialize(stream, deco::make_list(name, properties));
-		}
-
-		std::ofstream file("style.deco", std::ios::binary);
-		file << stream.str;
-	}
-
+	app.save_style_file("style.deco");
 	app.style_manager.styles.clear();
-
-	{
-		auto file = std::ifstream("style.deco", std::ios::binary);
-		std::string file_str{
-			std::istreambuf_iterator<char>(file),
-			std::istreambuf_iterator<char>() };
-
-		auto stream = deco::make_InputStream(file_str.cbegin());
-
-		while (stream.position != file_str.cend() && !stream.peek_list_end())
-		{
-			std::string name;
-			style::style_st properties;
-			deco::serialize(stream, deco::begin_list(name));
-			deco::serialize(stream, properties);
-			deco::serialize(stream, deco::end_list);
-
-			app.style_manager.styles.emplace(name, properties);
-		}
-	}
+	app.load_style_file("style.deco");
 
 
 	// test using layout file

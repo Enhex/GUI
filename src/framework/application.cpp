@@ -3,6 +3,7 @@
 #define NANOVG_GL2_IMPLEMENTATION
 #include <nanovg_gl.h>
 
+#include <fstream>
 #include <stdexcept>
 #include <tuple>
 
@@ -20,6 +21,39 @@ application::application(int width, int height, const char* title, GLFWmonitor* 
 application::~application()
 {
 	glfwTerminate();
+}
+
+void application::save_style_file(std::string const & filepath)
+{
+	deco::OutputStream_indent stream;
+
+	for (auto&[name, properties] : style_manager.styles) {
+		deco::serialize(stream, deco::make_list(name, properties));
+	}
+
+	std::ofstream file(filepath, std::ios::binary);
+	file << stream.str;
+}
+
+void application::load_style_file(std::string const & filepath)
+{
+	auto file = std::ifstream(filepath, std::ios::binary);
+	std::string file_str{
+		std::istreambuf_iterator<char>(file),
+		std::istreambuf_iterator<char>() };
+
+	auto stream = deco::make_InputStream(file_str.cbegin());
+
+	while (stream.position != file_str.cend() && !stream.peek_list_end())
+	{
+		std::string name;
+		style::style_st properties;
+		deco::serialize(stream, deco::begin_list(name));
+		deco::serialize(stream, properties);
+		deco::serialize(stream, deco::end_list);
+
+		style_manager.styles.emplace(name, properties);
+	}
 }
 
 void application::initialize()
