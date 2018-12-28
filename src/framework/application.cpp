@@ -56,6 +56,40 @@ void application::load_style_file(std::string const & filepath)
 	}
 }
 
+void application::load_layout(std::string const & filepath, element& parent)
+{
+	auto file = std::ifstream(filepath, std::ios::binary);
+	std::string file_str{
+		std::istreambuf_iterator<char>(file),
+		std::istreambuf_iterator<char>() };
+
+	/*
+	use pre-parsed Deco objects approach to simplify serialization
+	specifically polymorphic serialization
+	*/
+	auto entries = deco::parse(file_str.begin(), file_str.end());
+
+	for (auto& entry : entries)
+	{
+		using namespace deco;
+
+		auto const& name = entry.content;
+
+		if (name == "element") {
+			auto& child = emplace_back_derived<element>(parent.children);
+			read(entry, child);
+		}
+		else if (name == "panel") {
+			auto& child = emplace_back_derived<panel>(parent.children);
+			read(entry, child);
+		}
+		else if (name == "text") {
+			auto& child = emplace_back_derived<text>(parent.children);
+			read(entry, child);
+		}
+	}
+}
+
 void application::initialize()
 {
 	if (!glfwInit())

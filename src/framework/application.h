@@ -23,6 +23,8 @@ struct application : gui::context
 	void save_style_file(std::string const& filepath);
 	void load_style_file(std::string const& filepath);
 
+	void load_layout(std::string const& filepath, element& parent);
+
 protected:
 	void initialize();
 	void create_window(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share);
