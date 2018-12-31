@@ -188,6 +188,9 @@ namespace deco
 		
 		if(value.child_layout)
 			serialize(stream, make_list("child_layout", /*TODO temporary hack for testing:*/static_cast<gui::layout::box&>(*value.child_layout)));
+		
+		if (value.expand != element().expand)
+			serialize(stream, make_list("expand", value.expand));
 
 		if (!value.children.empty())
 		{

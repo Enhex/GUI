@@ -70,6 +70,19 @@ namespace deco
 				auto& child_layout = value.create_layout<gui::layout::box>();//TODO hack for testing, need to handle different layout types
 				read(entry, child_layout);
 			}
+			else if (name == "expand")
+			{
+				auto read_bool = [&](uint_fast8_t i)
+				{
+					auto const& content = entry.entries[i].content;
+					if (content == "0")
+						value.expand[i] = false;
+					else if (content == "1")
+						value.expand[i] = true;
+				};
+				read_bool(0);
+				read_bool(1);
+			}
 			else if (name == "children")
 			{
 				for(auto& child : entry.entries)

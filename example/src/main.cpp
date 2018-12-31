@@ -67,6 +67,7 @@ int main()
 		el.position = { 50,50 };
 		el.min_size = { 20,25 };
 		el.style = "green";
+		el.expand = { 1,0 }; // doesnt affect anything currently, just testing serialization
 		el.create_layout<gui::layout::box>();
 
 		auto& child = emplace_back_derived<text>(el.children);
