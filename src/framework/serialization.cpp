@@ -53,6 +53,28 @@ namespace deco
 		std::from_chars(content.data(), content.data() + content.size(), reinterpret_cast<int&>(value.orient));
 	}
 
+	void read_element(deco::EntryObject& entry, element& parent)
+	{
+		auto const& name = entry.content;
+
+		if (name == element::element_name) {
+			auto& child_element = emplace_back_derived<element>(parent.children);
+			read(entry, child_element);
+		}
+		else if (name == panel::element_name) {
+			auto& child_element = emplace_back_derived<panel>(parent.children);
+			read(entry, child_element);
+		}
+		else if (name == text::element_name) {
+			auto& child_element = emplace_back_derived<text>(parent.children);
+			read(entry, child_element);
+		}
+		else if (name == text_edit::element_name) {
+			auto& child_element = emplace_back_derived<text_edit>(parent.children);
+			read(entry, child_element);
+		}
+	}
+
 	void read(deco::EntryObject& entry, element& value)
 	{
 		read(entry, static_cast<rectangle&>(value));
@@ -87,18 +109,7 @@ namespace deco
 			{
 				for(auto& child : entry.entries)
 				{
-					if (child.content == "element") {
-						auto& child_element = emplace_back_derived<element>(value.children);
-						read(child, child_element);
-					}
-					else if (child.content == "panel") {
-						auto& child_element = emplace_back_derived<panel>(value.children);
-						read(child, child_element);
-					}
-					else if (child.content == "text") {
-						auto& child_element = emplace_back_derived<text>(value.children);
-						read(child, child_element);
-					}
+					read_element(child, value);
 				}
 			}
 
@@ -137,5 +148,11 @@ namespace deco
 				}
 			}
 		}
+	}
+
+
+	void read(deco::EntryObject & entry, text_edit & value)
+	{
+		read(entry, static_cast<text&>(value));
 	}
 }

@@ -71,22 +71,7 @@ void application::load_layout(std::string const & filepath, element& parent)
 
 	for (auto& entry : entries)
 	{
-		using namespace deco;
-
-		auto const& name = entry.content;
-
-		if (name == "element") {
-			auto& child = emplace_back_derived<element>(parent.children);
-			read(entry, child);
-		}
-		else if (name == "panel") {
-			auto& child = emplace_back_derived<panel>(parent.children);
-			read(entry, child);
-		}
-		else if (name == "text") {
-			auto& child = emplace_back_derived<text>(parent.children);
-			read(entry, child);
-		}
+		read_element(entry, parent);
 	}
 }
 

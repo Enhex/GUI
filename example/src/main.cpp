@@ -74,13 +74,13 @@ int main()
 		child.str = "I'm a child element";
 		child.style = "red";
 
-		deco::serialize(stream, deco::make_list("panel", el));
+		deco::serialize(stream, deco::make_list(el.get_element_name(), el));
 
-		text el2;
+		text_edit el2;
 		el2.str = "hi";
 		el2.position = { 55,30 };
 
-		deco::serialize(stream, deco::make_list("text", el2));
+		deco::serialize(stream, deco::make_list(el2.get_element_name(), el2));
 
 		auto file = std::ofstream("layout.deco", std::ios::binary);
 		file << stream.str;

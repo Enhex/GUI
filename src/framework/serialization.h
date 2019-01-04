@@ -173,6 +173,7 @@ namespace deco
 
 	void read(deco::EntryObject& entry, gui::layout::box& value);
 
+	void read_element(deco::EntryObject& entry, element& parent);
 
 	// elements
 	template<typename Stream>
@@ -200,13 +201,16 @@ namespace deco
 			{
 				// need to cast to the derived class
 				if (child->type_info() == typeid(element)) {
-					serialize(stream, make_list("element", static_cast<element&>(*child)));
+					serialize(stream, make_list(element::element_name, static_cast<element&>(*child)));
 				}
 				else if (child->type_info() == typeid(panel)) {
-					serialize(stream, make_list("panel", static_cast<panel&>(*child)));
+					serialize(stream, make_list(panel::element_name, static_cast<panel&>(*child)));
 				}
 				else if (child->type_info() == typeid(text)) {
-					serialize(stream, make_list("text", static_cast<text&>(*child)));
+					serialize(stream, make_list(text::element_name, static_cast<text&>(*child)));
+				}
+				else if (child->type_info() == typeid(text_edit)) {
+					serialize(stream, make_list(text_edit::element_name, static_cast<text_edit&>(*child)));
 				}
 			}
 
@@ -235,6 +239,15 @@ namespace deco
 			serialize(stream, make_list("position", value.position));
 		if (value.str != text().str)
 			serialize(stream, make_list("string", value.str));
+	}
+
+	void read(deco::EntryObject& entry, text& value);
+
+
+	template<typename Stream>
+	void serialize(Stream& stream, text_edit& value)
+	{
+		serialize(stream, static_cast<text&>(value));
 	}
 
 	void read(deco::EntryObject& entry, text& value);
