@@ -195,28 +195,21 @@ namespace deco
 		if (value.expand != element().expand)
 			serialize(stream, make_list("expand", value.expand));
 
-		if (!value.children.empty())
+		for (auto& child : value.children)
 		{
-			serialize(stream, begin_list("children"));
-			
-			for (auto& child : value.children)
-			{
-				// need to cast to the derived class
-				if (child->type_info() == typeid(element)) {
-					serialize(stream, make_list(element::element_name, static_cast<element&>(*child)));
-				}
-				else if (child->type_info() == typeid(panel)) {
-					serialize(stream, make_list(panel::element_name, static_cast<panel&>(*child)));
-				}
-				else if (child->type_info() == typeid(text)) {
-					serialize(stream, make_list(text::element_name, static_cast<text&>(*child)));
-				}
-				else if (child->type_info() == typeid(text_edit)) {
-					serialize(stream, make_list(text_edit::element_name, static_cast<text_edit&>(*child)));
-				}
+			// need to cast to the derived class
+			if (child->type_info() == typeid(element)) {
+				serialize(stream, make_list(element::element_name, static_cast<element&>(*child)));
 			}
-
-			serialize(stream, end_list);
+			else if (child->type_info() == typeid(panel)) {
+				serialize(stream, make_list(panel::element_name, static_cast<panel&>(*child)));
+			}
+			else if (child->type_info() == typeid(text)) {
+				serialize(stream, make_list(text::element_name, static_cast<text&>(*child)));
+			}
+			else if (child->type_info() == typeid(text_edit)) {
+				serialize(stream, make_list(text_edit::element_name, static_cast<text_edit&>(*child)));
+			}
 		}
 	}
 

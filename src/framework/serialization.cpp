@@ -105,12 +105,9 @@ namespace deco
 				read_bool(0);
 				read_bool(1);
 			}
-			else if (name == "children")
+			else
 			{
-				for(auto& child : entry.entries)
-				{
-					read_element(child, value);
-				}
+				read_element(entry, value);
 			}
 
 			// apply style before layouting (needed for things like font size)
