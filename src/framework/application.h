@@ -20,6 +20,8 @@ struct application : gui::context
 	template<typename F>
 	void run(F loop_function);
 
+	std::string load_deco_file(std::string const& filepath);
+
 	void save_style_file(std::string const& filepath);
 	void load_style_file(std::string const& filepath);
 

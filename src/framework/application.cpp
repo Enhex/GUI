@@ -23,6 +23,19 @@ application::~application()
 	glfwTerminate();
 }
 
+std::string application::load_deco_file(std::string const & filepath)
+{
+	auto file = std::ifstream(filepath, std::ios::binary);
+	std::string file_str{
+		std::istreambuf_iterator<char>(file),
+		std::istreambuf_iterator<char>() };
+
+	if (file_str.back() != deco::entry_delimiter)
+		file_str.push_back(deco::entry_delimiter);
+
+	return file_str;
+}
+
 void application::save_style_file(std::string const & filepath)
 {
 	deco::OutputStream_indent stream;
@@ -37,10 +50,7 @@ void application::save_style_file(std::string const & filepath)
 
 void application::load_style_file(std::string const & filepath)
 {
-	auto file = std::ifstream(filepath, std::ios::binary);
-	std::string file_str{
-		std::istreambuf_iterator<char>(file),
-		std::istreambuf_iterator<char>() };
+	std::string file_str = load_deco_file(filepath);
 
 	auto stream = deco::make_InputStream(file_str.cbegin());
 
@@ -58,10 +68,7 @@ void application::load_style_file(std::string const & filepath)
 
 void application::load_layout(std::string const & filepath, element& parent)
 {
-	auto file = std::ifstream(filepath, std::ios::binary);
-	std::string file_str{
-		std::istreambuf_iterator<char>(file),
-		std::istreambuf_iterator<char>() };
+	std::string file_str = load_deco_file(filepath);
 
 	/*
 	use pre-parsed Deco objects approach to simplify serialization
