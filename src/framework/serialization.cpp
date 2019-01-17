@@ -88,8 +88,8 @@ namespace deco
 			}
 			else if (name == "min_size")
 				read(entry, value.min_size);
-			else if (name == "child_layout") {
-				auto& child_layout = value.create_layout<gui::layout::box>();//TODO hack for testing, need to handle different layout types
+			else if (name == "layout-box") {
+				auto& child_layout = value.create_layout<gui::layout::box>();
 				read(entry, child_layout);
 			}
 			else if (name == "expand")

@@ -187,8 +187,10 @@ namespace deco
 		if (value.min_size != element().min_size) // if not default value
 			serialize(stream, make_list("min_size", value.min_size));
 		
-		if(value.child_layout)
-			serialize(stream, make_list("child_layout", /*TODO temporary hack for testing:*/static_cast<gui::layout::box&>(*value.child_layout)));
+		if (value.child_layout) {
+			if (value.child_layout->type_info() == gui::layout::box().type_info())
+				serialize(stream, make_list("layout-box", static_cast<gui::layout::box&>(*value.child_layout)));
+		}
 		
 		if (value.expand != element().expand)
 			serialize(stream, make_list("expand", value.expand));
