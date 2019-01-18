@@ -201,6 +201,9 @@ namespace deco
 			if (child->type_info() == typeid(element)) {
 				serialize(stream, make_list(element::element_name, static_cast<element&>(*child)));
 			}
+			if (child->type_info() == typeid(scissor)) {
+				serialize(stream, make_list(scissor::element_name, static_cast<scissor&>(*child)));
+			}
 			else if (child->type_info() == typeid(panel)) {
 				serialize(stream, make_list(panel::element_name, static_cast<panel&>(*child)));
 			}
@@ -214,6 +217,15 @@ namespace deco
 	}
 
 	void read(deco::EntryObject& entry, element& value);
+
+
+	template<typename Stream>
+	void serialize(Stream& stream, scissor& value)
+	{
+		serialize(stream, static_cast<element&>(value));
+	}
+
+	void read(deco::EntryObject& entry, scissor& value);
 
 
 	template<typename Stream>

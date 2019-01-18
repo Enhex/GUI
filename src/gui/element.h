@@ -49,7 +49,7 @@ struct element : layout::element<element>, input::element
 	virtual void draw(NVGcontext* vg) {}
 
 	void draw_recursive() { draw_recursive(context->vg); }
-	void draw_recursive(NVGcontext* vg) {
+	virtual void draw_recursive(NVGcontext* vg) {
 		draw(vg);
 		for (auto const& child : children)
 			child->draw_recursive(vg);

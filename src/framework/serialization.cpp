@@ -61,6 +61,10 @@ namespace deco
 			auto& child_element = emplace_back_derived<element>(parent.children);
 			read(entry, child_element);
 		}
+		if (name == scissor::element_name) {
+			auto& child_element = emplace_back_derived<scissor>(parent.children);
+			read(entry, child_element);
+		}
 		else if (name == panel::element_name) {
 			auto& child_element = emplace_back_derived<panel>(parent.children);
 			read(entry, child_element);
@@ -119,15 +123,15 @@ namespace deco
 		}
 	}
 
+	void read(deco::EntryObject & entry, scissor & value)
+	{
+		read(entry, static_cast<element&>(value));
+	}
+
 
 	void read(deco::EntryObject& entry, panel& value)
 	{
 		read(entry, static_cast<element&>(value));
-
-		for (auto const& entry : entry.entries)
-		{
-			auto const& name = entry.content;
-		}
 	}
 
 	void read(deco::EntryObject & entry, text & value)
