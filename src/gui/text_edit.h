@@ -53,7 +53,8 @@ struct text_edit : text
 		auto const max_glyphs = str.size();
 		glyphs = std::make_unique<NVGglyphPosition[]>(max_glyphs);
 		// TODO can cache glyphs and update only when text changes
-		auto const num_glyphs = nvgTextGlyphPositions(vg, X(position), Y(position), str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
+		auto absolute_position = get_position();
+		auto const num_glyphs = nvgTextGlyphPositions(vg, X(absolute_position), Y(absolute_position), str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
 		//auto const num_glyphs = nvgTextGlyphPositions(vg, 0,0, str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
 
 		nvgRestore(vg);
@@ -66,12 +67,13 @@ struct text_edit : text
 		// only need to use X position because it's already known the click is inside the element rectangle, and single-line text is used.
 
 		auto const num_glyphs = update_glyphs();
+		auto absolute_position = get_position();
 
 		for (auto i = num_glyphs; i-- > 0;)
 		{
 			auto const& glyph = glyphs[i];
 			auto const x_min = glyphs[i].x; // current glyph start position
-			auto const x_max = i + 1 < num_glyphs ? glyphs[i + 1].x : X(position) + X(size); // next glyph start position
+			auto const x_max = i + 1 < num_glyphs ? glyphs[i + 1].x : X(absolute_position) + X(size); // next glyph start position
 
 			auto& input_manager = context->input_manager;
 
@@ -132,9 +134,11 @@ struct text_edit : text
 
 			auto const x_pos = cursor_pos == str.size() ? X(position) + X(size) : glyphs[cursor_pos].x;
 
+			auto absolute_position = get_position();
+
 			nvgBeginPath(vg);
-			nvgMoveTo(vg, x_pos, Y(position));
-			nvgLineTo(vg, x_pos, Y(position) + Y(size));
+			nvgMoveTo(vg, x_pos, Y(absolute_position));
+			nvgLineTo(vg, x_pos, Y(absolute_position) + Y(size));
 			nvgStrokeColor(vg, nvgRGBA(255, 255, 255, 255));
 			nvgStrokeWidth(vg, 1.0f);
 			nvgStroke(vg);

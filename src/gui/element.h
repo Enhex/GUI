@@ -27,6 +27,15 @@ struct element : layout::element<element>, input::element
 
 	std::string style = element_name;
 
+	// get absolute position. regular `position` variable being relative to the parent
+	vector2 get_position() {
+		return parent != nullptr ? parent->get_position() + position : position;
+	}
+
+	bool is_inside(vector2 const& point) {
+		rectangle absolute_rectangle{ get_position(), size };
+		return absolute_rectangle.is_inside(point);
+	}
 
 	virtual void set_style(style::style_t const& style) {}
 

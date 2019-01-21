@@ -37,7 +37,8 @@ struct panel : element
 	void draw(NVGcontext* vg) override
 	{
 		nvgBeginPath(vg);
-		nvgRect(vg, X(position), Y(position), X(size), Y(size));
+		auto absolute_position = get_position();
+		nvgRect(vg, X(absolute_position), Y(absolute_position), X(size), Y(size));
 		nvgFillColor(vg, color);
 		nvgFill(vg);
 	};

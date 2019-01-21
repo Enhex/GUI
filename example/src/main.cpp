@@ -70,11 +70,10 @@ int main()
 		el.expand = { 1,0 }; // doesnt affect anything currently, just testing serialization
 		el.create_layout<gui::layout::box>();
 
-		auto& scissor_child = emplace_back_derived<scissor>(el.children);
+		auto& scissor_child = el.create_child<scissor>();
 		scissor_child.expand = { true, true };
-		scissor_child.create_layout<gui::layout::box>();
 
-		auto& child = emplace_back_derived<text>(scissor_child.children);
+		auto& child = scissor_child.create_child<text>();
 		child.str = "I'm a child element";
 		child.style = "red";
 

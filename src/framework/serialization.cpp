@@ -58,23 +58,23 @@ namespace deco
 		auto const& name = entry.content;
 
 		if (name == element::element_name) {
-			auto& child_element = emplace_back_derived<element>(parent.children);
+			auto& child_element = parent.create_child<element>();
 			read(entry, child_element);
 		}
 		if (name == scissor::element_name) {
-			auto& child_element = emplace_back_derived<scissor>(parent.children);
+			auto& child_element = parent.create_child<scissor>();
 			read(entry, child_element);
 		}
 		else if (name == panel::element_name) {
-			auto& child_element = emplace_back_derived<panel>(parent.children);
+			auto& child_element = parent.create_child<panel>();
 			read(entry, child_element);
 		}
 		else if (name == text::element_name) {
-			auto& child_element = emplace_back_derived<text>(parent.children);
+			auto& child_element = parent.create_child<text>();
 			read(entry, child_element);
 		}
 		else if (name == text_edit::element_name) {
-			auto& child_element = emplace_back_derived<text_edit>(parent.children);
+			auto& child_element = parent.create_child<text_edit>();
 			read(entry, child_element);
 		}
 	}

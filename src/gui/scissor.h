@@ -13,7 +13,8 @@ struct scissor : element
 	virtual void draw_recursive(NVGcontext* vg) override 
 	{
 		nvgSave(vg);
-		nvgIntersectScissor(vg, X(position), Y(position), X(size), Y(size));
+		auto absolute_position = get_position();
+		nvgIntersectScissor(vg, X(absolute_position), Y(absolute_position), X(size), Y(size));
 
 		for (auto const& child : children)
 			child->draw_recursive(vg);

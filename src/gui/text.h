@@ -107,7 +107,8 @@ struct text : element
 
 		float ascender, descender, lineh;
 		nvgTextMetrics(vg, &ascender, &descender, &lineh);
-		nvgText(vg, X(position), Y(position) + ascender, str.c_str(), nullptr);
+		auto absolute_position = get_position();
+		nvgText(vg, X(absolute_position), Y(absolute_position) + ascender, str.c_str(), nullptr);
 
 		update_bounds(vg);
 	}

@@ -74,12 +74,12 @@ namespace layout
 			auto& parent = this->parent;
 
 			// position the children
-			auto last_orient_position = parent->position.a[orient];
+			auto last_orient_position = 0.f;
 			for (auto& child : parent->children)
 			{
 				// position relative to parent/previous child
-				X(child->position) = orient == horizontal ? last_orient_position : X(parent->position);
-				Y(child->position) = orient == vertical ? last_orient_position : Y(parent->position);
+				X(child->position) = orient == horizontal ? last_orient_position : 0.f;
+				Y(child->position) = orient == vertical ? last_orient_position : 0.f;
 
 				last_orient_position += child->size.a[orient]; // advance to the current child's end position
 
