@@ -9,7 +9,7 @@ if not _OPTIONS["location"] then
 end
 
 -- include GUI lib's dependencies
-include("../../build/conanpremake.lua")
+include("../../build/conanbuildinfo.premake.lua")
 
 workspace("GUI example")
 	location(_OPTIONS["location"])

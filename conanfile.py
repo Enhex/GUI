@@ -1,5 +1,20 @@
 from conans import ConanFile, CMake
 
+# automatically choose Premake generator
+def run_premake(self):
+	if "Visual Studio" in self.settings.compiler:
+		_visuals = {'8': '2005',
+					'9': '2008',
+					'10': '2010',
+					'11': '2012',
+					'12': '2013',
+					'14': '2015',
+					'15': '2017',
+					'16': '2019'}
+		premake_command = "premake5 vs%s" % _visuals.get(str(self.settings.compiler.version), "UnknownVersion %s" % str(self.settings.compiler.version))
+		self.run(premake_command)
+	else:
+		self.run("premake5 gmake2")
 
 class GuiConan(ConanFile):
 	name = "gui"
@@ -15,16 +30,14 @@ class GuiConan(ConanFile):
 	exports_sources = "src/*"
 	
 	requires = (
-		"boost_qvm/1.67.0@bincrafters/stable",
+		"boost/1.73.0",
 		"glfw/3.2.1@bincrafters/stable",
 		"glad/0.1.24@bincrafters/stable",
 		"nanovg/master@enhex/stable",
-		"Deco/master@enhex/stable",
-		"premake_generator/master@enhex/stable"
+		"Deco/master@enhex/stable"
 	)
 	
 	def build(self):
-		from premake import run_premake
 		run_premake(self)
 		self.run('build')
 

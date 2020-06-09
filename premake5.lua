@@ -8,7 +8,7 @@ if not _OPTIONS["location"] then
 	_OPTIONS["location"] = "./"
 end
 
-include(_OPTIONS["location"] .. "conanpremake.lua")
+include(_OPTIONS["location"] .. "conanbuildinfo.premake.lua")
 
 workspace("GUI")
 	location(_OPTIONS["location"])

@@ -8,4 +8,4 @@ REM conan install %source% --build=outdated
 REM conan install %source% --build=outdated -s build_type=Debug
 
 cd %source%
-premake5 vs2017 --location=../../example-build/
+premake5 vs2019 --location=../../example-build/
