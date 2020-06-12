@@ -38,8 +38,10 @@ struct button : panel
 		input_manager.subscribe<input::event::mouse_release>(this, [this, &input_manager](std::any&& args) {
 			color = hover_color;
 			//execute callback if the button was pressed before release event
-			if(input_manager.pressed_element == this)
-				callback();
+			if (input_manager.pressed_element == this) {
+				if(callback)
+					callback();
+			}
 		});
 	}
 
