@@ -5,6 +5,8 @@
 
 namespace layout
 {
+	// automatically lays out children vertically/horizontally, with an option for them to expand.
+	// expansion space is divides equally between the expanders.
 	template <typename derived_element>
 	struct box : base<derived_element>
 	{
@@ -16,13 +18,21 @@ namespace layout
 		// size, bottom-up (need to know the size of the children to fit around them)
 		void fit() override
 		{
+			/*			
+			- find expander size
+			- set expanders' size
+			- fit children (expanders don't shrink) 
+			- if element isn't an expander, set size to children's size (shrink). 
+			in fact if there's a single child expander, the element won't shrink.
+			*/
+
 			//TODO things can be pre-calcualted when adding/removing children
 
 			auto& parent = this->parent; // conformance: https://isocpp.org/wiki/faq/templates#nondependent-name-lookup-members
 			auto const non_orient = orient == horizontal ? vertical : horizontal;
 
 			// use the maximum child size on the non-orient axis
-			float non_orient_max_size = parent->min_size.a[non_orient];
+			float non_orient_max_size = std::max(parent->size.a[non_orient], parent->min_size.a[non_orient]);
 			// total children size on the orient axis
 			float children_size = 0;
 			// use the space taken by non-expanding children for the orient axis //TODO testing another option
@@ -32,27 +42,17 @@ namespace layout
 
 			for (auto& child : parent->children)
 			{
-				// size children first
-				if (child->child_layout != nullptr)
-					child->child_layout->fit();
-				else
-					child->apply_min_size(); // make sure the size is updated
-
 				if (!child->expand[orient]) {
+					child->apply_min_size();
 					taken_space += child->size.a[orient];
 				}
-				else
+				else {
 					++num_expanders;
+				}
 
 				// sample child's size
-				children_size += child->size.a[orient];
 				non_orient_max_size = std::max(non_orient_max_size, child->size.a[non_orient]);
 			}
-
-
-			// set parent size
-			parent->size.a[orient] = std::max(parent->min_size.a[orient], children_size);
-			parent->size.a[non_orient] = non_orient_max_size; // already started from min_size
 
 
 			// expand children after the parent's size is known
@@ -65,6 +65,33 @@ namespace layout
 					child->size.a[orient] = std::max(child->size.a[orient], expander_size);
 				if (child->expand[non_orient])
 					child->size.a[non_orient] = std::max(child->size.a[non_orient], parent->size.a[non_orient]);
+			}
+
+
+			// shrink non-expanding children
+			for (auto& child : parent->children)
+			{
+				if (child->child_layout != nullptr)
+					child->child_layout->fit();
+				// make sure the size is updated
+				else {
+					if (!child->expand[orient])
+						child->size.a[orient] = child->min_size.a[orient];
+					if (!child->expand[non_orient])
+						child->size.a[non_orient] = child->min_size.a[non_orient];
+				}
+				
+				children_size += child->size.a[orient];
+			}
+
+
+			// set parent size
+			if (num_expanders < 1) // only shrink if there are no expander children
+			{
+				if(!parent->expand[orient])
+					parent->size.a[orient] = std::max(parent->min_size.a[orient], children_size);
+				if(!parent->expand[non_orient])
+					parent->size.a[non_orient] = non_orient_max_size; // already started from min_size
 			}
 		}
 

@@ -4,8 +4,8 @@
 #include <gui/gui.h>
 #include <iostream>
 
-constexpr int window_width = 640;
-constexpr int window_height = 480;
+constexpr int window_width = 800;
+constexpr int window_height = 800;
 
 auto rand_bright() {
 	return rand() % 128 + 127;
@@ -133,19 +133,62 @@ int main()
 		el.callback = []() { std::cout << "button clicked\n"; };
 	}
 
+	// nested box sizing test
+	{
+		auto& root = app.root.create_child<panel>();
+		root.position = { 500,300 };
+		root.min_size = { 250,250 };
+		root.apply_min_size();
+		root.color = nvgRGBA(0, 0, 255, 255);
+		auto& box = root.create_layout<gui::layout::box>();
+
+		auto& el = root.create_child<panel>();
+		el.expand = {true, true};
+		el.color = random_color();
+		el.create_layout<gui::layout::box>();
+
+		auto& el2 = el.create_child<panel>();
+		el2.min_size = { 20, 20 };
+		el2.expand = {false, true};
+		el2.color = random_color();
+
+		root.child_layout->perform();
+	}
+
+	// scroll view test
+	{
+		auto& root = app.root.create_child<panel>();
+		root.position = { 500,300 };
+		root.min_size = { 250,250 };
+		root.apply_min_size();
+		root.color = nvgRGBA(0, 0, 255, 255);
+		auto& box = root.create_layout<gui::layout::box>();
+
+		auto& el = root.create_child<scroll_view>();
+		el.expand = {true, true};
+
+		auto& p1 = el.children[0]->create_child<panel>();
+		p1.position = { 50, 50 };
+		p1.min_size = { 50, 50 };
+		p1.apply_min_size();
+		p1.color = random_color();
+
+		root.child_layout->perform();
+	}
 
 	// extended element fit around children
 	{
 		auto& root = app.root.create_child<panel>();
 		root.position = { 50, 200 };
 		root.min_size = { 100,100 };
+		root.apply_min_size();
 		root.color = random_color();
 
 		root.create_layout<gui::layout::box>();
 
 		auto& expander = root.create_child<panel>();
 		expander.min_size = { 60,0 };
-		expander.expand = {false, true};
+		//expander.expand = {false, true}; // expanding causes it to not fit around children, which kinda makes sense? be limited to the expansion size when expending? makes sense with expanding scissor view.
 		expander.color = random_color();
 
 		expander.create_layout<gui::layout::box>();
@@ -169,6 +212,7 @@ int main()
 	auto& root = app.root.create_child<panel>();
 	root.position = { 200,50 };
 	root.min_size = { 200,400 };
+	root.apply_min_size();
 	root.color = random_color();
 
 	auto& box = root.create_layout<gui::layout::box>();
