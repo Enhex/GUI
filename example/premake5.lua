@@ -13,8 +13,7 @@ include("../../build/conanbuildinfo.premake.lua")
 
 workspace("GUI example")
 	location(_OPTIONS["location"])
-	configurations { conan_build_type }
-	architecture(conan_arch)
+	conan_basic_setup()
 	startproject "gui_example"
 
 	project("gui_example")
@@ -28,12 +27,11 @@ workspace("GUI example")
 		}
 
 		includedirs{
-			conan_includedirs,
 			"../src"
 		}
-		libdirs{conan_libdirs}
-		links{"GUI", conan_libs}
-		defines{conan_cppdefines, "_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"}
+		links{"GUI"}
+		
+		defines{"_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"}
 
 		filter "configurations:Debug"
 			defines { "DEBUG" }
