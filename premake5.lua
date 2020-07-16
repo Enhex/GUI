@@ -24,11 +24,17 @@ workspace("GUI")
 			"src/**",
 		}
 
-		pchheader "precompiled.h"
-		pchsource "src/framework/precompiled.cpp"
-		forceincludes  { "precompiled.h" }
-
 		defines{"_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"}
+
+		pchsource "src/framework/precompiled.cpp"
+
+		filter "toolset:gcc"
+			pchheader "src/framework/precompiled.h"
+			forceincludes  { "src/framework/precompiled.h" }
+			
+		filter "toolset:not gcc"
+			pchheader "precompiled.h"
+			forceincludes  { "precompiled.h" }
 
 		filter "configurations:Debug"
 			defines { "DEBUG" }
