@@ -23,9 +23,9 @@ int main()
 	auto& vg = app.vg;
 
 
-	auto font = app.style_manager.create_font(vg, "../GUI/example/font/Roboto-Regular.ttf"); // in case of running from build folder
+	auto font = app.style_manager.create_font(vg, "../../GUI/example/font/Roboto-Regular.ttf"); // in case of running from build folder
 	if (font == -1) {
-		font = app.style_manager.create_font(vg, "../../../GUI/example/font/Roboto-Regular.ttf"); // in case of running from bin folder
+		font = app.style_manager.create_font(vg, "../../../../GUI/example/font/Roboto-Regular.ttf"); // in case of running from bin folder
 		if (font == -1) {
 			printf("Could not add font.\n");
 			return 1;
