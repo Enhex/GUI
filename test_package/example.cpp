@@ -1,3 +1,4 @@
+#include <string>
 #include <gui/gui.h>
 
 int main() {
