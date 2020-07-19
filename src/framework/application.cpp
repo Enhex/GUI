@@ -93,7 +93,7 @@ void application::create_window(int width, int height, const char * title, GLFWm
 	// Create a windowed mode window and its OpenGL context
 	window = glfwCreateWindow(width, height, title, NULL, NULL);
 	if (!window)
-		throw std::runtime_error("GLAD loading failed.");
+		throw std::runtime_error("Window or OpenGL context creation failed.");
 
 	// Make the window's context current
 	glfwMakeContextCurrent(window);
