@@ -8,8 +8,14 @@ if not _OPTIONS["location"] then
    _OPTIONS["location"] = "./"
 end
 
+newoption {
+	trigger     = "gui-path",
+	value       = "./",
+	description = "Where the GUI project is located.",
+ }
+
 -- include GUI lib's dependencies
-include("../../build/conanbuildinfo.premake.lua")
+include(_OPTIONS["gui-path"] .. "/conanbuildinfo.premake.lua")
 
 workspace("GUI example")
 	location(_OPTIONS["location"])
@@ -42,6 +48,7 @@ workspace("GUI example")
 			optimize "On"
 
 	externalproject "GUI"
-		location "../../build/"
+		print(_OPTIONS["gui-path"])
+		location(_OPTIONS["gui-path"])
 		kind "StaticLib"
 		language "C++"
