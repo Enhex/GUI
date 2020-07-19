@@ -31,8 +31,8 @@ class GuiConan(ConanFile):
 	
 	requires = (
 		"boost/1.73.0",
-		"glfw/3.2.1@bincrafters/stable",
-		"glad/0.1.24@bincrafters/stable",
+		"glfw/3.3.2",
+		"glad/0.1.33",
 		"nanovg/master@enhex/stable",
 		"Deco/master@enhex/stable"
 	)
