@@ -164,10 +164,10 @@ int main()
 		root.color = nvgRGBA(0, 0, 255, 255);
 		auto& box = root.create_layout<gui::layout::box>();
 
-		auto& el = root.create_child<scroll_view>();
-		el.expand = {true, true};
+		auto& sv = root.create_child<scroll_view>();
+		sv.expand = {true, true};
 
-		auto& p1 = el.children[0]->create_child<panel>();
+		auto& p1 = sv.content.create_child<panel>();
 		p1.position = { 50, 50 };
 		p1.min_size = { 50, 50 };
 		p1.apply_min_size();

@@ -11,8 +11,16 @@ struct scrollbar : element
 
 	std::type_info const& type_info() const override { return typeid(scrollbar); }
 
+	button& scroll_up;
+	button& track;
+	button& handle;
+	button& scroll_down;
 
-	scrollbar()
+	scrollbar() :
+	scroll_up(create_child<button>()),
+	track(create_child<button>()),
+	handle(track.create_child<button>()),
+	scroll_down(create_child<button>())
 	{
 		style = element_name;
 
@@ -25,24 +33,20 @@ struct scrollbar : element
 			el.press_color = nvgRGBA(0, 120, 210, 255);
 		};
 
-		auto& scroll_up = create_child<button>();
 		scroll_up.min_size = { 20,20 };
 		color_scroll_button(scroll_up);
 
-		auto& track = create_child<button>();
 		track.min_size = { 20,40 };
 		track.color = track.background_color = nvgRGBA(50, 50, 50, 255);
 		track.hover_color = nvgRGBA(50, 50, 50, 255);
 		track.press_color = nvgRGBA(50, 50, 50, 255);
 		track.expand = {false, true};
 
-		auto& handle = track.create_child<button>();
 		handle.min_size = { 20,20 };
 		handle.color = handle.background_color = nvgRGBA(100, 100, 100, 255);
 		handle.hover_color = nvgRGBA(120, 120, 120, 255);
 		handle.press_color = nvgRGBA(210, 210, 210, 255);
 
-		auto& scroll_down = create_child<button>();
 		scroll_down.min_size = { 20,20 };
 		color_scroll_button(scroll_down);
 
@@ -56,6 +60,5 @@ struct scrollbar : element
 
 		TODO arrow buttons
 		*/
-
 	}
 };
