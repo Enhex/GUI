@@ -7,7 +7,7 @@
 /*TODO
 - set scrollbar handle size relative to size/overflow
 - hold middle mouse click to scroll in all directions
-- virtual add_child(), to add to the content scissor
+- virtual create_child(), to add to the content scissor
 */
 struct scroll_view : element
 {
@@ -17,13 +17,15 @@ struct scroll_view : element
 	std::type_info const& type_info() const override { return typeid(scroll_view); }
 
 	scissor& view;
-	element& content;
+	element& content; // used to move all the elements inside the view
+	scrollbar& scroll;
 
 	float scroll_step = 10;
 
 	scroll_view() :
 	view(create_child<scissor>()),
-	content(view.create_child<element>())
+	content(view.create_child<element>()),
+	scroll(create_child<scrollbar>())
 	{
 		style = element_name;
 		
@@ -32,10 +34,11 @@ struct scroll_view : element
 
 		// elements
 		view.expand = {true, true};
+		auto& forward = view.create_layout<gui::layout::forward>();
 
-		content.expand = {true, true};
+		content.expand = {false, false};
+		auto& shrink = content.create_layout<gui::layout::shrink>();
 
-		auto& scroll = create_child<scrollbar>();
 		scroll.expand = {false, true};
 
 		// input
@@ -52,5 +55,11 @@ struct scroll_view : element
 			// move content
 			boost::qvm::Y(content.position) -= scroll_step;
 		});
+	}
+
+	void update_handle_size()
+	{
+		Y(scroll.handle.min_size) = Y(scroll.track.size) * std::min(1.f, Y(view.size) / Y(content.size));
+		scroll.handle.apply_min_size();
 	}
 };

@@ -1,4 +1,5 @@
 #include "../include_glfw.h"
+#include <algorithm>
 #include <any>
 #include <boost/qvm/all.hpp>
 #include <charconv>

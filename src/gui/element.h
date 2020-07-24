@@ -68,4 +68,6 @@ struct element : layout::element<element>, input::element
 namespace gui::layout
 {
 	using box = ::layout::box<::element>;
+	using shrink = ::layout::shrink<::element>;
+	using forward = ::layout::forward<::element>;
 }

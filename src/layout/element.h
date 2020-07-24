@@ -16,6 +16,7 @@ namespace layout
 	{
 		std::vector<std::unique_ptr<derived>> children;
 		std::unique_ptr<layout::base<derived>> child_layout;
+		// should the element expand to fill free space
 		std::array<bool, layout::orientation::count> expand{ false };
 
 		vector2 min_size{ 0,0 };

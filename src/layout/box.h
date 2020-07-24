@@ -73,8 +73,8 @@ namespace layout
 			{
 				if (child->child_layout != nullptr)
 					child->child_layout->fit();
-				// make sure the size is updated
 				else {
+					// make sure the size is updated
 					if (!child->expand[orient])
 						child->size.a[orient] = child->min_size.a[orient];
 					if (!child->expand[non_orient])

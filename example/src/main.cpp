@@ -169,11 +169,16 @@ int main()
 
 		auto& p1 = sv.content.create_child<panel>();
 		p1.position = { 50, 50 };
-		p1.min_size = { 50, 50 };
+		p1.min_size = { 50, 500 };
 		p1.apply_min_size();
 		p1.color = random_color();
+		auto& t1 = sv.content.create_child<text>();
+		t1.setup(font, 25, "scroll view");
+		t1.position = { 60, 60 };
+		t1.color = nvgRGBA(255, 0, 0, 255);;
 
 		root.child_layout->perform();
+		sv.update_handle_size();//TODO need to automatically call it in a "post sizing" callback
 	}
 
 	// extended element fit around children
