@@ -138,7 +138,6 @@ int main()
 		auto& root = app.root.create_child<panel>();
 		root.position = { 500,300 };
 		root.min_size = { 250,250 };
-		root.apply_min_size();
 		root.color = nvgRGBA(0, 0, 255, 255);
 		auto& box = root.create_layout<gui::layout::box>();
 
@@ -160,7 +159,6 @@ int main()
 		auto& root = app.root.create_child<panel>();
 		root.position = { 500,300 };
 		root.min_size = { 250,250 };
-		root.apply_min_size();
 		root.color = nvgRGBA(0, 0, 255, 255);
 		auto& box = root.create_layout<gui::layout::box>();
 
@@ -170,7 +168,6 @@ int main()
 		auto& p1 = sv.content.create_child<panel>();
 		p1.position = { 50, 50 };
 		p1.min_size = { 50, 500 };
-		p1.apply_min_size();
 		p1.color = random_color();
 		auto& t1 = sv.content.create_child<text>();
 		t1.setup(font, 25, "scroll view");
@@ -185,7 +182,6 @@ int main()
 		auto& root = app.root.create_child<panel>();
 		root.position = { 50, 200 };
 		root.min_size = { 100,100 };
-		root.apply_min_size();
 		root.color = random_color();
 
 		root.create_layout<gui::layout::box>();
@@ -216,7 +212,6 @@ int main()
 	auto& root = app.root.create_child<panel>();
 	root.position = { 200,50 };
 	root.min_size = { 200,400 };
-	root.apply_min_size();
 	root.color = random_color();
 
 	auto& box = root.create_layout<gui::layout::box>();

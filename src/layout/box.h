@@ -118,6 +118,8 @@ namespace layout
 		// perform layout
 		void perform() override
 		{
+			this->layout_start();
+
 			// need to update size before updating position
 			fit();
 			lay();

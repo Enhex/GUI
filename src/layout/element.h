@@ -41,6 +41,13 @@ namespace layout
 			child_layout->parent = this;
 		}
 
+		// executes before the parent's layout
+		virtual void pre_layout()
+		{
+			// automatically apply min size by default
+			apply_min_size();
+		}
+
 		// executes after done resizing by the parent's layout
 		virtual void post_layout()
 		{
