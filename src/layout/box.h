@@ -121,6 +121,8 @@ namespace layout
 			// need to update size before updating position
 			fit();
 			lay();
+
+			this->layout_complete();
 		}
 	};
 }

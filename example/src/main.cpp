@@ -178,7 +178,6 @@ int main()
 		t1.color = nvgRGBA(255, 0, 0, 255);;
 
 		root.child_layout->perform();
-		sv.update_handle_size();//TODO need to automatically call it in a "post sizing" callback
 	}
 
 	// extended element fit around children

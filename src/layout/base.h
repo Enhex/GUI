@@ -18,5 +18,12 @@ namespace layout
 		virtual void fit() = 0;
 		virtual void lay() = 0;
 		virtual void perform() = 0;
+
+		virtual void layout_complete()
+		{
+			for(auto& child : parent->children) {
+				child->post_layout();
+			}
+		}
 	};
 }

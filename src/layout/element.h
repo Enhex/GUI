@@ -40,5 +40,11 @@ namespace layout
 			child_layout.reset(new_layout);
 			child_layout->parent = this;
 		}
+
+		// executes after done resizing by the parent's layout
+		virtual void post_layout()
+		{
+			// do nothing by default
+		}
 	};
 }

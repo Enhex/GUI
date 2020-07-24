@@ -55,11 +55,18 @@ struct scroll_view : element
 			// move content
 			boost::qvm::Y(content.position) -= scroll_step;
 		});
+
+		//TODO clicking the track should move page up/down
 	}
 
 	void update_handle_size()
 	{
 		Y(scroll.handle.min_size) = Y(scroll.track.size) * std::min(1.f, Y(view.size) / Y(content.size));
 		scroll.handle.apply_min_size();
+	}
+
+	void post_layout() override
+	{
+		update_handle_size();
 	}
 };
