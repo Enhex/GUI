@@ -77,6 +77,10 @@ namespace deco
 			auto& child_element = parent.create_child<panel>();
 			read(entry, child_element);
 		}
+		else if (name == button::element_name) {
+			auto& child_element = parent.create_child<button>();
+			read(entry, child_element);
+		}
 		else if (name == text::element_name) {
 			auto& child_element = parent.create_child<text>();
 			read(entry, child_element);
@@ -142,6 +146,13 @@ namespace deco
 		read(entry, static_cast<element&>(value));
 	}
 
+
+	void read(deco::EntryObject& entry, button& value)
+	{
+		read(entry, static_cast<element&>(value));
+	}
+
+
 	void read(deco::EntryObject & entry, text & value)
 	{
 		read(entry, static_cast<element&>(value));
@@ -151,9 +162,15 @@ namespace deco
 			auto const& name = entry.content;
 
 			if (name == "string") {
-				for (auto const& line : entry.entries) {
-					value.str += line.content;
+				auto const& lines = entry.entries;
+				auto const num_lines = lines.size();
+				if(num_lines == 0)
+					continue;
+				
+				value.str = entry.entries[0].content;
+				for (size_t i = 1; i < num_lines; ++i) {
 					value.str += '\n';
+					value.str += lines[i].content;
 				}
 			}
 		}

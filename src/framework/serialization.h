@@ -14,7 +14,10 @@
 static std::map<std::string, std::type_info const&> style_properties{
 	{"font", typeid(std::string)},
 	{"font_size", typeid(float)},
-	{"color", typeid(NVGcolor)}
+	{"color", typeid(NVGcolor)},
+	{"background_color", typeid(NVGcolor)},
+	{"hover_color", typeid(NVGcolor)},
+	{"press_color", typeid(NVGcolor)}
 };
 
 
@@ -207,6 +210,9 @@ namespace deco
 			else if (child->type_info() == typeid(panel)) {
 				serialize(stream, make_list(panel::element_name, static_cast<panel&>(*child)));
 			}
+			else if (child->type_info() == typeid(button)) {
+				serialize(stream, make_list(button::element_name, static_cast<button&>(*child)));
+			}
 			else if (child->type_info() == typeid(text)) {
 				serialize(stream, make_list(text::element_name, static_cast<text&>(*child)));
 			}
@@ -235,6 +241,15 @@ namespace deco
 	}
 
 	void read(deco::EntryObject& entry, panel& value);
+
+
+	template<typename Stream>
+	void serialize(Stream& stream, button& value)
+	{
+		serialize(stream, static_cast<element&>(value));
+	}
+
+	void read(deco::EntryObject& entry, button& value);
 
 
 	template<typename Stream>
