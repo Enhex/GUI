@@ -102,6 +102,8 @@ namespace deco
 			if (name == "style") {
 				value.style = entry.entries[0].content;
 			}
+			else if (name == "id")
+				value.set_id(entry.entries[0].content);
 			else if (name == "min_size")
 				read(entry, value.min_size);
 			else if (name == "layout-box") {

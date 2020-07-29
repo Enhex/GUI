@@ -184,6 +184,9 @@ namespace deco
 	{
 		serialize(stream, static_cast<rectangle&>(value));
 
+		if (!value.get_id().empty())
+			serialize(stream, make_list("id", value.get_id()));
+
 		if (value.style != value.get_element_name())
 			serialize(stream, make_list("style", value.style));
 

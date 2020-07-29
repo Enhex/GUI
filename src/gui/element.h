@@ -27,25 +27,25 @@ struct element : layout::element<element>, input::element
 
 	std::string style = element_name;
 
-	// get absolute position. regular `position` variable being relative to the parent
-	vector2 get_position() {
-		return parent != nullptr ? parent->get_position() + position : position;
-	}
+protected:
+	std::string id;
+	static std::unordered_map<std::string, element&> id_to_element;
+public:
 
-	bool is_inside(vector2 const& point) {
-		rectangle absolute_rectangle{ get_position(), size };
-		return absolute_rectangle.is_inside(point);
-	}
+	virtual ~element();
+
+	static element* get_by_id(std::string const& id);
+	void set_id(std::string_view const new_id);
+	std::string const& get_id();
+
+	// get absolute position. regular `position` variable being relative to the parent
+	vector2 get_position();
+
+	bool is_inside(vector2 const& point);
 
 	virtual void set_style(style::style_t const& style) {}
 
-	inline void apply_style()
-	{
-		auto iter = context->style_manager.styles.find(style);
-		if (iter != context->style_manager.styles.end()) {
-			set_style(iter->second);
-		}
-	}
+	void apply_style();
 
 	template<typename T, typename... Args>
 	T& create_child(Args&... args) {
@@ -54,15 +54,11 @@ struct element : layout::element<element>, input::element
 		return child;
 	}
 
-	void draw() { draw(context->vg); }
+	void draw();
 	virtual void draw(NVGcontext* vg) {}
 
-	void draw_recursive() { draw_recursive(context->vg); }
-	virtual void draw_recursive(NVGcontext* vg) {
-		draw(vg);
-		for (auto const& child : children)
-			child->draw_recursive(vg);
-	}
+	void draw_recursive();
+	virtual void draw_recursive(NVGcontext* vg);
 };
 
 namespace gui::layout

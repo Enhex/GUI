@@ -64,6 +64,7 @@ int main()
 		deco::OutputStream_indent stream;
 
 		panel el;
+		el.set_id("first");
 		el.position = { 50,50 };
 		el.min_size = { 20,25 };
 		el.style = "green";
