@@ -57,7 +57,7 @@ namespace deco
 
 	void read(deco::EntryObject & entry, gui::layout::box & value)
 	{
-		auto const& content = entry.entries[0].content;
+		auto const& content = entry.entries[0].entries[0].content;
 		std::from_chars(content.data(), content.data() + content.size(), reinterpret_cast<int&>(value.orient));
 	}
 

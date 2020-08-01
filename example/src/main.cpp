@@ -69,7 +69,7 @@ int main()
 		el.min_size = { 20,25 };
 		el.style = "green";
 		el.expand = { 1,0 }; // doesnt affect anything currently, just testing serialization
-		el.create_layout<gui::layout::box>();
+		el.create_layout<gui::layout::box>().orient = layout::horizontal;
 
 		auto& scissor_child = el.create_child<scissor>();
 		scissor_child.expand = { true, true };
