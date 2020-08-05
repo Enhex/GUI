@@ -3,6 +3,12 @@
 
 std::unordered_map<std::string, element&> element::id_to_element;
 
+element::element()
+{
+	// default to forwarding
+	create_layout<gui::layout::forward>();
+}
+
 element::~element()
 {
 	id_to_element.erase(id);

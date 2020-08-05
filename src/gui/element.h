@@ -32,6 +32,7 @@ protected:
 	static std::unordered_map<std::string, element&> id_to_element;
 public:
 
+	element();
 	virtual ~element();
 
 	static element* get_by_id(std::string const& id);
