@@ -86,9 +86,10 @@ struct text : element
 		nvgTextMetrics(vg, &ascender, &descender, &lineh);
 
 		// using local space with position 0, can directly use max point instead of calculating bounding box size
-		X(size) = X(min_size) = bounds[2];
-		Y(size) = Y(min_size) = bounds[3] + ascender;
+		X(min_size) = bounds[2];
+		Y(min_size) = bounds[3] + ascender;
 
+		apply_min_size();
 
 		nvgRestore(vg);
 	}
