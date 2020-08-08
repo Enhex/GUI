@@ -56,7 +56,7 @@ namespace layout
 
 
 			// expand children after the parent's size is known
-			auto const free_space{ parent->size.a[orient] - taken_space };
+			auto const free_space = std::max(0.f, parent->size.a[orient] - taken_space);
 			auto const expander_size = num_expanders == 0 ? 0 : free_space / num_expanders;
 
 			for (auto& child : parent->children)
@@ -83,9 +83,9 @@ namespace layout
 			{
 				if(!parent->expand[orient])
 					parent->size.a[orient] = std::max(parent->min_size.a[orient], children_size);
-				if(!parent->expand[non_orient])
-					parent->size.a[non_orient] = non_orient_max_size; // already started from min_size
 			}
+			if(!parent->expand[non_orient]) // shrink around the biggest child if not expanding
+				parent->size.a[non_orient] = non_orient_max_size; // already started from min_size
 		}
 
 		// position, top-down (children need to know the parent's position to be relative to it)
