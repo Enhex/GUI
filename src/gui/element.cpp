@@ -62,6 +62,12 @@ void element::apply_style()
 	}
 }
 
+void element::add_child(std::unique_ptr<element> child)
+{
+	child->parent = this;
+	children.emplace_back(std::move(child));
+}
+
 void element::draw()
 {
 	draw(context->vg);

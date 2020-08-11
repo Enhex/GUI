@@ -55,6 +55,9 @@ public:
 		return child;
 	}
 
+	//NOTE: takes ownership of the child element
+	void add_child(std::unique_ptr<element> child);
+
 	void draw();
 	virtual void draw(NVGcontext* vg) {}
 
