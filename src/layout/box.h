@@ -40,7 +40,13 @@ namespace layout
 			// number of children that expand in the orient direction
 			size_t num_expanders = 0;
 
-			for (auto& child : parent->children)
+			std::vector<derived_element*> visible_children;
+			for (auto& child : parent->children) {
+				if(child->visible)
+					visible_children.emplace_back(child.get());
+			}
+
+			for (auto& child : visible_children)
 			{
 				if (!child->expand[orient]) {
 					child->apply_min_size();
@@ -59,17 +65,17 @@ namespace layout
 			auto const free_space = std::max(0.f, parent->size.a[orient] - taken_space);
 			auto const expander_size = num_expanders == 0 ? 0 : free_space / num_expanders;
 
-			for (auto& child : parent->children)
+			for (auto& child : visible_children)
 			{
 				if (child->expand[orient])
-					child->size.a[orient] = std::max(child->size.a[orient], expander_size);
+					child->size.a[orient] = std::max(child->min_size.a[orient], expander_size);
 				if (child->expand[non_orient])
-					child->size.a[non_orient] = std::max(child->size.a[non_orient], parent->size.a[non_orient]);
+					child->size.a[non_orient] = std::max(child->min_size.a[non_orient], parent->size.a[non_orient]);
 			}
 
 
 			// shrink non-expanding children
-			for (auto& child : parent->children)
+			for (auto& child : visible_children)
 			{
 				if (child->child_layout != nullptr)
 					child->child_layout->fit();
@@ -97,6 +103,9 @@ namespace layout
 			auto last_orient_position = 0.f;
 			for (auto& child : parent->children)
 			{
+				if(!child->visible)
+					continue;
+
 				// position relative to parent/previous child
 				X(child->position) = orient == horizontal ? last_orient_position : 0.f;
 				Y(child->position) = orient == vertical ? last_orient_position : 0.f;

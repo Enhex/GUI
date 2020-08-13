@@ -115,25 +115,6 @@ int main()
 		background.child_layout->perform();
 	}
 
-
-	// button test
-	{
-		auto& el = app.root.create_child<button>();
-		el.position = { 500,200 };
-		el.background_color = nvgRGBA(80, 80, 80, 255);
-		el.hover_color = nvgRGBA(120, 120, 120, 255);
-		el.press_color = nvgRGBA(0, 120, 210, 255);
-		el.color = el.background_color;
-
-		auto& label = el.create_child<text>();
-		label.str = "button";
-
-		el.child_layout->perform();
-		el.size = { 100,50 };
-
-		el.callback = []() { std::cout << "button clicked\n"; };
-	}
-
 	// nested box sizing test
 	{
 		auto& root = app.root.create_child<panel>();
@@ -213,7 +194,7 @@ int main()
 	auto& root = app.root.create_child<panel>();
 	root.position = { 200,50 };
 	root.min_size = { 200,400 };
-	root.color = random_color();
+	root.color = nvgRGBA(127, 127, 127, 255);
 
 	auto& box = root.create_layout<gui::layout::box>();
 
@@ -240,11 +221,11 @@ int main()
 			txt.setup(font, 50, "Testing");
 		}
 	}
-	{
-		auto& el = root.create_child<panel>();
-		el.expand = { true, true };
-		el.color = random_color();
-	}
+
+	auto& toggle_el = root.create_child<panel>();
+	toggle_el.expand = { true, true };
+	toggle_el.color = random_color();
+
 	{
 		auto& el = root.create_child<panel>();
 		el.min_size = { 150,50 };
@@ -252,6 +233,29 @@ int main()
 	}
 
 	root.child_layout->perform();
+
+
+	// button test
+	{
+		auto& el = app.root.create_child<button>();
+		el.position = { 500,200 };
+		el.background_color = nvgRGBA(80, 80, 80, 255);
+		el.hover_color = nvgRGBA(120, 120, 120, 255);
+		el.press_color = nvgRGBA(0, 120, 210, 255);
+		el.color = el.background_color;
+
+		auto& label = el.create_child<text>();
+		label.str = "button";
+
+		el.child_layout->perform();
+		el.size = { 100,50 };
+
+		el.callback = [&]() {
+			std::cout << "button clicked\n";
+			toggle_el.visible = !toggle_el.visible;
+			root.child_layout->perform();
+		};
+	}
 
 
 	// test global event

@@ -23,10 +23,13 @@ namespace layout
 
 		void layout_start_recurse(element_t& element)
 		{
-				element.pre_layout();
-				for(auto& child : element.children) {
-					layout_start_recurse(*child);
-				}
+			if(!element.visible)
+				return;
+
+			element.pre_layout();
+			for(auto& child : element.children) {
+				layout_start_recurse(*child);
+			}
 		}
 		virtual void layout_start()
 		{
@@ -36,7 +39,8 @@ namespace layout
 		virtual void layout_complete()
 		{
 			for(auto& child : parent->children) {
-				child->post_layout();
+				if(child->visible)
+					child->post_layout();
 			}
 		}
 	};

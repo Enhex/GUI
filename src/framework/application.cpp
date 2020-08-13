@@ -165,6 +165,9 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 	{
 		auto recurse_impl = [&](element* el, auto& func) -> bool
 		{
+			if(!el->visible)
+				return false;
+
 			for (auto const& child : el->children) {
 				if (func(child.get(), func))
 					return true;
