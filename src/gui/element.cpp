@@ -80,9 +80,11 @@ void element::draw_recursive()
 
 void element::draw_recursive(NVGcontext* vg)
 {
+	if (!visible)
+		return;
+
 	draw(vg);
 	for (auto const& child : children) {
-		if (child->visible)
-			child->draw_recursive(vg);
+		child->draw_recursive(vg);
 	}
 }
