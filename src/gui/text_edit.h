@@ -40,6 +40,7 @@ struct text_edit : text
 
 	size_t cursor_pos = 0;
 
+	// glyphs' absolute positions
 	std::unique_ptr<NVGglyphPosition[]> glyphs;
 
 	int update_glyphs()
@@ -132,9 +133,9 @@ struct text_edit : text
 			if (glyphs == nullptr)
 				update_glyphs();
 
-			auto const x_pos = cursor_pos == str.size() ? X(position) + X(size) : glyphs[cursor_pos].x;
+			auto const absolute_position = get_position();
 
-			auto absolute_position = get_position();
+			auto const x_pos = cursor_pos == str.size() ? X(absolute_position) + X(size) : glyphs[cursor_pos].x;
 
 			nvgBeginPath(vg);
 			nvgMoveTo(vg, x_pos, Y(absolute_position));
