@@ -13,6 +13,7 @@ struct text : element
 	int font = -1;
 	float font_size = 12;
 	NVGcolor color = nvgRGBA(255, 255, 255, 255);
+	float text_bounds[4];
 
 
 	text()
@@ -79,15 +80,14 @@ struct text : element
 
 		init_font(vg);
 
-		float bounds[4];
-		nvgTextBounds(vg, 0, 0, str.c_str(), nullptr, bounds);
+		nvgTextBounds(vg, 0, 0, str.c_str(), nullptr, text_bounds);
 
 		float ascender, descender, lineh;
 		nvgTextMetrics(vg, &ascender, &descender, &lineh);
 
 		// using local space with position 0, can directly use max point instead of calculating bounding box size
-		X(min_size) = bounds[2];
-		Y(min_size) = bounds[3] + ascender;
+		X(min_size) = text_bounds[2];
+		Y(min_size) = text_bounds[3] + ascender;
 
 		apply_min_size();
 

@@ -60,6 +60,8 @@ struct text_edit : text
 
 		nvgRestore(vg);
 
+		update_bounds();
+
 		return num_glyphs;
 	}
 
@@ -70,19 +72,35 @@ struct text_edit : text
 		auto const num_glyphs = update_glyphs();
 		auto absolute_position = get_position();
 
+		bool glyph_clicked = false;
+
+		auto& input_manager = context->input_manager;
+		auto const mouse_x = X(input_manager.mouse_pos);
+
 		for (auto i = num_glyphs; i-- > 0;)
 		{
 			auto const& glyph = glyphs[i];
-			auto const x_min = glyphs[i].x; // current glyph start position
-			auto const x_max = i + 1 < num_glyphs ? glyphs[i + 1].x : X(absolute_position) + X(size); // next glyph start position
-
-			auto& input_manager = context->input_manager;
+			auto const x_mid = glyph.x + (glyph.maxx - glyph.minx) / 2;
 
 			// check if the glyph was clicked
-			if (X(input_manager.mouse_pos) >= x_min &&
-				X(input_manager.mouse_pos) <= x_max) {
+			if (mouse_x >= glyph.minx &&
+				mouse_x <= x_mid) {
 				cursor_pos = i;
+				glyph_clicked = true;
 				break;
+			}
+			else if (mouse_x >= x_mid &&
+					 mouse_x <= glyph.maxx) {
+				cursor_pos = i+1;
+				glyph_clicked = true;
+				break;
+			}
+		}
+
+		// if clicked past the last character, position the cursor at the end of the text
+		if(!glyph_clicked) {
+			if(mouse_x > text_bounds[2]) {
+				cursor_pos = str.size();
 			}
 		}
 	}
@@ -93,11 +111,13 @@ struct text_edit : text
 		case GLFW_KEY_BACKSPACE:
 			if (cursor_pos > 0)
 				str.erase(--cursor_pos, 1);
+				update_glyphs();
 			break;
 
 		case GLFW_KEY_DELETE:
 			if (cursor_pos < str.size())
 				str.erase(cursor_pos, 1);
+				update_glyphs();
 			break;
 
 		case GLFW_KEY_LEFT:
@@ -135,7 +155,9 @@ struct text_edit : text
 
 			auto const absolute_position = get_position();
 
-			auto const x_pos = cursor_pos == str.size() ? X(absolute_position) + X(size) : glyphs[cursor_pos].x;
+			auto const x_pos = cursor_pos == 0 ?
+				X(absolute_position) : // may have no characters, position at the start.
+				glyphs[cursor_pos-1].maxx; // position at the end of the previous character	
 
 			nvgBeginPath(vg);
 			nvgMoveTo(vg, x_pos, Y(absolute_position));
