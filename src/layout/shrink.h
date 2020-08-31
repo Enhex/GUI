@@ -10,6 +10,9 @@ namespace layout
 	{
 		std::type_info const& type_info() const override { return typeid(shrink); }
 
+		// should the parent change its position too, or only its size?
+		bool shrink_position = true;
+
 		// fit around children
 		// size, bottom-up (need to know the size of the children to fit around them)
 		void fit() override
@@ -25,8 +28,10 @@ namespace layout
 			auto& first_child = parent.children.front();
 			if (first_child->child_layout != nullptr)
 				first_child->child_layout->perform();
-			parent_rect = *first_child;
-			
+			if(shrink_position)
+				parent_rect = *first_child;
+			else
+				parent_rect.size = first_child->size;
 			
 			for (auto& child : parent.children)
 			{
@@ -41,7 +46,6 @@ namespace layout
 			parent.min_size = parent.size;
 		}
 
-		// position, top-down (children need to know the parent's position to be relative to it)
 		void lay() override
 		{
 			// do nothing

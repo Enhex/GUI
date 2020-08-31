@@ -149,7 +149,7 @@ int main()
 
 		auto& p1 = sv.content.create_child<panel>();
 		p1.position = { 50, 50 };
-		p1.min_size = { 50, 500 };
+		p1.min_size = { 50, 450 };
 		p1.color = random_color();
 		auto& t1 = sv.content.create_child<text>();
 		t1.setup(font, 25, "scroll view");

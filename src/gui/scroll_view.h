@@ -20,7 +20,7 @@ struct scroll_view : element
 	element& content; // used to move all the elements inside the view
 	scrollbar& scroll;
 
-	float scroll_step = 10;
+	float scroll_step = 50;
 
 	scroll_view() :
 	view(create_child<scissor>()),
@@ -29,15 +29,13 @@ struct scroll_view : element
 	{
 		style = element_name;
 		
-		auto& box = create_layout<gui::layout::box>();
-		box.orient = layout::horizontal;
+		create_layout<gui::layout::box>().orient = layout::horizontal;
 
 		// elements
 		view.expand = {true, true};
-		auto& forward = view.create_layout<gui::layout::forward>();
 
 		content.expand = {false, false};
-		auto& shrink = content.create_layout<gui::layout::shrink>();
+		content.create_layout<gui::layout::shrink>().shrink_position = false;
 
 		scroll.expand = {false, true};
 
@@ -45,24 +43,34 @@ struct scroll_view : element
 		auto& input_manager = context->input_manager;
 		
 		input_manager.subscribe<input::event::mouse_press>(&scroll.scroll_up, [&](std::any&& args) {
-			auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
-			// move content
-			boost::qvm::Y(content.position) += scroll_step;
+			move_content(scroll_step);
 		});
 
 		input_manager.subscribe<input::event::mouse_press>(&scroll.scroll_down, [&](std::any&& args) {
-			auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
-			// move content
-			boost::qvm::Y(content.position) -= scroll_step;
+			move_content(-scroll_step);
 		});
 
 		//TODO clicking the track should move page up/down
+	}
+
+	void move_content(float change)
+	{
+		Y(content.position) += change;
+		Y(content.position) = std::clamp(Y(content.position), -Y(content.size), 0.f);
+		update_handle_position();
 	}
 
 	void update_handle_size()
 	{
 		Y(scroll.handle.min_size) = Y(scroll.track.size) * std::min(1.f, Y(view.size) / Y(content.size));
 		scroll.handle.apply_min_size();
+	}
+
+	void update_handle_position()
+	{
+		auto const content_position_fraction = (Y(content.position)*-1) / Y(content.size);
+		auto const handle_position_size = Y(scroll.track.size) - Y(scroll.handle.size); // handle need to be stopped before it goes outside the track
+		Y(scroll.handle.position) = handle_position_size * content_position_fraction;
 	}
 
 	void post_layout() override
