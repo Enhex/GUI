@@ -79,5 +79,14 @@ namespace input
 			// codepoint
 			using params = std::tuple<unsigned int>;
 		};
+
+		struct frame_start : base
+		{
+			static constexpr size_t id = 7;
+			size_t get_id() const { return id; }
+
+			// codepoint
+			using params = std::tuple<>;
+		};
 	}
 }

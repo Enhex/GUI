@@ -2,10 +2,10 @@
 
 #include "element.h"
 
+#include "../include_glfw.h"
 #include "scrollbar.h"
 
 /*TODO
-- set scrollbar handle size relative to size/overflow
 - hold middle mouse click to scroll in all directions
 - virtual create_child(), to add to the content scissor
 */
@@ -21,6 +21,10 @@ struct scroll_view : element
 	scrollbar& scroll;
 
 	float scroll_step = 50;
+
+	bool handle_dragging = false;
+	// position-local to the handle, which mouse drag will be aligned with.
+	float handle_drag_ancor;
 
 	scroll_view() :
 	view(create_child<scissor>()),
@@ -50,7 +54,50 @@ struct scroll_view : element
 			move_content(-scroll_step);
 		});
 
+		input_manager.subscribe<input::event::mouse_press>(&scroll.handle, [&](std::any&& args) {
+			auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+			if(button != GLFW_MOUSE_BUTTON_LEFT)
+				return;
+
+			// start dragging
+			handle_dragging = true;
+			handle_drag_ancor = Y(input_manager.mouse_pos) - Y(scroll.handle.get_position());
+		});
+
+		input_manager.subscribe_global<input::event::frame_start>([&](std::any&& args) {
+			if (!handle_dragging)
+				return;
+
+			// update handle position
+			auto const new_absolute_pos = Y(input_manager.mouse_pos) - handle_drag_ancor;
+			auto const change = Y(scroll.handle.get_position()) - new_absolute_pos;
+			if (change != 0)
+				move_content(change);
+		});
+
+		input_manager.subscribe<input::event::mouse_release>(&scroll.handle, [&](std::any&& args) {
+			auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+			stop_dragging(button);
+		});
+
+		input_manager.subscribe_global<input::event::mouse_release>([&](std::any&& args) {
+			auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+			stop_dragging(button);
+		});
+
 		//TODO clicking the track should move page up/down
+	}
+
+	void stop_dragging(int const button)
+	{
+		if (button != GLFW_MOUSE_BUTTON_LEFT ||
+			!handle_dragging)
+			return;
+
+		// stop dragging
+		handle_dragging = false;
+
+		//TODO unsubscribe for optimization to not call needlessly, both mouse_release and frame_start
 	}
 
 	void move_content(float change)

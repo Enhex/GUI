@@ -59,6 +59,8 @@ inline void application::run(F loop_function)
 
 		nvgBeginFrame(vg, (float)win_width, (float)win_height, pixel_ratio);
 
+		input_manager.send_global_event(input::event::frame_start::id, {});
+
 		// user defined function
 		loop_function();
 
