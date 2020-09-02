@@ -63,7 +63,9 @@ namespace input
 		template<typename Event>
 		void unsubscribe(element* subscriber)
 		{
-			focused_events.erase(subscriber);
+			auto iter = focused_events.find(subscriber);
+			if(iter != focused_events.end())
+				iter->second.erase(Event::id);
 		}
 
 		// global
