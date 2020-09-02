@@ -64,7 +64,7 @@ struct scroll_view : element
 			handle_drag_ancor = Y(input_manager.mouse_pos) - Y(scroll.handle.get_position());
 		});
 
-		input_manager.subscribe_global<input::event::frame_start>([&](std::any&& args) {
+		input_manager.subscribe_global<input::event::frame_start>(this, [&](std::any&& args) {
 			if (!handle_dragging)
 				return;
 
@@ -80,7 +80,7 @@ struct scroll_view : element
 			stop_dragging(button);
 		});
 
-		input_manager.subscribe_global<input::event::mouse_release>([&](std::any&& args) {
+		input_manager.subscribe_global<input::event::mouse_release>(this, [&](std::any&& args) {
 			auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
 			stop_dragging(button);
 		});

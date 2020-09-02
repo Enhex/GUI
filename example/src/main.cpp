@@ -259,18 +259,20 @@ int main()
 
 
 	// test global event
-	app.input_manager.subscribe_global<input::event::key_press>([](std::any&& args) {
+	app.input_manager.subscribe_global<input::event::key_press>(&app.root, [&app, &root](std::any&& args) {
 		auto&[key, mods] = std::any_cast<input::event::key_press::params&>(args);
 		std::cout << "(global) key pressed: " << key << "\n";
-	});
-	app.input_manager.subscribe_global<input::event::key_press>([&root](std::any&& args) {
-		auto&[key, mods] = std::any_cast<input::event::key_press::params&>(args);
-		if (key != 67)
-			return;
 
-		root.children.clear();
-
-		std::cout << "cleared!\n";
+		if (key == GLFW_KEY_C)
+		{
+			root.children.clear();
+			std::cout << "cleared!\n";
+		}
+		else if(key == GLFW_KEY_U)
+		{
+			app.input_manager.unsubscribe_global<input::event::key_press>(&app.root);
+			std::cout << "unsubscribed!\n";
+		}
 	});
 
 	// test focused hover events
