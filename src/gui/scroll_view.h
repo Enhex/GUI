@@ -22,7 +22,6 @@ struct scroll_view : element
 
 	float scroll_step = 50;
 
-	bool handle_dragging = false;
 	// position-local to the handle, which mouse drag will be aligned with.
 	float handle_drag_ancor;
 
@@ -60,29 +59,26 @@ struct scroll_view : element
 				return;
 
 			// start dragging
-			handle_dragging = true;
 			handle_drag_ancor = Y(input_manager.mouse_pos) - Y(scroll.handle.get_position());
-		});
 
-		input_manager.subscribe_global<input::event::frame_start>(this, [&](std::any&& args) {
-			if (!handle_dragging)
-				return;
+			// subscribe to events
+			input_manager.subscribe_global<input::event::frame_start>(this, [&](std::any&& args) {
+				// update handle position
+				auto const new_absolute_pos = Y(input_manager.mouse_pos) - handle_drag_ancor;
+				auto const change = Y(scroll.handle.get_position()) - new_absolute_pos;
+				if (change != 0)
+					move_content(change);
+			});
 
-			// update handle position
-			auto const new_absolute_pos = Y(input_manager.mouse_pos) - handle_drag_ancor;
-			auto const change = Y(scroll.handle.get_position()) - new_absolute_pos;
-			if (change != 0)
-				move_content(change);
-		});
+			input_manager.subscribe<input::event::mouse_release>(&scroll.handle, [&](std::any&& args) {
+				auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+				stop_dragging(button);
+			});
 
-		input_manager.subscribe<input::event::mouse_release>(&scroll.handle, [&](std::any&& args) {
-			auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
-			stop_dragging(button);
-		});
-
-		input_manager.subscribe_global<input::event::mouse_release>(this, [&](std::any&& args) {
-			auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
-			stop_dragging(button);
+			input_manager.subscribe_global<input::event::mouse_release>(this, [&](std::any&& args) {
+				auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+				stop_dragging(button);
+			});
 		});
 
 		//TODO clicking the track should move page up/down
@@ -90,14 +86,14 @@ struct scroll_view : element
 
 	void stop_dragging(int const button)
 	{
-		if (button != GLFW_MOUSE_BUTTON_LEFT ||
-			!handle_dragging)
+		if (button != GLFW_MOUSE_BUTTON_LEFT)
 			return;
 
-		// stop dragging
-		handle_dragging = false;
-
-		//TODO unsubscribe for optimization to not call needlessly, both mouse_release and frame_start
+		// unsubscribe for optimization to not call callbacks needlessly when not dragging
+		auto& input_manager = context->input_manager;
+		input_manager.unsubscribe<input::event::mouse_release>(&scroll.handle);
+		input_manager.unsubscribe_global<input::event::mouse_release>(this);
+		input_manager.unsubscribe_global<input::event::frame_start>(this);
 	}
 
 	void move_content(float change)
