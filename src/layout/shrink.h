@@ -40,7 +40,12 @@ namespace layout
 					child->child_layout->perform();
 
 				// fit around the child
-				parent_rect.merge(*child);
+				if(shrink_position)
+					parent_rect.merge(*child);
+				else {
+					X(parent_rect.size) = std::max(X(parent_rect.size), X(child->size));
+					Y(parent_rect.size) = std::max(Y(parent_rect.size), Y(child->size));
+				}
 			}
 
 			parent.min_size = parent.size;
