@@ -98,6 +98,9 @@ struct scroll_view : element
 
 	void move_content(float change)
 	{
+		if(Y(content.size) < Y(view.size))
+			return;
+
 		Y(content.position) += change;
 		Y(content.position) = std::clamp(Y(content.position), -Y(content.size), 0.f);
 		update_handle_position();

@@ -35,9 +35,12 @@ namespace layout
 		// perform layout
 		void perform() override
 		{
-			// need to update size before updating position
+			this->layout_start();
+
 			fit();
 			lay();
+
+			this->layout_complete();
 		}
 	};
 }

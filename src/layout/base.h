@@ -36,12 +36,19 @@ namespace layout
 			layout_start_recurse(*parent);
 		}
 
+		void layout_complete_recurse(element_t& element)
+		{
+			if(!element.visible)
+				return;
+
+			element.post_layout();
+			for(auto& child : element.children) {
+				layout_complete_recurse(*child);
+			}
+		}
 		virtual void layout_complete()
 		{
-			for(auto& child : parent->children) {
-				if(child->visible)
-					child->post_layout();
-			}
+			layout_complete_recurse(*parent);
 		}
 	};
 }
