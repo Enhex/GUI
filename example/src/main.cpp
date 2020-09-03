@@ -293,6 +293,8 @@ int main()
 	// Loop until the user closes the window
 	app.run([&]()
 	{
+		app.root.child_layout->perform();
+
 		txt.draw_recursive();
 		app.root.draw_recursive();
 	});

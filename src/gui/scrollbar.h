@@ -41,6 +41,7 @@ struct scrollbar : element
 		track.hover_color = nvgRGBA(50, 50, 50, 255);
 		track.press_color = nvgRGBA(50, 50, 50, 255);
 		track.expand = {false, true};
+		track.create_layout<gui::layout::forward>();
 
 		handle.min_size = { 20,20 };
 		handle.color = handle.background_color = nvgRGBA(100, 100, 100, 255);
