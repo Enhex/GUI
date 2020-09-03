@@ -174,6 +174,8 @@ namespace deco
 					value.str += '\n';
 					value.str += lines[i].content;
 				}
+				// once done constructing the string, update the text size
+				value.update_bounds();
 			}
 		}
 	}
