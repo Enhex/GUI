@@ -160,7 +160,8 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 	*/
 	auto& input_manager = app.input_manager;
 
-	// recursively search for the leaf-most element that the mouse fits inside
+	// recursively search for the leaf-most element that the mouse fits inside.
+	// also need to search child order back-to-front, because child rendering is front-to-back (so child that's rendered on top of others takes priority).
 	auto find_hoevered_element = [&](element* parent)
 	{
 		auto recurse_impl = [&](element* el, auto& func) -> bool
@@ -168,8 +169,8 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 			if(!el->visible)
 				return false;
 
-			for (auto const& child : el->children) {
-				if (func(child.get(), func))
+			for (auto child = el->children.rbegin(); child != el->children.rend(); ++child) {
+				if (func(child->get(), func))
 					return true;
 			}
 

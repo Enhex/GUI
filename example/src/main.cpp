@@ -237,24 +237,44 @@ int main()
 
 	// button test
 	{
-		auto& el = app.root.create_child<button>();
-		el.position = { 500,200 };
-		el.background_color = nvgRGBA(80, 80, 80, 255);
-		el.hover_color = nvgRGBA(120, 120, 120, 255);
-		el.press_color = nvgRGBA(0, 120, 210, 255);
-		el.color = el.background_color;
+		{
+			auto& el = app.root.create_child<button>();
+			el.position = { 500,200 };
+			el.background_color = nvgRGBA(80, 80, 80, 255);
+			el.hover_color = nvgRGBA(120, 120, 120, 255);
+			el.press_color = nvgRGBA(0, 120, 210, 255);
+			el.color = el.background_color;
 
-		auto& label = el.create_child<text>();
-		label.str = "button";
+			auto& label = el.create_child<text>();
+			label.str = "button 1";
 
-		el.child_layout->perform();
-		el.size = { 100,50 };
+			el.child_layout->perform();
+			el.size = { 100,50 };
 
-		el.callback = [&]() {
-			std::cout << "button clicked\n";
-			toggle_el.visible = !toggle_el.visible;
-			root.child_layout->perform();
-		};
+			el.callback = [&]() {
+				std::cout << "button 1 clicked\n";
+			};
+		}
+		{
+			auto& el = app.root.create_child<button>();
+			el.position = { 540,205 };
+			el.background_color = nvgRGBA(80, 80, 80, 255);
+			el.hover_color = nvgRGBA(120, 120, 120, 255);
+			el.press_color = nvgRGBA(0, 120, 210, 255);
+			el.color = el.background_color;
+
+			auto& label = el.create_child<text>();
+			label.str = "button 2";
+
+			el.child_layout->perform();
+			el.size = { 100,50 };
+
+			el.callback = [&]() {
+				std::cout << "button 2 clicked\n";
+				toggle_el.visible = !toggle_el.visible;
+				root.child_layout->perform();
+			};
+		}
 	}
 
 
