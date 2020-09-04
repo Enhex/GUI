@@ -43,8 +43,8 @@ namespace layout
 				if(shrink_position)
 					parent_rect.merge(*child);
 				else {
-					X(parent_rect.size) = std::max(X(parent_rect.size), X(child->size));
-					Y(parent_rect.size) = std::max(Y(parent_rect.size), Y(child->size));
+					X(parent_rect.size) = std::max(X(parent_rect.size), X(child->size) + X(child->position));
+					Y(parent_rect.size) = std::max(Y(parent_rect.size), Y(child->size) + Y(child->position));
 				}
 			}
 

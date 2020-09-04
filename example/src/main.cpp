@@ -149,12 +149,18 @@ int main()
 
 		auto& p1 = sv.content.create_child<panel>();
 		p1.position = { 50, 50 };
-		p1.min_size = { 50, 450 };
+		p1.min_size = { 50, 440 };
 		p1.color = random_color();
+
+		auto& p2 = sv.content.create_child<panel>();
+		p2.position = { 50, 490 };
+		p2.min_size = { 50, 10 };
+		p2.color = random_color();
+
 		auto& t1 = sv.content.create_child<text>();
 		t1.setup(font, 25, "scroll view");
 		t1.position = { 60, 60 };
-		t1.color = nvgRGBA(255, 0, 0, 255);;
+		t1.color = nvgRGBA(255, 0, 0, 255);
 
 		root.child_layout->perform();
 	}

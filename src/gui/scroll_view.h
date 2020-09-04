@@ -96,13 +96,18 @@ struct scroll_view : element
 		input_manager.unsubscribe_global<input::event::frame_start>(this);
 	}
 
+	float get_scroll_length() const
+	{
+		return Y(content.size) - Y(view.size);
+	}
+
 	void move_content(float change)
 	{
 		if(Y(content.size) < Y(view.size))
 			return;
 
 		Y(content.position) += change;
-		Y(content.position) = std::clamp(Y(content.position), -Y(content.size), 0.f);
+		Y(content.position) = std::clamp(Y(content.position), -get_scroll_length(), 0.f);
 		update_handle_position();
 	}
 
@@ -114,7 +119,7 @@ struct scroll_view : element
 
 	void update_handle_position()
 	{
-		auto const content_position_fraction = (Y(content.position)*-1) / Y(content.size);
+		auto const content_position_fraction = (Y(content.position)*-1) / get_scroll_length();
 		auto const handle_position_size = Y(scroll.track.size) - Y(scroll.handle.size); // handle need to be stopped before it goes outside the track
 		Y(scroll.handle.position) = handle_position_size * content_position_fraction;
 	}
