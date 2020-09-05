@@ -149,7 +149,10 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 {
 	auto& app = *static_cast<application*>(glfwGetWindowUserPointer(window));
 	app.input_manager.mouse_pos = { (float)xpos, (float)ypos };
+}
 
+void application::update_hoevered_element()
+{
 	/*TODO
 	- hover event
 		- start with brute force search
@@ -158,7 +161,6 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 		- hover end:
 		hovered element
 	*/
-	auto& input_manager = app.input_manager;
 
 	// recursively search for the leaf-most element that the mouse fits inside.
 	// also need to search child order back-to-front, because child rendering is front-to-back (so child that's rendered on top of others takes priority).
@@ -176,7 +178,7 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 
 			auto const& focused_events = input_manager.get_focused_events();
 			if (focused_events.find(el) != focused_events.end() &&	// if the element doesn't do something with the event, propagate it to the parent.
-				el->is_inside(app.input_manager.mouse_pos)) {
+				el->is_inside(input_manager.mouse_pos)) {
 				input_manager.set_hovered_element(el);
 				return true;
 			}
@@ -187,7 +189,7 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 		return recurse_impl(parent, recurse_impl);
 	};
 
-	if(!find_hoevered_element(&app.root))
+	if(!find_hoevered_element(&root))
 		input_manager.set_hovered_element(nullptr);
 }
 

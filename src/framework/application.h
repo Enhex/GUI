@@ -36,6 +36,8 @@ protected:
 
 	static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos);
 	static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
+
+	void update_hoevered_element();
 };
 
 
@@ -59,6 +61,7 @@ inline void application::run(F loop_function)
 
 		nvgBeginFrame(vg, (float)win_width, (float)win_height, pixel_ratio);
 
+		update_hoevered_element();
 		input_manager.send_global_event(input::event::frame_start::id, {});
 
 		// user defined function
