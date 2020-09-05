@@ -252,13 +252,21 @@ int main()
 			el.color = el.background_color;
 
 			auto& label = el.create_child<text>();
-			label.str = "button 1";
+			label.set_text("file");
 
 			el.child_layout->perform();
 			el.size = { 100,50 };
 
+			auto& file_di = app.root.create_child<file_dialog>();
+			file_di.position = {100,160};
+			file_di.min_size = {400,400};
+			file_di.apply_min_size();
+
 			el.callback = [&]() {
 				std::cout << "button 1 clicked\n";
+				file_di.pick_file("./", [](std::filesystem::path file){
+					std::cout << "picked file: " << file << "\n";
+				});
 			};
 		}
 		{
@@ -270,7 +278,7 @@ int main()
 			el.color = el.background_color;
 
 			auto& label = el.create_child<text>();
-			label.str = "button 2";
+			label.set_text("toggle");
 
 			el.child_layout->perform();
 			el.size = { 100,50 };

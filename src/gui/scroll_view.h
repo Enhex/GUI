@@ -3,6 +3,7 @@
 #include "element.h"
 
 #include "../include_glfw.h"
+#include "scissor.h"
 #include "scrollbar.h"
 
 /*TODO
