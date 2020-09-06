@@ -30,7 +30,7 @@ size_t cursor_pos = 0;
 // glyphs' absolute positions
 std::unique_ptr<NVGglyphPosition[]> glyphs;
 
-int text_edit::update_glyphs()
+void text_edit::update_glyphs()
 {
 	auto& vg = context->vg;
 
@@ -42,21 +42,19 @@ int text_edit::update_glyphs()
 	glyphs = std::make_unique<NVGglyphPosition[]>(max_glyphs);
 	// TODO can cache glyphs and update only when text changes
 	auto absolute_position = get_position();
-	auto const num_glyphs = nvgTextGlyphPositions(vg, X(absolute_position), Y(absolute_position), str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
+	num_glyphs = nvgTextGlyphPositions(vg, X(absolute_position), Y(absolute_position), str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
 	//auto const num_glyphs = nvgTextGlyphPositions(vg, 0,0, str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
 
 	nvgRestore(vg);
 
 	update_bounds();
-
-	return num_glyphs;
 }
 
 void text_edit::on_mouse_press()
 {
 	// only need to use X position because it's already known the click is inside the element rectangle, and single-line text is used.
 
-	auto const num_glyphs = update_glyphs();
+	update_glyphs();
 	auto absolute_position = get_position();
 
 	bool glyph_clicked = false;

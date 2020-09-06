@@ -20,8 +20,9 @@ struct text_edit : text
 
 	// glyphs' absolute positions
 	std::unique_ptr<NVGglyphPosition[]> glyphs;
+	int num_glyphs = 0;
 
-	int update_glyphs();
+	void update_glyphs();
 
 	void on_mouse_press();
 
