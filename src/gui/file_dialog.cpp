@@ -1,8 +1,13 @@
 #include "file_dialog.h"
 
+#include "../include_glfw.h"
+#include "../input/events.h"
 #include "button.h"
 #include "scroll_view.h"
 #include "text.h"
+#include "text_edit.h"
+
+namespace fs = std::filesystem;
 
 file_dialog::file_dialog() :
 title(create_child<text>())
@@ -16,6 +21,18 @@ title(create_child<text>())
 	create_layout<gui::layout::box>();
 
 	// elements
+	{
+		auto& border = create_child<panel>();
+		border.min_size = {0,1};
+		border.expand[layout::horizontal] = true;
+	}
+	{
+		auto& bg = create_child<panel>();
+		bg.create_layout<gui::layout::box>();
+		bg.color = NVGcolor{0.15,0.15,0.15,1};
+
+		path_field = &bg.create_child<text_edit>();
+	}
 	{
 		auto& border = create_child<panel>();
 		border.min_size = {0,1};
@@ -41,13 +58,25 @@ title(create_child<text>())
 	}
 }
 
-void file_dialog::pick_file(std::filesystem::path dir, std::function<void(std::filesystem::path)> callback)
+void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback)
 {
+	auto canon = fs::canonical(dir);
+
+	path_field->set_text(canon.string());
+
+	context->input_manager.subscribe<input::event::key_press>(path_field, [this, callback](std::any&& args) {
+		auto const& [key, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+		path_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
+
+		if(key == GLFW_KEY_ENTER && fs::exists(path_field->str))
+			pick_file(path_field->str, callback);
+	});
+
 	title.set_text("choose file...");
 
 	visible = true;
 
-	auto add_path = [&](std::filesystem::path const& path, std::string str = "")
+	auto add_path = [&](fs::path const& path, std::string str = "")
 	{
 		auto& btn = view->content.create_child<button>();
 		auto& txt = btn.create_child<text>();
@@ -57,7 +86,7 @@ void file_dialog::pick_file(std::filesystem::path dir, std::function<void(std::f
 			txt.set_text(str);
 
 		// display directory's content when clicked
-		if(std::filesystem::is_directory(path))
+		if(fs::is_directory(path))
 		{
 			btn.callback = [this, path, callback]{
 				pick_file(path, callback);
@@ -74,15 +103,14 @@ void file_dialog::pick_file(std::filesystem::path dir, std::function<void(std::f
 	view->content.children.clear();
 
 	// "go back" button
-	auto abs = std::filesystem::absolute(dir);
-	if(abs.has_parent_path())
+	if(canon.has_parent_path())
 	{
-		auto const parent = abs / "..";
+		auto const parent = canon / "..";
 		add_path(parent, "..");
 	}
 
 	// create representations for paths in the viewed directory
-	for(auto const& p : std::filesystem::directory_iterator(dir))
+	for(auto const& p : fs::directory_iterator(dir))
 	{
 		add_path(p.path());
 	}

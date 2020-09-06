@@ -5,6 +5,7 @@
 
 struct scroll_view;
 struct text;
+struct text_edit;
 
 /*
 
@@ -18,6 +19,7 @@ struct file_dialog : panel
 
 	text& title;
 	scroll_view* view;
+	text_edit* path_field;
 
 	file_dialog();
 
