@@ -48,6 +48,9 @@ void text_edit::update_glyphs()
 	nvgRestore(vg);
 
 	update_bounds();
+
+	if(cursor_pos > num_glyphs)
+		cursor_pos = num_glyphs;
 }
 
 void text_edit::on_mouse_press()
@@ -151,4 +154,10 @@ void text_edit::draw(NVGcontext* vg)
 		nvgStrokeWidth(vg, 1.0f);
 		nvgStroke(vg);
 	}
+}
+
+void text_edit::set_text(std::string const& new_str)
+{
+	text::set_text(new_str);
+	update_glyphs();
 }

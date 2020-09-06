@@ -31,4 +31,6 @@ struct text_edit : text
 	void on_character(unsigned codepoint);
 
 	void draw(NVGcontext* vg) override;
+
+	void set_text(std::string const& new_str) override;
 };
