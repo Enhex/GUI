@@ -6,6 +6,7 @@
 struct scroll_view;
 struct text;
 struct text_edit;
+struct button;
 
 /*
 
@@ -20,9 +21,13 @@ struct file_dialog : panel
 	text& title;
 	scroll_view* view;
 	text_edit* path_field;
+	text_edit* filename_field;
+	button* confirm;
 
 	file_dialog();
 
-	//
+	// only choose existing files
 	void pick_file(std::filesystem::path dir, std::function<void(std::filesystem::path)> callback);
+	// can enter new file name
+	void save_file(std::filesystem::path dir, std::function<void(std::filesystem::path)> callback);
 };

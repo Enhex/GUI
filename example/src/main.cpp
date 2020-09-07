@@ -252,7 +252,7 @@ int main()
 			el.color = el.background_color;
 
 			auto& label = el.create_child<text>();
-			label.set_text("file");
+			label.set_text("pick file");
 
 			el.child_layout->perform();
 			el.size = { 100,50 };
@@ -271,6 +271,32 @@ int main()
 		}
 		{
 			auto& el = app.root.create_child<button>();
+			el.position = { 500,150 };
+			el.background_color = nvgRGBA(80, 80, 80, 255);
+			el.hover_color = nvgRGBA(120, 120, 120, 255);
+			el.press_color = nvgRGBA(0, 120, 210, 255);
+			el.color = el.background_color;
+
+			auto& label = el.create_child<text>();
+			label.set_text("save file");
+
+			el.child_layout->perform();
+			el.size = { 100,50 };
+
+			auto& file_di = app.root.create_child<file_dialog>();
+			file_di.position = {100,160};
+			file_di.min_size = {400,400};
+			file_di.apply_min_size();
+
+			el.callback = [&]() {
+				std::cout << "button 2 clicked\n";
+				file_di.save_file("./", [](std::filesystem::path file){
+					std::cout << "saved file: " << file << "\n";
+				});
+			};
+		}
+		{
+			auto& el = app.root.create_child<button>();
 			el.position = { 540,205 };
 			el.background_color = nvgRGBA(80, 80, 80, 255);
 			el.hover_color = nvgRGBA(120, 120, 120, 255);
@@ -284,7 +310,7 @@ int main()
 			el.size = { 100,50 };
 
 			el.callback = [&]() {
-				std::cout << "button 2 clicked\n";
+				std::cout << "button 3 clicked\n";
 				toggle_el.visible = !toggle_el.visible;
 				root.child_layout->perform();
 			};
