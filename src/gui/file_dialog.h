@@ -19,6 +19,7 @@ struct file_dialog : panel
 	std::type_info const& type_info() const override { return typeid(file_dialog); }
 
 	text& title;
+	element& filename_container;
 	scroll_view* view;
 	text_edit* path_field;
 	text_edit* filename_field;

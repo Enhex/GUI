@@ -10,7 +10,8 @@
 namespace fs = std::filesystem;
 
 file_dialog::file_dialog() :
-title(create_child<text>())
+	title(create_child<text>()),
+	filename_container(create_child<element>())
 {
 	color = NVGcolor{0.2,0.2,0.2,1};
 
@@ -22,14 +23,15 @@ title(create_child<text>())
 
 	// elements
 	{
-		auto& horizontal_container = create_child<element>();
-		horizontal_container.create_layout<gui::layout::box>().orient = layout::horizontal;
+		filename_container.create_layout<gui::layout::box>().orient = layout::horizontal;
+		filename_container.expand[layout::horizontal] = true;
 
-		auto& txt = horizontal_container.create_child<text>();
+		auto& txt = filename_container.create_child<text>();
 		txt.set_text("file name: ");
 
-		auto& bg = horizontal_container.create_child<panel>();
+		auto& bg = filename_container.create_child<panel>();
 		bg.create_layout<gui::layout::box>();
+		bg.expand[layout::horizontal] = true;
 		bg.color = NVGcolor{0.15,0.15,0.15,1};
 
 		filename_field = &bg.create_child<text_edit>();
@@ -100,7 +102,7 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 	title.set_text("choose file...");
 
 	visible = true;
-	filename_field->visible = false;
+	filename_container.visible = false;
 	confirm->visible = false;
 
 	auto add_path = [&](fs::path const& path, std::string str = "")
@@ -160,7 +162,7 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 	title.set_text("save file...");
 
 	visible = true;
-	filename_field->visible = true;
+	filename_container.visible = true;
 	confirm->visible = true;
 
 	auto add_path = [&](fs::path const& path, std::string str = "")
