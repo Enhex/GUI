@@ -176,7 +176,7 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 		if(fs::is_directory(path))
 		{
 			btn.callback = [this, path, callback]{
-				pick_file(path, callback);
+				save_file(path, callback);
 			};
 		}
 		// set filename to clicked file
