@@ -317,6 +317,29 @@ int main()
 		}
 	}
 
+	// expanding child with layout test
+	{
+		auto& root = app.root.create_child<panel>();
+		root.color = nvgRGBA(60, 60, 60, 255);
+		root.create_layout<gui::layout::box>().orient;
+		root.position = {100, 500};
+		root.min_size = {80,100};
+
+		auto& container = root.create_child<element>();
+		container.create_layout<gui::layout::box>().orient = layout::horizontal;
+		container.expand[layout::horizontal] = true;
+
+		auto& label = container.create_child<text>();
+		label.set_text("function:  ");
+
+		auto& text_bg = container.create_child<panel>();
+		text_bg.color = nvgRGBA(0, 60, 180, 255);
+		text_bg.create_layout<gui::layout::box>().orient = layout::horizontal;
+		text_bg.expand[layout::horizontal] = true;
+
+		auto& name = text_bg.create_child<text_edit>();
+		name.expand[layout::horizontal] = true;
+	}
 
 	// test global event
 	app.input_manager.subscribe_global<input::event::key_press>(&app.root, [&app, &root](std::any&& args) {

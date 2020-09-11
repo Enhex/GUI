@@ -18,6 +18,7 @@ namespace layout
 		element_t* parent = nullptr;
 
 		virtual void fit() = 0;
+		virtual void expand(){};
 		virtual void lay() = 0;
 		virtual void perform() = 0;
 

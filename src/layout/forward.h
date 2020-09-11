@@ -12,20 +12,25 @@ namespace layout
 
 		void fit() override
 		{
-			auto& parent = *this->parent; // conformance: https://isocpp.org/wiki/faq/templates#nondependent-name-lookup-members
-
-			for (auto& child : parent.children)
+			for (auto& child : this->parent->children)
 			{
 				if (child->child_layout != nullptr)
 					child->child_layout->fit();
 			}
 		}
 
+		void expand() override
+		{
+			for (auto& child : this->parent->children)
+			{
+				if (child->child_layout != nullptr)
+					child->child_layout->expand();
+			}
+		}
+
 		void lay() override
 		{
-			auto& parent = *this->parent;
-
-			for (auto& child : parent.children)
+			for (auto& child : this->parent->children)
 			{
 				if (child->child_layout != nullptr)
 					child->child_layout->lay();
@@ -38,6 +43,7 @@ namespace layout
 			this->layout_start();
 
 			fit();
+			expand();
 			lay();
 
 			this->layout_complete();

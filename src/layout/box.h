@@ -18,16 +18,6 @@ namespace layout
 		// size, bottom-up (need to know the size of the children to fit around them)
 		void fit() override
 		{
-			/*			
-			- find expander size
-			- set expanders' size
-			- fit children (expanders don't shrink) 
-			- if element isn't an expander, set size to children's size (shrink). 
-			in fact if there's a single child expander, the element won't shrink.
-			*/
-
-			//TODO things can be pre-calcualted when adding/removing children
-
 			auto& parent = this->parent; // conformance: https://isocpp.org/wiki/faq/templates#nondependent-name-lookup-members
 			auto const non_orient = orient == horizontal ? vertical : horizontal;
 
@@ -35,6 +25,40 @@ namespace layout
 			float non_orient_max_size = std::max(parent->size.a[non_orient], parent->min_size.a[non_orient]);
 			// total children size on the orient axis
 			float children_size = 0;
+
+			std::vector<derived_element*> visible_children;
+			for (auto& child : parent->children) {
+				if(child->visible)
+					visible_children.emplace_back(child.get());
+			}
+
+			// apply child layout fit
+			for (auto& child : visible_children)
+			{
+				// reset expanders' size, so their expanded size won't be used.
+				if (child->expand[orient])
+					child->size.a[orient] = child->min_size.a[orient];
+				if (child->expand[non_orient])
+					child->size.a[non_orient] = child->min_size.a[non_orient];
+
+				if (child->child_layout != nullptr)
+					child->child_layout->fit();
+
+				children_size += child->size.a[orient];
+				non_orient_max_size = std::max(non_orient_max_size, child->size.a[non_orient]);
+			}
+
+			// set parent size
+			parent->size.a[orient] = std::max(parent->min_size.a[orient], children_size);
+			parent->size.a[non_orient] = non_orient_max_size; // already initialized with parent min_size
+		}
+
+		// after parent's size is known, children can expand inside it.
+		void expand() override
+		{
+			auto& parent = this->parent;
+			auto const non_orient = orient == horizontal ? vertical : horizontal;
+
 			// use the space taken by non-expanding children for the orient axis //TODO testing another option
 			float taken_space = 0;
 			// number of children that expand in the orient direction
@@ -49,17 +73,12 @@ namespace layout
 			for (auto& child : visible_children)
 			{
 				if (!child->expand[orient]) {
-					child->apply_min_size();
 					taken_space += child->size.a[orient];
 				}
 				else {
 					++num_expanders;
 				}
-
-				// sample child's size
-				non_orient_max_size = std::max(non_orient_max_size, child->size.a[non_orient]);
 			}
-
 
 			// expand children after the parent's size is known
 			auto const free_space = std::max(0.f, parent->size.a[orient] - taken_space);
@@ -68,30 +87,13 @@ namespace layout
 			for (auto& child : visible_children)
 			{
 				if (child->expand[orient])
-					child->size.a[orient] = std::max(child->min_size.a[orient], expander_size);
+					child->size.a[orient] = std::max(child->size.a[orient], expander_size);
 				if (child->expand[non_orient])
-					child->size.a[non_orient] = std::max(child->min_size.a[non_orient], parent->size.a[non_orient]);
-			}
-
-
-			// shrink non-expanding children
-			for (auto& child : visible_children)
-			{
-				if (child->child_layout != nullptr)
-					child->child_layout->fit();
+					child->size.a[non_orient] = std::max(child->size.a[non_orient], parent->size.a[non_orient]);
 				
-				children_size += child->size.a[orient];
+				if (child->child_layout != nullptr)
+					child->child_layout->expand();
 			}
-
-
-			// set parent size
-			if (num_expanders < 1) // only shrink if there are no expander children
-			{
-				if(!parent->expand[orient])
-					parent->size.a[orient] = std::max(parent->min_size.a[orient], children_size);
-			}
-			if(!parent->expand[non_orient]) // shrink around the biggest child if not expanding
-				parent->size.a[non_orient] = non_orient_max_size; // already started from min_size
 		}
 
 		// position, top-down (children need to know the parent's position to be relative to it)
@@ -124,6 +126,7 @@ namespace layout
 
 			// need to update size before updating position
 			fit();
+			expand();
 			lay();
 
 			this->layout_complete();
