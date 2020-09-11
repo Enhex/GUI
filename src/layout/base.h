@@ -5,10 +5,10 @@
 namespace layout
 {
 	// layout base class
-	template <typename element_derived>
+	template <typename derived_element>
 	struct base
 	{
-		using element_t = element<element_derived>;
+		using element_t = element<derived_element>;
 
 		virtual ~base() = default;
 
@@ -18,7 +18,30 @@ namespace layout
 		element_t* parent = nullptr;
 
 		virtual void fit() = 0;
-		virtual void expand(){};
+
+		// allow expanding inside elements by default
+		virtual void expand()
+		{
+			auto& parent = this->parent;
+
+			std::vector<derived_element*> visible_children;
+			for (auto& child : parent->children) {
+				if(child->visible)
+					visible_children.emplace_back(child.get());
+			}
+
+			for (auto& child : visible_children)
+			{
+				if (child->expand[0])
+					child->size.a[0] = std::max(child->size.a[0], parent->size.a[0]);
+				if (child->expand[1])
+					child->size.a[1] = std::max(child->size.a[1], parent->size.a[1]);
+
+				if (child->child_layout != nullptr)
+					child->child_layout->expand();
+			}
+		}
+
 		virtual void lay() = 0;
 		virtual void perform() = 0;
 

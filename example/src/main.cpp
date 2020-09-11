@@ -68,7 +68,7 @@ int main()
 		el.position = { 50,50 };
 		el.min_size = { 20,25 };
 		el.style = "green";
-		el.expand = { 1,0 }; // doesnt affect anything currently, just testing serialization
+		el.expand = { 0,0 };
 		el.create_layout<gui::layout::box>().orient = layout::horizontal;
 
 		auto& scissor_child = el.create_child<scissor>();
@@ -243,6 +243,11 @@ int main()
 
 	// button test
 	{
+		auto& file_di = app.root.create_child<file_dialog>();
+		file_di.position = {100,160};
+		file_di.min_size = {400,400};
+		file_di.apply_min_size();
+
 		{
 			auto& el = app.root.create_child<button>();
 			el.position = { 500,200 };
@@ -256,11 +261,6 @@ int main()
 
 			el.child_layout->perform();
 			el.size = { 100,50 };
-
-			auto& file_di = app.root.create_child<file_dialog>();
-			file_di.position = {100,160};
-			file_di.min_size = {400,400};
-			file_di.apply_min_size();
 
 			el.callback = [&]() {
 				std::cout << "button 1 clicked\n";
@@ -282,11 +282,6 @@ int main()
 
 			el.child_layout->perform();
 			el.size = { 100,50 };
-
-			auto& file_di = app.root.create_child<file_dialog>();
-			file_di.position = {100,160};
-			file_di.min_size = {400,400};
-			file_di.apply_min_size();
 
 			el.callback = [&]() {
 				std::cout << "button 2 clicked\n";

@@ -19,15 +19,6 @@ namespace layout
 			}
 		}
 
-		void expand() override
-		{
-			for (auto& child : this->parent->children)
-			{
-				if (child->child_layout != nullptr)
-					child->child_layout->expand();
-			}
-		}
-
 		void lay() override
 		{
 			for (auto& child : this->parent->children)
@@ -43,7 +34,7 @@ namespace layout
 			this->layout_start();
 
 			fit();
-			expand();
+			this->expand();
 			lay();
 
 			this->layout_complete();
