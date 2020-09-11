@@ -35,7 +35,7 @@ file_dialog::file_dialog() :
 		bg.color = NVGcolor{0.15,0.15,0.15,1};
 
 		filename_field = &bg.create_child<text_edit>();
-		X(filename_field->min_size) = 20; //TODO need to fix expand bug
+		filename_field->expand[layout::horizontal] = true;
 	}
 	{
 		auto& border = create_child<panel>();
@@ -46,10 +46,11 @@ file_dialog::file_dialog() :
 	{
 		auto& bg = create_child<panel>();
 		bg.create_layout<gui::layout::box>();
+		bg.expand[layout::horizontal] = true;
 		bg.color = NVGcolor{0.15,0.15,0.15,1};
 
 		path_field = &bg.create_child<text_edit>();
-		X(path_field->min_size) = 20; //TODO need to fix expand bug
+		path_field->expand[layout::horizontal] = true;
 	}
 	{
 		auto& border = create_child<panel>();
@@ -60,6 +61,7 @@ file_dialog::file_dialog() :
 	view = &create_child<scroll_view>();
 	view->expand = {true, true};
 	view->content.create_layout<gui::layout::box>();
+	view->content.expand[layout::horizontal] = true;
 
 	{
 		auto& border = create_child<panel>();
@@ -108,6 +110,8 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 	auto add_path = [&](fs::path const& path, std::string str = "")
 	{
 		auto& btn = view->content.create_child<button>();
+		btn.expand[layout::horizontal] = true;
+
 		auto& txt = btn.create_child<text>();
 		if(str.empty())
 			txt.set_text(path.filename().string());
@@ -168,6 +172,8 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 	auto add_path = [&](fs::path const& path, std::string str = "")
 	{
 		auto& btn = view->content.create_child<button>();
+		btn.expand[layout::horizontal] = true;
+
 		auto& txt = btn.create_child<text>();
 		if(str.empty())
 			txt.set_text(path.filename().string());
