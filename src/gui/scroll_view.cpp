@@ -25,6 +25,11 @@ scroll_view::scroll_view() :
 	// input
 	auto& input_manager = context->input_manager;
 	
+	input_manager.subscribe<input::event::scroll>(this, [&](std::any&& args) {
+		auto&[xoffset, yoffset] = std::any_cast<input::event::scroll::params&>(args);
+		move_content(scroll_step * yoffset);
+	});
+
 	input_manager.subscribe<input::event::mouse_press>(&scroll.scroll_up, [&](std::any&& args) {
 		move_content(scroll_step);
 	});

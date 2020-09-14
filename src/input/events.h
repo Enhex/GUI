@@ -53,7 +53,7 @@ namespace input
 			//using params = std::tuple<vector2 const&>;
 		};
 
-		struct mouse_release : base
+		struct mouse_press : base
 		{
 			static constexpr size_t id = 4;
 			size_t get_id() const { return id; }
@@ -62,7 +62,7 @@ namespace input
 			using params = std::tuple<int, int>;
 		};
 
-		struct mouse_press : base
+		struct mouse_release : base
 		{
 			static constexpr size_t id = 5;
 			size_t get_id() const { return id; }
@@ -71,9 +71,18 @@ namespace input
 			using params = std::tuple<int, int>;
 		};
 
-		struct character : base
+		struct scroll : base
 		{
 			static constexpr size_t id = 6;
+			size_t get_id() const { return id; }
+
+			// x offset, y offset
+			using params = std::tuple<double, double>;
+		};
+
+		struct character : base
+		{
+			static constexpr size_t id = 7;
 			size_t get_id() const { return id; }
 
 			// codepoint
@@ -82,7 +91,7 @@ namespace input
 
 		struct frame_start : base
 		{
-			static constexpr size_t id = 7;
+			static constexpr size_t id = 8;
 			size_t get_id() const { return id; }
 
 			// codepoint

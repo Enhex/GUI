@@ -108,6 +108,7 @@ void application::create_window(int width, int height, const char * title, GLFWm
 
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
+	glfwSetScrollCallback(window, scroll_callback);
 }
 
 void application::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
@@ -212,4 +213,10 @@ void application::mouse_button_callback(GLFWwindow * window, int button, int act
 	// reset pressed element after release event was sent, so the callback can know which element was pressed
 	if (event_id == event::mouse_release::id)
 		input_manager.pressed_element = nullptr;
+}
+
+void application::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
+	input_manager.send_event(input_manager.focused_element, input::event::scroll::id, std::tuple{ xoffset, yoffset });
 }
