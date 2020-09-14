@@ -14,6 +14,9 @@ namespace input
 
 		// try focused
 		send_focused_event(element, event_id, std::move(args));
+
+		// no focused callback was found, propagate into a global event
+		send_global_event(event_id, std::move(args));
 	}
 
 	void manager::send_focused_event(element* element, size_t event_id, std::any&& args)
@@ -31,8 +34,8 @@ namespace input
 			}
 		}
 
-		// no focused callback was found, propagate into a global event
-		send_global_event(event_id, std::move(args));
+		if(element && element->get_parent() != nullptr)
+			send_focused_event(element->get_parent(), event_id, std::move(args));
 	}
 
 	void manager::send_global_event(size_t event_id, std::any&& args)

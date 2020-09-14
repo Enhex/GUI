@@ -36,9 +36,14 @@ std::string const& element::get_id()
 	return id;
 }
 
+element* element::get_parent()
+{
+	return static_cast<element*>(parent);
+}
+
 // get absolute position. regular `position` variable being relative to the parent
 vector2 element::get_position() {
-	return parent != nullptr ? parent->get_position() + position : position;
+	return parent != nullptr ? get_parent()->get_position() + position : position;
 }
 
 bool element::is_inside(vector2 const& point) {

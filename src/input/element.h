@@ -19,5 +19,12 @@ namespace input
 {
 	struct element : dynamic_destructor
 	{
+		virtual element* get_parent()
+		{
+			return parent;
+		}
+
+	protected:
+		element* parent = nullptr;
 	};
 }

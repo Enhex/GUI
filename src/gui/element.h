@@ -23,8 +23,6 @@ struct element : layout::element<element>, input::element
 
 	inline static gui::context* context = nullptr;
 
-	element* parent = nullptr;
-
 	std::string style = element_name;
 
 protected:
@@ -38,6 +36,8 @@ public:
 	static element* get_by_id(std::string const& id);
 	void set_id(std::string_view const new_id);
 	std::string const& get_id();
+
+	element* get_parent();
 
 	// get absolute position. regular `position` variable being relative to the parent
 	vector2 get_position();

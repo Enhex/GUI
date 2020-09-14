@@ -218,5 +218,5 @@ void application::mouse_button_callback(GLFWwindow * window, int button, int act
 void application::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
-	input_manager.send_event(input_manager.focused_element, input::event::scroll::id, std::tuple{ xoffset, yoffset });
+	input_manager.send_event(input_manager.hovered_element, input::event::scroll::id, std::tuple{ xoffset, yoffset });
 }
