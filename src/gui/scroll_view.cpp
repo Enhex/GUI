@@ -55,7 +55,7 @@ scroll_view::scroll_view() :
 			stop_dragging(button);
 		});
 
-		input_manager.subscribe_global<input::event::mouse_release>(this, [&](std::any&& args) {
+		input_manager.subscribe_exclusive<input::event::mouse_release>([&](std::any&& args) {
 			auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
 			stop_dragging(button);
 		});
@@ -72,7 +72,7 @@ void scroll_view::stop_dragging(int const button)
 	// unsubscribe for optimization to not call callbacks needlessly when not dragging
 	auto& input_manager = context->input_manager;
 	input_manager.unsubscribe<input::event::mouse_release>(&scroll.handle);
-	input_manager.unsubscribe_global<input::event::mouse_release>(this);
+	input_manager.unsubscribe_exclusive<input::event::mouse_release>();
 	input_manager.unsubscribe_global<input::event::frame_start>(this);
 }
 

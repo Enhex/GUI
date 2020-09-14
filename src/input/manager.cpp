@@ -2,6 +2,20 @@
 
 namespace input
 {
+	void manager::send_event(element* element, size_t event_id, std::any&& args)
+	{
+		// try exclusive first
+		auto iter = exclusive_events.find(event_id);
+		if(iter != exclusive_events.end()) {
+				// call callback
+				iter->second(std::move(args));
+				return;
+		}
+
+		// try focused
+		send_focused_event(element, event_id, std::move(args));
+	}
+
 	void manager::send_focused_event(element* element, size_t event_id, std::any&& args)
 	{
 		// find element

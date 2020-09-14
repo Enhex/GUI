@@ -29,6 +29,8 @@ namespace input
 		//NOTE: while technically it isn't a requirement for a subscriber to be an element (unlike focused event which listens to the subscribing element's events), it's
 		// still useful for automatic unsubscription on destruction and unified API.
 		std::unordered_map<event_ID, std::unordered_map<element*, any_callback>> global_events;
+		// only one callback per event
+		std::unordered_map<event_ID, any_callback> exclusive_events;
 
 		// used to handle deleting subsription while iterating
 		element* active_callback_element = nullptr;
@@ -52,7 +54,7 @@ namespace input
 			focused_events[subscriber][Event::id] = std::move(callback);
 		}
 
-		// global
+		// global, when no specific element has focus.
 		template<typename Event>
 		void subscribe_global(element* subscriber, std::function<void(std::any&&)>&& callback)
 		{
@@ -68,6 +70,17 @@ namespace input
 
 			// subscribe
 			event[subscriber] = std::move(callback);
+		}
+
+		// return false if the event already has exclusive subscription
+		template<typename Event>
+		bool subscribe_exclusive(std::function<void(std::any&&)>&& callback)
+		{
+			if(exclusive_events.count(Event::id) != 0)
+				return false;
+
+			exclusive_events[Event::id] = callback;
+			return true;
 		}
 
 		// focused
@@ -96,6 +109,14 @@ namespace input
 			}
 		}
 
+		// exclusive
+		template<typename Event>
+		void unsubscribe_exclusive()
+		{
+			exclusive_events.erase(Event::id);
+		}
+
+		void send_event(element* element, size_t event_id, std::any&& args);
 
 		void send_focused_event(element* element, size_t event_id, std::any&& args);
 

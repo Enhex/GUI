@@ -125,24 +125,14 @@ void application::key_callback(GLFWwindow * window, int key, int scancode, int a
 		return input::event::invalid_id;
 	}();
 
-	if (input_manager.focused_element != nullptr) {
-		input_manager.send_focused_event(input_manager.focused_element, event_id, std::tuple{ key, mods });
-	}
-	else {
-		input_manager.send_global_event(event_id, std::tuple{ key, mods });
-	}
+	input_manager.send_event(input_manager.focused_element, event_id, std::tuple{ key, mods });
 }
 
 void application::character_callback(GLFWwindow * window, unsigned int codepoint)
 {
 	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
 
-	if (input_manager.focused_element != nullptr) {
-		input_manager.send_focused_event(input_manager.focused_element, input::event::character::id, std::tuple{ codepoint });
-	}
-	else {
-		input_manager.send_global_event(input::event::character::id, std::tuple { codepoint });
-	}
+	input_manager.send_event(input_manager.focused_element, input::event::character::id, std::tuple{ codepoint });
 }
 
 void application::cursor_pos_callback(GLFWwindow * window, double xpos, double ypos)
@@ -215,12 +205,9 @@ void application::mouse_button_callback(GLFWwindow * window, int button, int act
 
 		if(event_id == event::mouse_press::id)
 			input_manager.pressed_element = input_manager.hovered_element;
+	}
 
-		input_manager.send_focused_event(input_manager.hovered_element, event_id, std::tuple{ button, mods });
-	}
-	else {
-		input_manager.send_global_event(event_id, std::tuple{ button, mods });
-	}
+	input_manager.send_event(input_manager.hovered_element, event_id, std::tuple{ button, mods });
 
 	// reset pressed element after release event was sent, so the callback can know which element was pressed
 	if (event_id == event::mouse_release::id)
