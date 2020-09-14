@@ -10,7 +10,7 @@ framework - uses the GUI system, and provides the needed functionality to create
 
 # Building
 
-This project uses Conan + Premake setup.
+This project uses [Conan](https://conan.io/) + [Premake](https://github.com/premake/premake-core) setup.
 Make sure they're installed and run `python ./build-debug.py` (or `build-release.py`).
 
 The build scripts are configured to use Visual Studio generator on Windows and [Visual Studio Code](https://github.com/Enhex/premake-vscode) on Linux.
