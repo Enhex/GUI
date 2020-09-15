@@ -318,13 +318,15 @@ int main()
 		root.color = nvgRGBA(60, 60, 60, 255);
 		root.create_layout<gui::layout::box>().orient;
 		root.position = {100, 600};
-		root.min_size = {80,100};
+		root.min_size = {85,100};
 
 		auto& container = root.create_child<element>();
 		container.create_layout<gui::layout::box>().orient = layout::horizontal;
 		container.expand[layout::horizontal] = true;
 
-		auto& label = container.create_child<text>();
+		auto& border_ = container.create_child<border>();
+		border_.set_color({1.f, 0.f, 0.f, 1.f});
+		auto& label = border_.content.create_child<text>();
 		label.set_text("function:  ");
 
 		auto& text_bg = container.create_child<panel>();

@@ -145,12 +145,7 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 void application::update_hoevered_element()
 {
 	/*TODO
-	- hover event
-		- start with brute force search
-		- hover start:
-		hovered element isn't the same as the last hovered element
-		- hover end:
-		hovered element
+	- spatial partitioning to optimize search
 	*/
 
 	// recursively search for the leaf-most element that the mouse fits inside.
