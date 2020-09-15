@@ -28,7 +28,7 @@ namespace input
 
 		struct key_repeat : base
 		{
-			static constexpr size_t id = 7;
+			static constexpr size_t id = 2;
 			size_t get_id() const { return id; }
 
 			// key, mods
@@ -37,7 +37,7 @@ namespace input
 
 		struct hover_start : base
 		{
-			static constexpr size_t id = 2;
+			static constexpr size_t id = 3;
 			size_t get_id() const { return id; }
 
 			// mouse_position
@@ -46,7 +46,7 @@ namespace input
 
 		struct hover_end : base
 		{
-			static constexpr size_t id = 3;
+			static constexpr size_t id = 4;
 			size_t get_id() const { return id; }
 
 			// mouse_position
@@ -55,7 +55,7 @@ namespace input
 
 		struct mouse_press : base
 		{
-			static constexpr size_t id = 4;
+			static constexpr size_t id = 5;
 			size_t get_id() const { return id; }
 
 			// button, mods
@@ -64,7 +64,7 @@ namespace input
 
 		struct mouse_release : base
 		{
-			static constexpr size_t id = 5;
+			static constexpr size_t id = 6;
 			size_t get_id() const { return id; }
 
 			// button, mods
@@ -73,7 +73,7 @@ namespace input
 
 		struct scroll : base
 		{
-			static constexpr size_t id = 6;
+			static constexpr size_t id = 7;
 			size_t get_id() const { return id; }
 
 			// x offset, y offset
@@ -82,7 +82,7 @@ namespace input
 
 		struct character : base
 		{
-			static constexpr size_t id = 7;
+			static constexpr size_t id = 8;
 			size_t get_id() const { return id; }
 
 			// codepoint
@@ -91,7 +91,7 @@ namespace input
 
 		struct frame_start : base
 		{
-			static constexpr size_t id = 8;
+			static constexpr size_t id = 9;
 			size_t get_id() const { return id; }
 
 			// codepoint
