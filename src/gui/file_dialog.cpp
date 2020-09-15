@@ -13,7 +13,7 @@ file_dialog::file_dialog() :
 	title(create_child<text>()),
 	filename_container(create_child<element>())
 {
-	color = NVGcolor{0.2,0.2,0.2,1};
+	color = NVGcolor{0.2f,0.2f,0.2f,1.f};
 
 	style = element_name;
 	apply_style();
@@ -190,7 +190,7 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 		// set filename to clicked file
 		else {
 			btn.callback = [this, path, callback]{
-				filename_field->set_text(path.filename());
+				filename_field->set_text(path.filename().string());
 			};
 		}
 	};
