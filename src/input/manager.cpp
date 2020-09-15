@@ -34,7 +34,7 @@ namespace input
 			}
 		}
 
-		if(element && element->get_parent() != nullptr)
+		if(element != nullptr && element->get_parent() != nullptr)
 			send_focused_event(element->get_parent(), event_id, std::move(args));
 	}
 
@@ -80,5 +80,12 @@ namespace input
 	decltype(manager::focused_events) const& manager::get_focused_events()
 	{
 		return focused_events;
+	}
+	
+	void manager::on_element_delete(element& element)
+	{
+		if (hovered_element == &element) {
+			set_hovered_element(nullptr);
+		}
 	}
 }

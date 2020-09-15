@@ -11,6 +11,8 @@ element::element()
 
 element::~element()
 {
+	context->input_manager.on_element_delete(*this);
+
 	id_to_element.erase(id);
 }
 

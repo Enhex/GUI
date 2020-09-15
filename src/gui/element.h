@@ -37,7 +37,7 @@ public:
 	void set_id(std::string_view const new_id);
 	std::string const& get_id();
 
-	element* get_parent();
+	element* get_parent() override;
 
 	// get absolute position. regular `position` variable being relative to the parent
 	vector2 get_position();

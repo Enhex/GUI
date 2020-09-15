@@ -126,5 +126,7 @@ namespace input
 		void set_hovered_element(element* new_element);
 
 		decltype(focused_events) const& get_focused_events();
+
+		void on_element_delete(element& element);
 	};
 }
