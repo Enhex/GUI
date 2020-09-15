@@ -87,5 +87,13 @@ namespace input
 		if (hovered_element == &element) {
 			set_hovered_element(nullptr);
 		}
+
+		if (focused_element == &element) {
+			focused_element = nullptr;
+		}
+
+		if (pressed_element == &element) {
+			pressed_element = nullptr;
+		}
 	}
 }
