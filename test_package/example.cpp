@@ -1,7 +1,7 @@
 #include <string>
-#include <gui/gui.h>
+#include <framework/application.h>
 
 int main() {
-	panel pnl;
-	pnl.color = nvgRGBA(0,0,0,0);
+	application app(100, 100, "example", nullptr, nullptr);
+	element::context = &app;
 }
