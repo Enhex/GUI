@@ -9,6 +9,7 @@
 #include "../layout/element.h"
 
 #include <deco/Deco.h>
+#include <deco/list.h>
 #include <deco/types/arithmetic.h>
 
 static std::map<std::string, std::type_info const&> style_properties{
