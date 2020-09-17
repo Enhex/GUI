@@ -16,6 +16,8 @@ application::application(int width, int height, const char* title, GLFWmonitor* 
 	root.min_size = { (float)width, (float)height };
 
 	vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
+
+	element::context = this;
 }
 
 application::~application()

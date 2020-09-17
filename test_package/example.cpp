@@ -3,5 +3,4 @@
 
 int main() {
 	application app(100, 100, "example", nullptr, nullptr);
-	element::context = &app;
 }

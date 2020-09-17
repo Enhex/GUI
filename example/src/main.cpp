@@ -18,7 +18,6 @@ auto random_color() {
 int main()
 {
 	application app(window_width, window_height, "GUI example", nullptr, nullptr);
-	element::context = &app;
 
 	auto& vg = app.vg;
 
