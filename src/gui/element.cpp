@@ -11,6 +11,10 @@ element::element()
 
 element::~element()
 {
+	for(auto& child : children) {
+		child->parent = nullptr;
+	}
+
 	context->input_manager.on_element_delete(*this);
 
 	id_to_element.erase(id);
