@@ -19,7 +19,7 @@ namespace input
 		send_global_event(event_id, std::move(args));
 	}
 
-	void manager::send_focused_event(element* element, size_t event_id, std::any&& args)
+	element* manager::send_focused_event(element* element, size_t event_id, std::any&& args)
 	{
 		// find element
 		auto iter = focused_events.find(element);
@@ -30,12 +30,14 @@ namespace input
 			if (event_iter != subscribed_events.end()) {
 				// call callback
 				event_iter->second(std::move(args));
-				return;
+				return element;
 			}
 		}
 
 		if(element != nullptr && element->get_parent() != nullptr)
-			send_focused_event(element->get_parent(), event_id, std::move(args));
+			return send_focused_event(element->get_parent(), event_id, std::move(args));
+		
+		return nullptr;
 	}
 
 	void manager::send_global_event(size_t event_id, std::any&& args)
@@ -85,11 +87,10 @@ namespace input
 			if(focused_element != nullptr)
 				send_focused_event(focused_element, event::focus_end::id, {});
 
-			focused_element = new_element;
-
-			// focus start event
-			if (focused_element != nullptr)
-				send_focused_event(focused_element, event::focus_start::id, {});
+			// focus start event.
+			// focus on the element that's subscribed to focus_start
+			if (new_element != nullptr)
+				focused_element = send_focused_event(new_element, event::focus_start::id, {});
 		}
 	}
 

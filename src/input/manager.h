@@ -118,7 +118,8 @@ namespace input
 
 		void send_event(element* element, size_t event_id, std::any&& args);
 
-		void send_focused_event(element* element, size_t event_id, std::any&& args);
+		// return the element that captured the event
+		element* send_focused_event(element* element, size_t event_id, std::any&& args);
 
 		void send_global_event(size_t event_id, std::any&& args);
 
