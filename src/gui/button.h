@@ -16,4 +16,7 @@ struct button : panel
 	button();
 
 	void set_style(style::style_t const& style) override;
+
+protected:
+	bool is_pressed = false;
 };

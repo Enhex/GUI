@@ -19,12 +19,14 @@ button::button()
 
 	input_manager.subscribe<input::event::mouse_press>(this, [this](std::any&& args) {
 		color = press_color;
+		is_pressed = true;
 	});
 
 	input_manager.subscribe<input::event::mouse_release>(this, [this, &input_manager](std::any&& args) {
 		color = hover_color;
 		//execute callback if the button was pressed before release event
-		if (input_manager.pressed_element == this) {
+		if (is_pressed) {
+			is_pressed = false;
 			if(callback)
 				callback();
 		}

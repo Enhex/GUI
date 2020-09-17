@@ -164,9 +164,7 @@ void application::update_hoevered_element()
 					return true;
 			}
 
-			auto const& focused_events = input_manager.get_focused_events();
-			if (focused_events.find(el) != focused_events.end() &&	// if the element doesn't do something with the event, propagate it to the parent.
-				el->is_inside(input_manager.mouse_pos)) {
+			if (el->is_inside(input_manager.mouse_pos)) {
 				input_manager.set_hovered_element(el);
 				return true;
 			}
