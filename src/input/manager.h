@@ -124,6 +124,7 @@ namespace input
 
 
 		void set_hovered_element(element* new_element);
+		void set_focused_element(element* new_element);
 
 		decltype(focused_events) const& get_focused_events();
 

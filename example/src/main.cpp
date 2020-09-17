@@ -337,6 +337,33 @@ int main()
 		name.expand[layout::horizontal] = true;
 	}
 
+	// focus event test
+	{
+		auto& root = app.root.create_child<panel>();
+		root.color = nvgRGBA(60, 60, 60, 255);
+		root.create_layout<gui::layout::box>().orient;
+		root.position = {300, 600};
+		root.min_size = {80,80};
+
+		auto& text_bg = root.create_child<panel>();
+		text_bg.color = nvgRGBA(0, 60, 180, 255);
+		text_bg.create_layout<gui::layout::box>().orient = layout::horizontal;
+		X(text_bg.min_size) = 60;
+
+		auto& name = text_bg.create_child<text>();
+		name.set_text("focus");
+
+		app.input_manager.subscribe<input::event::focus_start>(&root, [&](std::any&& args) {
+			root.color = nvgRGBA(255,0,0,255);
+			std::cout << "focus start\n";
+		});
+
+		app.input_manager.subscribe<input::event::focus_end>(&root, [&](std::any&& args) {
+			root.color = nvgRGBA(0,255,0,255);
+			std::cout << "focus end\n";
+		});
+	}
+
 	// test global event
 	app.input_manager.subscribe_global<input::event::key_press>(&app.root, [&app, &root](std::any&& args) {
 		auto&[key, mods] = std::any_cast<input::event::key_press::params&>(args);

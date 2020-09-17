@@ -77,6 +77,22 @@ namespace input
 		}
 	}
 
+	void manager::set_focused_element(element* new_element)
+	{
+		if (new_element != focused_element)
+		{
+			// focus end event
+			if(focused_element != nullptr)
+				send_focused_event(focused_element, event::focus_end::id, {});
+
+			focused_element = new_element;
+
+			// focus start event
+			if (focused_element != nullptr)
+				send_focused_event(focused_element, event::focus_start::id, {});
+		}
+	}
+
 	decltype(manager::focused_events) const& manager::get_focused_events()
 	{
 		return focused_events;
@@ -89,7 +105,7 @@ namespace input
 		}
 
 		if (focused_element == &element) {
-			focused_element = nullptr;
+			set_focused_element(nullptr);
 		}
 
 		if (pressed_element == &element) {

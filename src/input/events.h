@@ -94,7 +94,22 @@ namespace input
 			static constexpr size_t id = 9;
 			size_t get_id() const { return id; }
 
-			// codepoint
+			using params = std::tuple<>;
+		};
+
+		struct focus_start : base
+		{
+			static constexpr size_t id = 10;
+			size_t get_id() const { return id; }
+
+			using params = std::tuple<>;
+		};
+
+		struct focus_end : base
+		{
+			static constexpr size_t id = 11;
+			size_t get_id() const { return id; }
+
 			using params = std::tuple<>;
 		};
 	}

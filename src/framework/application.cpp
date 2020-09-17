@@ -197,7 +197,7 @@ void application::mouse_button_callback(GLFWwindow * window, int button, int act
 
 	if (input_manager.hovered_element != nullptr) {
 		//TODO allow controlling if an element auto gains focus on click
-		input_manager.focused_element = input_manager.hovered_element;
+		input_manager.set_focused_element(input_manager.hovered_element);
 
 		if(event_id == event::mouse_press::id)
 			input_manager.pressed_element = input_manager.hovered_element;
