@@ -23,6 +23,9 @@ text_edit::text_edit()
 		auto&[codepoint] = std::any_cast<input::event::character::params&>(args);
 		on_character(codepoint);
 	});
+
+	// subscribe so text_edit will be able to capture focus
+	input_manager.subscribe<input::event::focus_start>(this, [this](std::any&& args) {});
 }
 
 size_t cursor_pos = 0;
