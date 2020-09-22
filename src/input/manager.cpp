@@ -91,6 +91,8 @@ namespace input
 			// focus on the element that's subscribed to focus_start
 			if (new_element != nullptr)
 				focused_element = send_focused_event(new_element, event::focus_start::id, {});
+			else
+				focused_element = nullptr;
 		}
 	}
 
