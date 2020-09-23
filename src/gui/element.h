@@ -33,6 +33,9 @@ public:
 	element();
 	virtual ~element();
 
+	// self remove
+	void remove();
+
 	static element* get_by_id(std::string const& id);
 	void set_id(std::string_view const new_id);
 	std::string const& get_id();

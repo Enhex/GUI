@@ -20,6 +20,20 @@ element::~element()
 	id_to_element.erase(id);
 }
 
+void element::remove()
+{
+	// keep a copy of the parent pointer because it needs to be set to null before deleting
+	auto temp_parent = get_parent();
+	parent = nullptr;
+
+	for(auto iter = temp_parent->children.begin(); iter != temp_parent->children.end(); ++iter)
+	{
+		if(iter->get() == this) {
+			temp_parent->children.erase(iter);
+			return;
+		}
+	}
+}
 element* element::get_by_id(std::string const& id)
 {
 	auto iter = id_to_element.find(id);
