@@ -94,6 +94,15 @@ file_dialog::file_dialog() :
 		auto& txt = confirm->create_child<text>();
 		txt.set_text("confirm");
 	}
+
+	// events
+	context->input_manager.subscribe<input::event::key_press>(filename_field, [this](std::any&& args) {
+		auto const& [key, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+		filename_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
+
+		if(key == GLFW_KEY_ENTER)
+			confirm->callback();
+	});
 }
 
 void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback, fs::path extension)
