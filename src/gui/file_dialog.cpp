@@ -96,18 +96,18 @@ file_dialog::file_dialog() :
 	}
 }
 
-void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback)
+void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback, fs::path extension)
 {
 	auto canon = fs::canonical(dir);
 
 	path_field->set_text(canon.string());
 
-	context->input_manager.subscribe<input::event::key_press>(path_field, [this, callback](std::any&& args) {
+	context->input_manager.subscribe<input::event::key_press>(path_field, [this, callback, extension](std::any&& args) {
 		auto const& [key, mods] = std::any_cast<input::event::mouse_press::params&>(args);
 		path_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
 
 		if(key == GLFW_KEY_ENTER && fs::exists(path_field->str))
-			pick_file(path_field->str, callback);
+			pick_file(path_field->str, callback, extension);
 	});
 
 	title.set_text("choose file...");
@@ -154,22 +154,23 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 	// create representations for paths in the viewed directory
 	for(auto const& p : fs::directory_iterator(dir))
 	{
-		add_path(p.path());
+		if(extension.empty() || fs::is_directory(p.path()) || p.path().extension() == extension)
+			add_path(p.path());
 	}
 }
 
-void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback)
+void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback, fs::path extension)
 {
 	auto canon = fs::canonical(dir);
 
 	path_field->set_text(canon.string());
 
-	context->input_manager.subscribe<input::event::key_press>(path_field, [this, callback](std::any&& args) {
+	context->input_manager.subscribe<input::event::key_press>(path_field, [this, callback, extension](std::any&& args) {
 		auto const& [key, mods] = std::any_cast<input::event::mouse_press::params&>(args);
 		path_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
 
 		if(key == GLFW_KEY_ENTER && fs::exists(path_field->str))
-			pick_file(path_field->str, callback);
+			save_file(path_field->str, callback, extension);
 	});
 
 	title.set_text("save file...");
@@ -216,11 +217,17 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 	// create representations for paths in the viewed directory
 	for(auto const& p : fs::directory_iterator(dir))
 	{
-		add_path(p.path());
+		if(extension.empty() || fs::is_directory(p.path()) || p.path().extension() == extension)
+			add_path(p.path());
 	}
 	
-	confirm->callback = [this, canon, callback]{
+	confirm->callback = [this, canon, callback, extension]{
 		visible = false;
-		callback(canon / filename_field->str);
+
+		fs::path filename = filename_field->str;
+		if(filename.extension() != extension)
+			filename += extension;
+
+		callback(canon / filename);
 	};
 }

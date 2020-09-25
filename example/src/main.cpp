@@ -286,7 +286,7 @@ int main()
 				std::cout << "button 2 clicked\n";
 				file_di.save_file("./", [](std::filesystem::path file){
 					std::cout << "saved file: " << file << "\n";
-				});
+				}, ".txt");
 			};
 		}
 		{
