@@ -71,7 +71,12 @@ file_dialog::file_dialog() :
 	
 	auto& horizontal_container = create_child<element>();
 	horizontal_container.create_layout<gui::layout::box>().orient = layout::horizontal;
+	horizontal_container.expand[layout::horizontal] = true;
 
+	{
+		auto& spacer = horizontal_container.create_child<element>();
+		spacer.expand[layout::horizontal] = true;
+	}
 	{
 		auto& cancel = horizontal_container.create_child<button>();
 		auto& txt = cancel.create_child<text>();
@@ -79,6 +84,10 @@ file_dialog::file_dialog() :
 		cancel.callback = [this]{
 			visible = false;
 		};
+	}
+	{
+		auto& spacer = horizontal_container.create_child<element>();
+		X(spacer.min_size) = 5;
 	}
 	{
 		confirm = &horizontal_container.create_child<button>();
