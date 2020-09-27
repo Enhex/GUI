@@ -39,12 +39,21 @@ namespace layout
 				if (child->child_layout != nullptr)
 					child->child_layout->perform();
 
+				// prevent expanding children from blowing up the size
+				auto non_expand_size = child->min_size;
+				if(child->expand[layout::horizontal] == false)
+					X(non_expand_size) = X(child->size);
+				if(child->expand[layout::vertical] == false)
+					Y(non_expand_size) = Y(child->size);
+
 				// fit around the child
-				if(shrink_position)
-					parent_rect.merge(*child);
+				if(shrink_position) {
+					parent_rect.merge(child->position);
+					parent_rect.merge(non_expand_size);
+				}
 				else {
-					X(parent_rect.size) = std::max(X(parent_rect.size), X(child->size) + X(child->position));
-					Y(parent_rect.size) = std::max(Y(parent_rect.size), Y(child->size) + Y(child->position));
+					X(parent_rect.size) = std::max(X(parent_rect.size), X(non_expand_size) + X(child->position));
+					Y(parent_rect.size) = std::max(Y(parent_rect.size), Y(non_expand_size) + Y(child->position));
 				}
 			}
 

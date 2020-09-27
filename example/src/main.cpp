@@ -151,6 +151,7 @@ int main()
 			auto& p1 = sv.content.create_child<panel>();
 			p1.position = { 50, 50 };
 			p1.min_size = { 440, 50 };
+			p1.expand[layout::horizontal] = true;
 			p1.color = random_color();
 			auto& p2 = sv.content.create_child<panel>();
 			p2.position = { 490, 50 };
