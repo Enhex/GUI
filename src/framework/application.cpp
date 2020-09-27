@@ -111,6 +111,7 @@ void application::create_window(int width, int height, const char * title, GLFWm
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetScrollCallback(window, scroll_callback);
+	glfwSetWindowSizeCallback(window, window_size_callback);
 }
 
 void application::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
@@ -214,4 +215,10 @@ void application::scroll_callback(GLFWwindow* window, double xoffset, double yof
 {
 	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
 	input_manager.send_event(input_manager.hovered_element, input::event::scroll::id, std::tuple{ xoffset, yoffset });
+}
+
+void application::window_size_callback(GLFWwindow* window, int width, int height)
+{
+	// use a callback to avoid resizing every frame, which is useful if layout is only updated when needed.
+	static_cast<application*>(glfwGetWindowUserPointer(window))->root.size = {(float)width, (float)height};
 }
