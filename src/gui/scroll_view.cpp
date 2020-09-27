@@ -123,9 +123,15 @@ void scroll_view::update_handle_size(layout::orientation const orient)
 
 void scroll_view::update_handle_position(layout::orientation const orient)
 {
-	auto const content_position_fraction = (content.position.a[orient] * -1) / get_scroll_length(orient);
-	auto const handle_position_size = scroll[orient]->track.size.a[orient] - scroll[orient]->handle.size.a[orient]; // handle need to be stopped before it goes outside the track
-	scroll[orient]->handle.position.a[orient] = handle_position_size * content_position_fraction;
+	auto const scroll_length = get_scroll_length(orient);
+	if(scroll_length > 0) {
+		auto const content_position_fraction = (content.position.a[orient] * -1) / scroll_length;
+		auto const handle_position_size = scroll[orient]->track.size.a[orient] - scroll[orient]->handle.size.a[orient]; // handle need to be stopped before it goes outside the track
+		scroll[orient]->handle.position.a[orient] = handle_position_size * content_position_fraction;
+	}
+	else {
+		scroll[orient]->handle.position.a[orient] = 0.f; // no space for moving the handle, so keep it at the start
+	}
 }
 
 void scroll_view::post_layout()
