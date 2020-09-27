@@ -16,5 +16,5 @@ struct scrollbar : element
 	button& handle;
 	button& scroll_down;
 
-	scrollbar();
+	scrollbar(layout::orientation const orient);
 };

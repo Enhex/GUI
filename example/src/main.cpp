@@ -146,15 +146,29 @@ int main()
 		auto& sv = root.create_child<scroll_view>();
 		sv.expand = {true, true};
 
-		auto& p1 = sv.content.create_child<panel>();
-		p1.position = { 50, 50 };
-		p1.min_size = { 50, 440 };
-		p1.color = random_color();
+		// horizontal
+		{
+			auto& p1 = sv.content.create_child<panel>();
+			p1.position = { 50, 50 };
+			p1.min_size = { 440, 50 };
+			p1.color = random_color();
+			auto& p2 = sv.content.create_child<panel>();
+			p2.position = { 490, 50 };
+			p2.min_size = { 10, 50 };
+			p2.color = random_color();
+		}
 
-		auto& p2 = sv.content.create_child<panel>();
-		p2.position = { 50, 490 };
-		p2.min_size = { 50, 10 };
-		p2.color = random_color();
+		// vertical
+		{
+			auto& p1 = sv.content.create_child<panel>();
+			p1.position = { 50, 50 };
+			p1.min_size = { 50, 440 };
+			p1.color = random_color();
+			auto& p2 = sv.content.create_child<panel>();
+			p2.position = { 50, 490 };
+			p2.min_size = { 50, 10 };
+			p2.color = random_color();
+		}
 
 		auto& t1 = sv.content.create_child<text>();
 		t1.setup(font, 25, "scroll view");

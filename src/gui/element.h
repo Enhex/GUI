@@ -52,7 +52,7 @@ public:
 	void apply_style();
 
 	template<typename T, typename... Args>
-	T& create_child(Args&... args) {
+	T& create_child(Args&&... args) {
 		auto& child = emplace_back_derived<T>(children, args...);
 		child.parent = this;
 		return child;

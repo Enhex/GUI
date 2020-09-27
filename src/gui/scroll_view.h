@@ -16,9 +16,10 @@ struct scroll_view : element
 
 	std::type_info const& type_info() const override { return typeid(scroll_view); }
 
+	element& vertical_container;
 	scissor& view;
 	element& content; // used to move all the elements inside the view
-	scrollbar& scroll;
+	std::array<scrollbar*, layout::orientation::count> scroll;
 
 	float scroll_step = 50;
 
@@ -27,15 +28,17 @@ struct scroll_view : element
 
 	scroll_view();
 
-	void stop_dragging(int const button);
+	void subscribe_scroll_events(layout::orientation const orient);
 
-	float get_scroll_length() const;
+	void stop_dragging(layout::orientation const orient, int const button);
 
-	void move_content(float change);
+	float get_scroll_length(layout::orientation const orient) const;
 
-	void update_handle_size();
+	void move_content(layout::orientation const orient, float change);
 
-	void update_handle_position();
+	void update_handle_size(layout::orientation const orient);
+
+	void update_handle_position(layout::orientation const orient);
 
 	void post_layout() override;
 };
