@@ -89,6 +89,10 @@ namespace deco
 			auto& child_element = parent.create_child<text_edit>();
 			read(entry, child_element);
 		}
+		if (name == scroll_view::element_name) {
+			auto& child_element = parent.create_child<scroll_view>();
+			read(entry, child_element);
+		}
 	}
 
 	void read(deco::EntryObject& entry, element& value)
@@ -138,6 +142,11 @@ namespace deco
 	}
 
 	void read(deco::EntryObject & entry, scissor & value)
+	{
+		read(entry, static_cast<element&>(value));
+	}
+
+	void read(deco::EntryObject & entry, scroll_view & value)
 	{
 		read(entry, static_cast<element&>(value));
 	}
