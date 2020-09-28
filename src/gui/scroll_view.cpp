@@ -117,8 +117,8 @@ void scroll_view::move_content(layout::orientation const orient, float change)
 
 void scroll_view::update_handle_size(layout::orientation const orient)
 {
-	scroll[orient]->handle.min_size.a[orient] = scroll[orient]->track.size.a[orient] * std::min(1.f, view.size.a[orient] / content.size.a[orient]);
-	scroll[orient]->handle.apply_min_size();
+	auto& handle = scroll[orient]->handle;
+	handle.size.a[orient] = handle.min_size.a[orient] = scroll[orient]->track.size.a[orient] * std::min(1.f, view.size.a[orient] / content.size.a[orient]);
 }
 
 void scroll_view::update_handle_position(layout::orientation const orient)
