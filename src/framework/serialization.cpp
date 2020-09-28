@@ -114,6 +114,9 @@ namespace deco
 				auto& child_layout = value.create_layout<gui::layout::box>();
 				read(entry, child_layout);
 			}
+			else if (name == "layout-shrink") {
+				value.create_layout<gui::layout::shrink>();
+			}
 			else if (name == "expand")
 			{
 				auto read_bool = [&](uint_fast8_t i)
