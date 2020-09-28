@@ -220,5 +220,6 @@ void application::scroll_callback(GLFWwindow* window, double xoffset, double yof
 void application::window_size_callback(GLFWwindow* window, int width, int height)
 {
 	// use a callback to avoid resizing every frame, which is useful if layout is only updated when needed.
-	static_cast<application*>(glfwGetWindowUserPointer(window))->root.size = {(float)width, (float)height};
+	auto& root = static_cast<application*>(glfwGetWindowUserPointer(window))->root;
+	root.size = root.min_size = {(float)width, (float)height};
 }
