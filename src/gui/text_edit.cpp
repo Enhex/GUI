@@ -1,6 +1,7 @@
 #include "text_edit.h"
 
 #include "../include_glfw.h"
+#include "../framework/application.h"
 
 text_edit::text_edit()
 {
@@ -119,6 +120,16 @@ void text_edit::on_key_press(int key, int mods)
 	case GLFW_KEY_RIGHT:
 		if (cursor_pos < str.size())
 			++cursor_pos;
+		break;
+
+	case GLFW_KEY_V:
+		if (mods & GLFW_MOD_CONTROL) {
+			auto& app = static_cast<application&>(*context);
+			auto const cstr = glfwGetClipboardString(app.window);
+			str.insert(cursor_pos, cstr);
+			cursor_pos += strlen(cstr);
+			update_glyphs();
+		}
 		break;
 	}
 }
