@@ -139,8 +139,8 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 		// display directory's content when clicked
 		if(fs::is_directory(path))
 		{
-			btn.callback = [this, path, callback]{
-				pick_file(path, callback);
+			btn.callback = [this, path, callback, extension]{
+				pick_file(path, callback, extension);
 			};
 		}
 		else {
@@ -202,8 +202,8 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 		// display directory's content when clicked
 		if(fs::is_directory(path))
 		{
-			btn.callback = [this, path, callback]{
-				save_file(path, callback);
+			btn.callback = [this, path, callback, extension]{
+				save_file(path, callback, extension);
 			};
 		}
 		// set filename to clicked file
