@@ -55,6 +55,8 @@ void text_edit::update_glyphs()
 
 	if(cursor_pos > num_glyphs)
 		cursor_pos = num_glyphs;
+
+	on_text_changed();
 }
 
 void text_edit::on_mouse_press()

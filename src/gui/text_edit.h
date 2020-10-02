@@ -22,6 +22,8 @@ struct text_edit : text
 	std::unique_ptr<NVGglyphPosition[]> glyphs;
 	int num_glyphs = 0;
 
+	std::function<void()> on_text_changed = []{};
+
 	void update_glyphs();
 
 	void on_mouse_press();
