@@ -61,7 +61,6 @@ void text_edit::on_mouse_press()
 {
 	// only need to use X position because it's already known the click is inside the element rectangle, and single-line text is used.
 
-	update_glyphs();
 	auto absolute_position = get_position();
 
 	bool glyph_clicked = false;

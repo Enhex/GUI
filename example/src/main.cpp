@@ -74,13 +74,13 @@ int main()
 		scissor_child.expand = { true, true };
 
 		auto& child = scissor_child.create_child<text>();
-		child.str = "I'm a child element";
+		child.set_text("I'm a child element");
 		child.style = "red";
 
 		deco::serialize(stream, deco::make_list(el.get_element_name(), el));
 
 		text_edit el2;
-		el2.str = "hi";
+		el2.set_text("hi");
 		el2.position = { 55,30 };
 
 		deco::serialize(stream, deco::make_list(el2.get_element_name(), el2));
@@ -93,11 +93,10 @@ int main()
 
 	// Test alignment issues with text at the very top of the window
 	text txt;
-	txt.str = "TopText";
+	txt.set_text("TopText");
 	txt.font = font;
 	txt.font_size = 14;
 	txt.color = nvgRGBA(255, 255, 255, 255);
-	txt.update_bounds();
 
 
 	// editable text
@@ -109,7 +108,7 @@ int main()
 		background.create_layout<gui::layout::box>();
 
 		auto& txt_edit = background.create_child<text_edit>();
-		txt_edit.str = "editable text";
+		txt_edit.set_text("editable text");
 
 		background.child_layout->perform();
 	}
