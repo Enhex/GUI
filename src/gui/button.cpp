@@ -2,6 +2,8 @@
 
 button::button()
 {
+	color = background_color;
+
 	style = element_name;
 	apply_style();
 
