@@ -1,0 +1,25 @@
+#pragma once
+
+#include "button.h"
+
+struct checkbox : button
+{
+	inline static constexpr auto element_name{ "checkbox" };
+	std::string get_element_name() override { return element_name; }
+
+	std::type_info const& type_info() const override { return typeid(checkbox); }
+
+	NVGcolor inner_color{ 0.08,0.08,0.08,1 };
+	NVGcolor selected_color{ 0.3,0.3,0.3,1 };
+	NVGcolor unselected_color{ 0.22,0.22,0.22,1 };
+
+	checkbox();
+
+	void set_state(bool new_state);
+	bool get_state() const;
+	void toggle();
+
+protected:
+	panel* fill;
+	bool state = false;
+};

@@ -355,7 +355,7 @@ int main()
 	{
 		auto& root = app.root.create_child<panel>();
 		root.color = nvgRGBA(60, 60, 60, 255);
-		root.create_layout<gui::layout::box>().orient;
+		root.create_layout<gui::layout::box>();
 		root.position = {300, 600};
 		root.min_size = {80,80};
 
@@ -376,6 +376,12 @@ int main()
 			root.color = nvgRGBA(0,255,0,255);
 			std::cout << "focus end\n";
 		});
+	}
+
+	// checkbox test
+	{
+		auto& cb = app.root.create_child<checkbox>();
+		cb.position = {300, 700};
 	}
 
 	// test global event

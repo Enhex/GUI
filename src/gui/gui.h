@@ -3,6 +3,7 @@
 #include "../style/style.h"
 #include "border.h"
 #include "button.h"
+#include "checkbox.h"
 #include "context.h"
 #include "file_dialog.h"
 #include "panel.h"
