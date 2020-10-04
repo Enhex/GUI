@@ -13,7 +13,7 @@ struct text : element
 	int font = -1;
 	float font_size = 12;
 	NVGcolor color = nvgRGBA(255, 255, 255, 255);
-	float text_bounds[4];
+	float text_bounds[4]; // local space
 
 
 	text();
