@@ -13,6 +13,8 @@ struct checkbox : button
 	NVGcolor selected_color{ 0.3,0.3,0.3,1 };
 	NVGcolor unselected_color{ 0.22,0.22,0.22,1 };
 
+	panel* fill;
+
 	checkbox();
 
 	void set_state(bool new_state);
@@ -20,6 +22,5 @@ struct checkbox : button
 	void toggle();
 
 protected:
-	panel* fill;
 	bool state = false;
 };
