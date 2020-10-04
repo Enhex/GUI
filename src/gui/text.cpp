@@ -78,7 +78,7 @@ void text::update_bounds(NVGcontext* vg)
 	X(min_size) = text_bounds[2];
 	Y(min_size) = text_bounds[3] + ascender;
 
-	apply_min_size();
+	size = min_size;
 
 	nvgRestore(vg);
 }
@@ -99,6 +99,4 @@ void text::draw(NVGcontext* vg)
 	nvgTextMetrics(vg, &ascender, &descender, &lineh);
 	auto absolute_position = get_position();
 	nvgText(vg, X(absolute_position), Y(absolute_position) + ascender, str.c_str(), nullptr);
-
-	update_bounds(vg);
 }
