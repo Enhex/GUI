@@ -288,5 +288,5 @@ namespace deco
 		serialize(stream, static_cast<text&>(value));
 	}
 
-	void read(deco::EntryObject& entry, text& value);
+	void read(deco::EntryObject& entry, text_edit& value);
 }
