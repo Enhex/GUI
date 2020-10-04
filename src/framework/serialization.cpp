@@ -196,5 +196,6 @@ namespace deco
 	void read(deco::EntryObject & entry, text_edit & value)
 	{
 		read(entry, static_cast<text&>(value));
+		value.update_glyphs<true,true>();
 	}
 }

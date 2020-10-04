@@ -22,9 +22,39 @@ struct text_edit : text
 	std::unique_ptr<NVGglyphPosition[]> glyphs;
 	int num_glyphs = 0;
 
+	// callback for when the text is changed
 	std::function<void()> on_text_changed = []{};
 
-	void update_glyphs();
+	template<bool text_changed = true, bool bounds_updated = false>
+	void update_glyphs()
+	{
+		auto& vg = context->vg;
+
+		nvgSave(vg);
+
+		init_font(vg); // for correct font size
+
+		auto const max_glyphs = str.size();
+
+		if constexpr(text_changed)
+			glyphs = std::make_unique<NVGglyphPosition[]>(max_glyphs);
+
+		// TODO can cache glyphs and update only when text changes
+		auto absolute_position = get_position();
+		num_glyphs = nvgTextGlyphPositions(vg, X(absolute_position), Y(absolute_position), str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
+
+		nvgRestore(vg);
+
+		if(cursor_pos > num_glyphs)
+			cursor_pos = num_glyphs;
+
+		if constexpr(text_changed) {
+			if constexpr(!bounds_updated) {
+				update_bounds();
+			}
+			on_text_changed();
+		}
+	}
 
 	void on_mouse_press();
 
@@ -35,4 +65,8 @@ struct text_edit : text
 	void draw(NVGcontext* vg) override;
 
 	void set_text(std::string const& new_str) override;
+
+	// absolute position may change after layout
+	//TODO would be better to only update when position changes
+	void post_layout() override;
 };
