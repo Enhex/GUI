@@ -1,5 +1,14 @@
 import os
 from sys import platform
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-r", "--release", help="Generate release build (debug by default).", action="store_true")
+args = parser.parse_args()
+
+build_type = 'Release' if args.release else 'Debug'
+
+source = os.path.dirname(os.path.realpath(__file__))
 
 def create_symlink(src, dst):
     # create all parent directories of the symlink one
@@ -37,3 +46,6 @@ def build(source, build_type, symlinks = [], symlink_pairs = []):
     else:
         premake_generate('gmake2')
         premake_generate('vscode')
+
+
+build(source, build_type)
