@@ -93,6 +93,14 @@ void text_edit::on_key_press(int key, int mods)
 			++cursor_pos;
 		break;
 
+	case GLFW_KEY_HOME:
+		cursor_pos = 0;
+		break;
+
+	case GLFW_KEY_END:
+		cursor_pos = str.size();
+		break;
+
 	case GLFW_KEY_V:
 		if (mods & GLFW_MOD_CONTROL) {
 			auto& app = static_cast<application&>(*context);
