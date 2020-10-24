@@ -329,7 +329,7 @@ int main()
 	{
 		auto& root = app.root.create_child<panel>();
 		root.color = nvgRGBA(60, 60, 60, 255);
-		root.create_layout<gui::layout::box>().orient;
+		root.create_layout<gui::layout::box>();
 		root.position = {100, 600};
 		root.min_size = {85,100};
 

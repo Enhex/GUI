@@ -22,7 +22,7 @@ namespace layout
 			auto const non_orient = orient == horizontal ? vertical : horizontal;
 
 			// use the maximum child size on the non-orient axis
-			float non_orient_max_size = std::max(parent->size.a[non_orient], parent->min_size.a[non_orient]);
+			float non_orient_max_size = parent->min_size.a[non_orient];
 			// total children size on the orient axis
 			float children_size = 0;
 
