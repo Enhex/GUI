@@ -1,4 +1,4 @@
-from conans import ConanFile, CMake
+from conans import ConanFile
 
 # automatically choose Premake generator
 def run_premake(self):
