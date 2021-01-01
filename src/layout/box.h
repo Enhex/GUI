@@ -90,7 +90,7 @@ namespace layout
 					child->size.a[orient] = std::max(child->size.a[orient], expander_size);
 				if (child->expand[non_orient])
 					child->size.a[non_orient] = std::max(child->size.a[non_orient], parent->size.a[non_orient]);
-				
+
 				if (child->child_layout != nullptr)
 					child->child_layout->expand();
 			}

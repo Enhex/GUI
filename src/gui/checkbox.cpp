@@ -5,14 +5,14 @@
 checkbox::checkbox()
 {
 	style = element_name;
-	
+
 	color = background_color = unselected_color;
 	hover_color = selected_color;
 
 	callback = [this]{
 		toggle();
 	};
-	
+
 	min_size = {20,20};
 
 	auto& outer_border = create_child<border>();

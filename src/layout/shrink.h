@@ -32,7 +32,7 @@ namespace layout
 				parent_rect = *first_child;
 			else
 				parent_rect.size = first_child->size;
-			
+
 			for (auto& child : parent.children)
 			{
 				// update child layout

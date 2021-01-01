@@ -117,7 +117,7 @@ void application::create_window(int width, int height, const char * title, GLFWm
 void application::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
 	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
-	
+
 	auto const event_id = [&]() {
 		if (action == GLFW_RELEASE)
 			return input::event::key_release::id;

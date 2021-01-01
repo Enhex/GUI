@@ -17,7 +17,7 @@ scroll_view::scroll_view() :
 	       &create_child<scrollbar>(vertical)})
 {
 	style = element_name;
-	
+
 	create_layout<gui::layout::box>().orient = layout::horizontal;
 
 	// elements
@@ -34,7 +34,7 @@ scroll_view::scroll_view() :
 
 	// input
 	auto& input_manager = context->input_manager;
-	
+
 	input_manager.subscribe<input::event::scroll>(this, [&](std::any&& args) {
 		auto&[xoffset, yoffset] = std::any_cast<input::event::scroll::params&>(args);
 		move_content(horizontal, scroll_step * xoffset);

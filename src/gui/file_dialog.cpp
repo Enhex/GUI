@@ -17,7 +17,7 @@ file_dialog::file_dialog() :
 
 	style = element_name;
 	apply_style();
-	
+
 	visible = false;
 	create_layout<gui::layout::box>();
 
@@ -68,7 +68,7 @@ file_dialog::file_dialog() :
 		border.min_size = {0,1};
 		border.expand[layout::horizontal] = true;
 	}
-	
+
 	auto& horizontal_container = create_child<element>();
 	horizontal_container.create_layout<gui::layout::box>().orient = layout::horizontal;
 	horizontal_container.expand[layout::horizontal] = true;
@@ -229,7 +229,7 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 		if(extension.empty() || fs::is_directory(p.path()) || p.path().extension() == extension)
 			add_path(p.path());
 	}
-	
+
 	confirm->callback = [this, canon, callback, extension]{
 		visible = false;
 

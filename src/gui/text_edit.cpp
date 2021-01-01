@@ -138,7 +138,7 @@ void text_edit::draw(NVGcontext* vg)
 
 		auto const x_pos = cursor_pos == 0 ?
 			X(absolute_position) : // may have no characters, position at the start.
-			glyphs[cursor_pos-1].maxx; // position at the end of the previous character	
+			glyphs[cursor_pos-1].maxx; // position at the end of the previous character
 
 		nvgBeginPath(vg);
 		nvgMoveTo(vg, x_pos, Y(absolute_position));

@@ -14,7 +14,7 @@ def create_symlink(src, dst):
     # create all parent directories of the symlink one
     parent_dir = os.path.dirname(dst)
     os.makedirs(parent_dir, exist_ok=True)
-    
+
     try:
         os.symlink(src, dst)
     except:
@@ -40,7 +40,7 @@ def build(source, build_type, symlinks = [], symlink_pairs = []):
 
     def premake_generate(generator):
         os.system('premake5 ' + generator + ' --location="' + build_dir + '" --gui-path="' + gui_dir + '"')
-        
+
     if platform == 'win32':
         premake_generate('vs2019')
     else:

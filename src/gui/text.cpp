@@ -42,7 +42,7 @@ void text::set_style(style::style_t const& style)
 	};
 
 	bool bounds_need_update = false;
-	
+
 	std::string font_name;
 	if (read(font_name, "font")) {
 		font = context->style_manager.font_name_to_id(font_name);
@@ -50,7 +50,7 @@ void text::set_style(style::style_t const& style)
 	}
 
 	if(read(font_size, "font_size")) {
-		bounds_need_update = true;	
+		bounds_need_update = true;
 	}
 
 	if(bounds_need_update)

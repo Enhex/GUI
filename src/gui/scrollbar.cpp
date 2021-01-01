@@ -39,7 +39,7 @@ scrollbar::scrollbar(layout::orientation const orient) :
 
 	/*TODO
 	expand depends on the scrollbar's orientation
-	
+
 	create handle
 		- input events for dragging
 		- ability to set size

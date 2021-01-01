@@ -180,7 +180,7 @@ namespace deco
 				auto const num_lines = lines.size();
 				if(num_lines == 0)
 					continue;
-				
+
 				value.str = entry.entries[0].content;
 				for (size_t i = 1; i < num_lines; ++i) {
 					value.str += '\n';

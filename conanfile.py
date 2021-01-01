@@ -28,7 +28,7 @@ class GuiConan(ConanFile):
 	generators = "premake"
 	exports = "premake5.lua"
 	exports_sources = "src/*"
-	
+
 	requires = (
 		"boost/1.75.0",
 		"glfw/3.3.2",
@@ -36,7 +36,7 @@ class GuiConan(ConanFile):
 		"nanovg/master@enhex/stable",
 		"Deco/master@enhex/stable"
 	)
-	
+
 	def build(self):
 		run_premake(self)
 		self.run('build')
