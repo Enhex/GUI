@@ -107,18 +107,28 @@ float scroll_view::get_scroll_length(layout::orientation const orient) const
 
 void scroll_view::move_content(layout::orientation const orient, float change)
 {
-	if(content.size.a[orient] < view.size.a[orient])
-		return;
+	if(content.size.a[orient] < view.size.a[orient]) {
+		content.position.a[orient] = 0;
+	}
+	else {
+		content.position.a[orient] += change;
+		content.position.a[orient] = std::clamp(content.position.a[orient], -get_scroll_length(orient), 0.f);
+	}
 
-	content.position.a[orient] += change;
-	content.position.a[orient] = std::clamp(content.position.a[orient], -get_scroll_length(orient), 0.f);
 	update_handle_position(orient);
 }
 
 void scroll_view::update_handle_size(layout::orientation const orient)
 {
 	auto& handle = scroll[orient]->handle;
-	handle.size.a[orient] = handle.min_size.a[orient] = scroll[orient]->track.size.a[orient] * std::min(1.f, view.size.a[orient] / content.size.a[orient]);
+	auto& track = scroll[orient]->track;
+	handle.size.a[orient] = handle.min_size.a[orient] = track.size.a[orient] * std::min(1.f, view.size.a[orient] / content.size.a[orient]);
+	//if size extrudes past the track move it backwards
+	auto const handle_end = handle.size.a[orient] + handle.position.a[orient];
+	if(handle_end > track.size.a[orient]) {
+		auto const offset = handle_end - track.size.a[orient];
+		move_content(orient, offset);
+	}
 }
 
 void scroll_view::update_handle_position(layout::orientation const orient)
