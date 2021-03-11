@@ -27,7 +27,7 @@ workspace("GUI example")
 		language "C++"
 		cppdialect "C++17"
 		targetdir = "bin/%{cfg.buildcfg}"
-		
+
 		files{
 			"src/**",
 		}
@@ -36,7 +36,7 @@ workspace("GUI example")
 			"../src"
 		}
 		links{"GUI"}
-		
+
 		defines{"_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"}
 
 		filter "configurations:Debug"
@@ -46,6 +46,9 @@ workspace("GUI example")
 		filter "configurations:Release"
 			defines { "NDEBUG" }
 			optimize "On"
+			flags{"LinkTimeOptimization"}
+			buildoptions{"-fdata-sections -ffunction-sections"} -- needed for -gc-sections
+			linkoptions{"-s -Wl,--gc-sections -Wl,--as-needed"}
 
 	externalproject "GUI"
 		print(_OPTIONS["gui-path"])

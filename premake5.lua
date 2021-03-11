@@ -43,3 +43,6 @@ workspace("GUI")
 		filter "configurations:Release"
 			defines { "NDEBUG" }
 			optimize "On"
+			flags{"LinkTimeOptimization"}
+			buildoptions{"-fdata-sections -ffunction-sections"} -- needed for -gc-sections
+			linkoptions{"-s -Wl,--gc-sections -Wl,--as-needed"}
