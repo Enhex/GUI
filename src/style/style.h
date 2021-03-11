@@ -3,6 +3,7 @@
 #include <any>
 #include <memory>
 #include <nanovg.h>
+#include <string>
 #include <strong_type.h>
 #include <unordered_map>
 
