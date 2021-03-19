@@ -16,6 +16,7 @@ namespace input
 	struct manager
 	{
 		using event_ID = size_t;
+		using callbacks_t = std::list<any_callback>;
 
 		vector2 mouse_pos;
 
@@ -25,7 +26,8 @@ namespace input
 
 	protected:
 		// map from element to subscribed events
-		std::unordered_map<element*, std::unordered_map<event_ID, any_callback>> focused_events;
+		//NOTE: using list for stable iterators
+		std::unordered_map<element*, std::unordered_map<event_ID, callbacks_t>> focused_events;
 		//NOTE: while technically it isn't a requirement for a subscriber to be an element (unlike focused event which listens to the subscribing element's events), it's
 		// still useful for automatic unsubscription on destruction and unified API.
 		std::unordered_map<event_ID, std::unordered_map<element*, any_callback>> global_events;
@@ -40,7 +42,7 @@ namespace input
 	public:
 		// focused
 		template<typename Event>
-		void subscribe(element* subscriber, std::function<void(std::any&&)>&& callback)
+		callbacks_t::iterator subscribe(element* subscriber, std::function<void(std::any&&)>&& callback)
 		{
 			// add removal callback
 			if (focused_events.find(subscriber) != focused_events.end())
@@ -51,7 +53,10 @@ namespace input
 			}
 
 			// subscribe
-			focused_events[subscriber][Event::id] = std::move(callback);
+			auto& callbacks = focused_events[subscriber][Event::id];
+			callbacks.emplace_back(std::move(callback));
+
+			return --callbacks.end();
 		}
 
 		// global, when no specific element has focus.

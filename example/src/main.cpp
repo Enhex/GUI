@@ -415,6 +415,10 @@ int main()
 		el->color = nvgRGBA(0, 255, 0, 255);
 		std::cout << "mouse press: " << button << "\n";
 	});
+	app.input_manager.subscribe<input::event::mouse_press>(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](std::any&& args) {
+		auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+		std::cout << "mouse press second callback\n";
+	});
 
 	// Loop until the user closes the window
 	app.run([&]()

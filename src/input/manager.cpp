@@ -28,8 +28,10 @@ namespace input
 			// find if element subscribed to the event
 			auto event_iter = subscribed_events.find(event_id);
 			if (event_iter != subscribed_events.end()) {
-				// call callback
-				event_iter->second(std::move(args));
+				// call the callbacks
+				for(auto& callback : event_iter->second) {
+					callback(std::move(args));
+				}
 				return element;
 			}
 		}
