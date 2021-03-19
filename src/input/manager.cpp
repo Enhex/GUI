@@ -13,31 +13,36 @@ namespace input
 		}
 
 		// try focused
-		send_focused_event(element, event_id, std::move(args));
+		if(element)
+			send_focused_event(*element, event_id, std::move(args));
 
 		// no focused callback was found, propagate into a global event
 		send_global_event(event_id, std::move(args));
 	}
 
-	element* manager::send_focused_event(element* element, size_t event_id, std::any&& args)
+	element* manager::send_focused_event(element& element, size_t event_id, std::any&& args)
 	{
 		// find element
-		auto iter = focused_events.find(element);
+		auto iter = focused_events.find(&element);
 		if (iter != focused_events.end()) {
 			auto const& subscribed_events = iter->second;
 			// find if element subscribed to the event
 			auto event_iter = subscribed_events.find(event_id);
 			if (event_iter != subscribed_events.end()) {
 				// call the callbacks
+				callback_element = &element;
 				for(auto& callback : event_iter->second) {
 					callback(std::move(args));
+					// stop calling callbacks if the element was deleted
+					if(callback_element == nullptr)
+						return nullptr;
 				}
-				return element;
+				return &element;
 			}
 		}
 
-		if(element != nullptr && element->get_parent() != nullptr)
-			return send_focused_event(element->get_parent(), event_id, std::move(args));
+		if(element.get_parent() != nullptr)
+			return send_focused_event(*element.get_parent(), event_id, std::move(args));
 
 		return nullptr;
 	}
@@ -71,13 +76,13 @@ namespace input
 		{
 			// hover end event
 			if(hovered_element != nullptr)
-				send_focused_event(hovered_element, event::hover_end::id, {});
+				send_focused_event(*hovered_element, event::hover_end::id, {});
 
 			hovered_element = new_element;
 
 			// hover start event
 			if (hovered_element != nullptr)
-				send_focused_event(hovered_element, event::hover_start::id, {});
+				send_focused_event(*hovered_element, event::hover_start::id, {});
 		}
 	}
 
@@ -87,12 +92,12 @@ namespace input
 		{
 			// focus end event
 			if(focused_element != nullptr)
-				send_focused_event(focused_element, event::focus_end::id, {});
+				send_focused_event(*focused_element, event::focus_end::id, {});
 
 			// focus start event.
 			// focus on the element that's subscribed to focus_start
 			if (new_element != nullptr)
-				focused_element = send_focused_event(new_element, event::focus_start::id, {});
+				focused_element = send_focused_event(*new_element, event::focus_start::id, {});
 			else
 				focused_element = nullptr;
 		}
@@ -105,12 +110,16 @@ namespace input
 
 	void manager::on_element_delete(element& element)
 	{
+		if(callback_element == &element) {
+			callback_element = nullptr; // mark as deleted
+		}
+
 		if (hovered_element == &element) {
-			set_hovered_element(nullptr);
+			hovered_element = nullptr;
 		}
 
 		if (focused_element == &element) {
-			set_focused_element(nullptr);
+			focused_element = nullptr;
 		}
 
 		if (pressed_element == &element) {

@@ -39,6 +39,10 @@ namespace input
 		event_ID active_callback_event_id = -1;
 		std::unordered_map<element*, any_callback>::iterator active_callback_global_iter;
 
+		// used to track if an element deleted itself from one of its callbacks, to prevent calling the rest of its callbacks.
+		// it's marked as deleted by setting the pointer to nullptr.
+		element* callback_element = nullptr;
+
 	public:
 		// focused
 		template<typename Event>
@@ -124,7 +128,7 @@ namespace input
 		void send_event(element* element, size_t event_id, std::any&& args);
 
 		// return the element that captured the event
-		element* send_focused_event(element* element, size_t event_id, std::any&& args);
+		element* send_focused_event(element& element, size_t event_id, std::any&& args);
 
 		void send_global_event(size_t event_id, std::any&& args);
 
