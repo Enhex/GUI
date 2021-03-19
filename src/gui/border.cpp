@@ -21,6 +21,9 @@ border::border() :
 	right.expand[layout::vertical] = true;
 
 	set_border_size(1.f);
+
+	style = element_name;
+	apply_style();
 }
 
 void border::set_color(NVGcolor color)
