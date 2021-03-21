@@ -88,18 +88,30 @@ namespace input
 
 	void manager::set_focused_element(element* new_element)
 	{
-		if (new_element != focused_element)
-		{
-			// focus end event
-			if(focused_element != nullptr)
-				send_focused_event(*focused_element, event::focus_end::id, {});
+		if(!in_set_focused_element) {
+			in_set_focused_element = true;
+			next_focused_element = nullptr;
+			if (new_element != focused_element)
+			{
+				// focus end event
+				if(focused_element != nullptr)
+					send_focused_event(*focused_element, event::focus_end::id, {});
 
-			// focus start event.
-			// focus on the element that's subscribed to focus_start
-			if (new_element != nullptr)
-				focused_element = send_focused_event(*new_element, event::focus_start::id, {});
-			else
-				focused_element = nullptr;
+				// focus start event.
+				// focus on the element that's subscribed to focus_start
+				if (new_element != nullptr)
+					focused_element = send_focused_event(*new_element, event::focus_start::id, {});
+				else
+					focused_element = nullptr;
+			}
+
+			in_set_focused_element = false;
+			if(next_focused_element) {
+				set_focused_element(next_focused_element);
+			}
+		}
+		else {
+			next_focused_element = new_element;
 		}
 	}
 

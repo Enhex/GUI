@@ -139,5 +139,12 @@ namespace input
 		decltype(focused_events) const& get_focused_events();
 
 		void on_element_delete(element& element);
+
+	private:
+		// used to check if set_focused_element was called from within itself
+		bool in_set_focused_element = false;
+		// in case of calling set_focused_element from itself, delay setting the new element
+		// after the original set_focused_element's call events were sent
+		element* next_focused_element = nullptr;
 	};
 }
