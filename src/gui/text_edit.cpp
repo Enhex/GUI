@@ -31,6 +31,8 @@ text_edit::text_edit()
 
 void text_edit::on_mouse_press()
 {
+	clear_selection();
+
 	// only need to use X position because it's already known the click is inside the element rectangle, and single-line text is used.
 
 	auto absolute_position = get_position();
@@ -85,12 +87,32 @@ void text_edit::on_key_press(int key, int mods)
 
 	case GLFW_KEY_LEFT:
 		if (cursor_pos > 0)
+		{
+			auto const select = mods & GLFW_MOD_SHIFT;
+			if(select && !has_selection()) {
+				selection_start_pos = cursor_pos;
+			}
+
 			--cursor_pos;
+
+			if(select)
+				selection_end_pos = cursor_pos;
+		}
 		break;
 
 	case GLFW_KEY_RIGHT:
 		if (cursor_pos < str.size())
+		{
+			auto const select = mods & GLFW_MOD_SHIFT;
+			if(select && !has_selection()) {
+				selection_start_pos = cursor_pos;
+			}
+
 			++cursor_pos;
+
+			if(select)
+				selection_end_pos = cursor_pos;
+		}
 		break;
 
 	case GLFW_KEY_HOME:
@@ -110,6 +132,12 @@ void text_edit::on_key_press(int key, int mods)
 			update_glyphs();
 		}
 		break;
+
+	case GLFW_KEY_A:
+		if(mods & GLFW_MOD_CONTROL) {
+			select_all();
+		}
+		break;
 	}
 }
 
@@ -122,7 +150,29 @@ void text_edit::on_character(unsigned codepoint)
 
 void text_edit::draw(NVGcontext* vg)
 {
-	//TODO draw selection background
+	// draw selection background
+	if(has_selection())
+	{
+		if (glyphs == nullptr)
+			update_glyphs();
+
+		auto const absolute_position = get_position();
+
+		auto const x_start = selection_start_pos == 0 ?
+			X(absolute_position) : // may have no characters, position at the start.
+			glyphs[selection_start_pos-1].maxx; // position at the end of the previous character
+
+		auto const x_end = selection_end_pos == 0 ?
+			X(absolute_position) :
+			glyphs[selection_end_pos-1].maxx;
+
+		nvgBeginPath(vg);
+		nvgRect(vg,
+				x_start, Y(absolute_position),
+				x_end - x_start, Y(size));
+		nvgFillColor(vg, selection_color);
+		nvgFill(vg);
+	}
 
 	text::draw(vg);
 
@@ -159,4 +209,21 @@ void text_edit::set_text(std::string const& new_str)
 void text_edit::post_layout()
 {
 	update_glyphs<false>();
+}
+
+bool text_edit::has_selection() const
+{
+	return selection_start_pos != selection_end_pos;
+}
+
+void text_edit::clear_selection()
+{
+	selection_start_pos = selection_end_pos = 0;
+}
+
+void text_edit::select_all()
+{
+	selection_start_pos = 0;
+	selection_end_pos = str.size();
+	cursor_pos = selection_end_pos;
 }

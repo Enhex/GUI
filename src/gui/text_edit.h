@@ -16,7 +16,11 @@ struct text_edit : text
 
 	text_edit();
 
+	NVGcolor selection_color{ 0,0.5,1,1 };
+
 	size_t cursor_pos = 0;
+	size_t selection_start_pos = 0;
+	size_t selection_end_pos = 0;
 
 	// glyphs' absolute positions
 	std::unique_ptr<NVGglyphPosition[]> glyphs;
@@ -69,4 +73,8 @@ struct text_edit : text
 	// absolute position may change after layout
 	//TODO would be better to only update when position changes
 	void post_layout() override;
+
+	bool has_selection() const;
+	void clear_selection();
+	void select_all();
 };
