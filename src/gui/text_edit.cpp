@@ -123,6 +123,15 @@ void text_edit::on_key_press(int key, int mods)
 		cursor_pos = str.size();
 		break;
 
+	case GLFW_KEY_C:
+		if (mods & GLFW_MOD_CONTROL) {
+			auto& app = static_cast<application&>(*context);
+			auto low_pos = std::min(selection_start_pos, selection_end_pos);
+			auto high_pos = std::max(selection_start_pos, selection_end_pos);
+			glfwSetClipboardString(app.window, str.substr(low_pos, high_pos - low_pos).c_str());
+		}
+		break;
+
 	case GLFW_KEY_V:
 		if (mods & GLFW_MOD_CONTROL) {
 			auto& app = static_cast<application&>(*context);
