@@ -60,7 +60,11 @@ struct text_edit : text
 		}
 	}
 
+	void set_cursor_to_mouse_pos();
+
 	void on_mouse_press();
+
+	void on_frame_start();
 
 	void on_key_press(int key, int mods);
 

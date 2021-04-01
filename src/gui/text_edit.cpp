@@ -12,6 +12,9 @@ text_edit::text_edit()
 	input_manager.subscribe<input::event::mouse_press>(this, [this](std::any&& args) {
 		on_mouse_press();
 	});
+	input_manager.subscribe_global<input::event::mouse_release>(this, [this](std::any&& args) {
+		context->input_manager.unsubscribe_global<input::event::frame_start>(this);
+	});
 	input_manager.subscribe<input::event::key_press>(this, [this](std::any&& args) {
 		auto&[key, mods] = std::any_cast<input::event::key_press::params&>(args);
 		on_key_press(key, mods);
@@ -29,18 +32,13 @@ text_edit::text_edit()
 	input_manager.subscribe<input::event::focus_start>(this, [this](std::any&& args) {});
 }
 
-void text_edit::on_mouse_press()
+void text_edit::set_cursor_to_mouse_pos()
 {
-	clear_selection();
-
 	// only need to use X position because it's already known the click is inside the element rectangle, and single-line text is used.
-
-	auto absolute_position = get_position();
-
-	bool glyph_clicked = false;
-
 	auto& input_manager = context->input_manager;
 	auto const mouse_x = X(input_manager.mouse_pos);
+
+	bool glyph_clicked = false;
 
 	for (auto i = num_glyphs; i-- > 0;)
 	{
@@ -68,6 +66,24 @@ void text_edit::on_mouse_press()
 			cursor_pos = str.size();
 		}
 	}
+}
+
+void text_edit::on_mouse_press()
+{
+	clear_selection();
+	set_cursor_to_mouse_pos();
+
+	selection_start_pos = cursor_pos;
+
+	context->input_manager.subscribe_global<input::event::frame_start>(this, [this](std::any&& args) {
+		on_frame_start();
+	});
+}
+
+void text_edit::on_frame_start()
+{
+	set_cursor_to_mouse_pos();
+	selection_end_pos = cursor_pos;
 }
 
 void text_edit::on_key_press(int key, int mods)
