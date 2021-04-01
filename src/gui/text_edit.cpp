@@ -62,7 +62,8 @@ void text_edit::set_cursor_to_mouse_pos()
 
 	// if clicked past the last character, position the cursor at the end of the text
 	if(!glyph_clicked) {
-		if(mouse_x > text_bounds[2]) {
+		auto const abs_text_end = X(get_position()) + text_bounds[2];
+		if(mouse_x > abs_text_end) {
 			cursor_pos = str.size();
 		}
 	}
