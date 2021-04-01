@@ -90,15 +90,23 @@ void text_edit::on_key_press(int key, int mods)
 {
 	switch (key) {
 	case GLFW_KEY_BACKSPACE:
-		if (cursor_pos > 0)
+		if(has_selection()) {
+			delete_selection();
+		}
+		else if (cursor_pos > 0) {
 			str.erase(--cursor_pos, 1);
 			update_glyphs();
+		}
 		break;
 
 	case GLFW_KEY_DELETE:
-		if (cursor_pos < str.size())
+		if(has_selection()) {
+			delete_selection();
+		}
+		else if (cursor_pos < str.size()) {
 			str.erase(cursor_pos, 1);
 			update_glyphs();
+		}
 		break;
 
 	case GLFW_KEY_LEFT:
@@ -244,6 +252,17 @@ bool text_edit::has_selection() const
 void text_edit::clear_selection()
 {
 	selection_start_pos = selection_end_pos = 0;
+}
+
+void text_edit::delete_selection()
+{
+	//NOTE: if there's no selection 0 chars will be erased
+	auto low_pos = std::min(selection_start_pos, selection_end_pos);
+	auto high_pos = std::max(selection_start_pos, selection_end_pos);
+	str.erase(low_pos, high_pos - low_pos);
+	cursor_pos = low_pos;
+	clear_selection();
+	update_glyphs();
 }
 
 void text_edit::select_all()

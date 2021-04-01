@@ -80,5 +80,6 @@ struct text_edit : text
 
 	bool has_selection() const;
 	void clear_selection();
+	void delete_selection();
 	void select_all();
 };
