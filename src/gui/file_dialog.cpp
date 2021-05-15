@@ -105,18 +105,18 @@ file_dialog::file_dialog() :
 	});
 }
 
-void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback, fs::path extension)
+void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback, std::vector<fs::path> const& extensions)
 {
 	auto canon = fs::canonical(dir);
 
 	path_field->set_text(canon.string());
 
-	context->input_manager.subscribe<input::event::key_press>(path_field, [this, callback, extension](std::any&& args) {
+	context->input_manager.subscribe<input::event::key_press>(path_field, [this, callback, extensions](std::any&& args) {
 		auto const& [key, mods] = std::any_cast<input::event::mouse_press::params&>(args);
 		path_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
 
 		if(key == GLFW_KEY_ENTER && fs::exists(path_field->str))
-			pick_file(path_field->str, callback, extension);
+			pick_file(path_field->str, callback, extensions);
 	});
 
 	title.set_text("choose file...");
@@ -139,8 +139,8 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 		// display directory's content when clicked
 		if(fs::is_directory(path))
 		{
-			btn.callback = [this, path, callback, extension]{
-				pick_file(path, callback, extension);
+			btn.callback = [this, path, callback, extensions]{
+				pick_file(path, callback, extensions);
 			};
 		}
 		else {
@@ -163,10 +163,26 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 	// create representations for paths in the viewed directory
 	for(auto const& p : fs::directory_iterator(dir))
 	{
-		if(extension.empty() || fs::is_directory(p.path()) || p.path().extension() == extension)
+		if(extensions.empty() || fs::is_directory(p.path())) {
 			add_path(p.path());
+			continue;
+		}
+
+		auto const p_ext = p.path().extension();
+		for(auto const& ext : extensions) {
+			if(p_ext == ext) {
+				add_path(p.path());
+				continue;
+			}
+		}
 	}
 }
+
+void file_dialog::pick_file(std::filesystem::path dir, std::function<void(std::filesystem::path)> callback, std::filesystem::path extension)
+{
+	pick_file(dir, callback, std::vector{extension});
+}
+
 
 void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback, fs::path extension)
 {

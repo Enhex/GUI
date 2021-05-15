@@ -29,7 +29,8 @@ struct file_dialog : panel
 
 	// only choose existing files
 	// extension: filter displayed files
-	void pick_file(std::filesystem::path dir, std::function<void(std::filesystem::path)> callback, std::filesystem::path extension = "");
+	void pick_file(std::filesystem::path dir, std::function<void(std::filesystem::path)> callback, std::vector<std::filesystem::path> const& extensions = {});
+	void pick_file(std::filesystem::path dir, std::function<void(std::filesystem::path)> callback, std::filesystem::path extension);
 	// can enter new file name
 	// extension: filter displayed files and save file with the extension
 	void save_file(std::filesystem::path dir, std::function<void(std::filesystem::path)> callback, std::filesystem::path extension = "");
