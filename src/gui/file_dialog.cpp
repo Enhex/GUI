@@ -18,7 +18,6 @@ file_dialog::file_dialog() :
 	style = element_name;
 	apply_style();
 
-	visible = false;
 	create_layout<gui::layout::box>();
 
 	// elements
@@ -82,7 +81,7 @@ file_dialog::file_dialog() :
 		auto& txt = cancel.create_child<text>();
 		txt.set_text("cancel");
 		cancel.callback = [this]{
-			visible = false;
+			set_visible(false);
 		};
 	}
 	{
@@ -105,6 +104,13 @@ file_dialog::file_dialog() :
 	});
 }
 
+void file_dialog::set_visible(bool visible)
+{
+	if(visibility_element == nullptr)
+		visibility_element = this;
+	visibility_element->visible = visible;
+}
+
 void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback, std::vector<fs::path> const& extensions)
 {
 	auto canon = fs::canonical(dir);
@@ -121,7 +127,7 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 
 	title.set_text("choose file...");
 
-	visible = true;
+	set_visible(true);
 	filename_container.visible = false;
 	confirm->visible = false;
 
@@ -145,7 +151,7 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 		}
 		else {
 			btn.callback = [this, path, callback]{
-				visible = false;
+				set_visible(false);
 				callback(path);
 			};
 		}
@@ -200,7 +206,7 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 
 	title.set_text("save file...");
 
-	visible = true;
+	set_visible(true);
 	filename_container.visible = true;
 	confirm->visible = true;
 
@@ -247,7 +253,7 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 	}
 
 	confirm->callback = [this, canon, callback, extension]{
-		visible = false;
+		set_visible(false);
 
 		fs::path filename = filename_field->str;
 		if(filename.extension() != extension)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "panel.h"
+
 #include <filesystem>
 
 struct scroll_view;
@@ -9,7 +10,7 @@ struct text_edit;
 struct button;
 
 /*
-
+widget for selecting files
 */
 struct file_dialog : panel
 {
@@ -17,6 +18,10 @@ struct file_dialog : panel
 	std::string get_element_name() override { return element_name; }
 
 	std::type_info const& type_info() const override { return typeid(file_dialog); }
+
+	// use an ancestor element's visibility for showing/hiding the dialog
+	// if null `this` will be used
+	element* visibility_element = nullptr;
 
 	text& title;
 	element& filename_container;
@@ -26,6 +31,8 @@ struct file_dialog : panel
 	button* confirm;
 
 	file_dialog();
+
+	void set_visible(bool visible);
 
 	// only choose existing files
 	// extension: filter displayed files

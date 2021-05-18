@@ -256,13 +256,18 @@ int main()
 
 	// button test
 	{
-		auto& file_di = app.root.create_child<file_dialog>();
+		// buttons should be created first to be behind the modal
+		auto& btns_root = app.root.create_child<element>();
+
+		auto& mod = app.root.create_child<modal>();
+		auto& file_di = mod.create_child<file_dialog>();
+		file_di.visibility_element = &mod;
 		file_di.position = {100,160};
 		file_di.min_size = {400,400};
 		file_di.apply_min_size();
 
 		{
-			auto& el = app.root.create_child<button>();
+			auto& el = btns_root.create_child<button>();
 			el.position = { 500,200 };
 			el.background_color = nvgRGBA(80, 80, 80, 255);
 			el.hover_color = nvgRGBA(120, 120, 120, 255);
@@ -277,13 +282,15 @@ int main()
 
 			el.callback = [&]() {
 				std::cout << "button 1 clicked\n";
-				file_di.pick_file("./", [](std::filesystem::path file){
+				mod.visible = true;
+				file_di.pick_file("./", [&mod](std::filesystem::path file){
+					mod.visible = false;
 					std::cout << "picked file: " << file << "\n";
 				});
 			};
 		}
 		{
-			auto& el = app.root.create_child<button>();
+			auto& el = btns_root.create_child<button>();
 			el.position = { 500,150 };
 			el.background_color = nvgRGBA(80, 80, 80, 255);
 			el.hover_color = nvgRGBA(120, 120, 120, 255);
@@ -298,13 +305,15 @@ int main()
 
 			el.callback = [&]() {
 				std::cout << "button 2 clicked\n";
-				file_di.save_file("./", [](std::filesystem::path file){
+				mod.visible = true;
+				file_di.save_file("./", [&mod](std::filesystem::path file){
+					mod.visible = false;
 					std::cout << "saved file: " << file << "\n";
 				}, ".txt");
 			};
 		}
 		{
-			auto& el = app.root.create_child<button>();
+			auto& el = btns_root.create_child<button>();
 			el.position = { 540,205 };
 			el.background_color = nvgRGBA(80, 80, 80, 255);
 			el.hover_color = nvgRGBA(120, 120, 120, 255);
