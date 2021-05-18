@@ -10,3 +10,4 @@
 #include "scissor.h"
 #include "scroll_view.h"
 #include "text_edit.h"
+#include "modal.h"
