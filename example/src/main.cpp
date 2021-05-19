@@ -259,9 +259,8 @@ int main()
 		// buttons should be created first to be behind the modal
 		auto& btns_root = app.root.create_child<element>();
 
-		auto& mod = app.root.create_child<modal>();
-		auto& file_di = mod.create_child<file_dialog>();
-		file_di.visibility_element = &mod;
+		auto& file_di_mod = app.root.create_child<file_dialog_modal>();
+		auto& file_di = file_di_mod.file_di;
 		file_di.position = {100,160};
 		file_di.min_size = {400,400};
 		file_di.apply_min_size();
@@ -282,9 +281,7 @@ int main()
 
 			el.callback = [&]() {
 				std::cout << "button 1 clicked\n";
-				mod.visible = true;
-				file_di.pick_file("./", [&mod](std::filesystem::path file){
-					mod.visible = false;
+				file_di.pick_file("./", [](std::filesystem::path file){
 					std::cout << "picked file: " << file << "\n";
 				});
 			};
@@ -305,9 +302,7 @@ int main()
 
 			el.callback = [&]() {
 				std::cout << "button 2 clicked\n";
-				mod.visible = true;
-				file_di.save_file("./", [&mod](std::filesystem::path file){
-					mod.visible = false;
+				file_di.save_file("./", [](std::filesystem::path file){
 					std::cout << "saved file: " << file << "\n";
 				}, ".txt");
 			};
