@@ -13,7 +13,6 @@
 #include <memory>
 #include <nanovg.h>
 #include <strong_type.h>
-#include <tuple>
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>

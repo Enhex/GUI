@@ -9,27 +9,24 @@ text_edit::text_edit()
 
 	auto& input_manager = context->input_manager;
 
-	input_manager.subscribe<input::event::mouse_press>(this, [this](std::any&& args) {
+	input_manager.mouse_press.subscribe(this, [this](int button, int mods) {
 		on_mouse_press();
 	});
-	input_manager.subscribe_global<input::event::mouse_release>(this, [this](std::any&& args) {
-		context->input_manager.unsubscribe_global<input::event::frame_start>(this);
+	input_manager.mouse_release.subscribe_global(this, [this](int button, int mods) {
+		context->input_manager.frame_start.unsubscribe_global(this);
 	});
-	input_manager.subscribe<input::event::key_press>(this, [this](std::any&& args) {
-		auto&[key, mods] = std::any_cast<input::event::key_press::params&>(args);
+	input_manager.key_press.subscribe(this, [this](int key, int mods) {
 		on_key_press(key, mods);
 	});
-	input_manager.subscribe<input::event::key_repeat>(this, [this](std::any&& args) {
-		auto&[key, mods] = std::any_cast<input::event::key_repeat::params&>(args);
+	input_manager.key_repeat.subscribe(this, [this](int key, int mods) {
 		on_key_press(key, mods);
 	});
-	input_manager.subscribe<input::event::character>(this, [this](std::any&& args) {
-		auto&[codepoint] = std::any_cast<input::event::character::params&>(args);
+	input_manager.character.subscribe(this, [this](unsigned int codepoint) {
 		on_character(codepoint);
 	});
 
 	// subscribe so text_edit will be able to capture focus
-	input_manager.subscribe<input::event::focus_start>(this, [this](std::any&& args) {});
+	input_manager.focus_start.subscribe(this, [this]() {});
 }
 
 void text_edit::set_cursor_to_mouse_pos()
@@ -76,7 +73,7 @@ void text_edit::on_mouse_press()
 
 	selection_start_pos = cursor_pos;
 
-	context->input_manager.subscribe_global<input::event::frame_start>(this, [this](std::any&& args) {
+	context->input_manager.frame_start.subscribe_global(this, [this]() {
 		on_frame_start();
 	});
 }

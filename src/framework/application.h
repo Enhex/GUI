@@ -64,7 +64,7 @@ inline void application::run(F loop_function)
 		nvgBeginFrame(vg, (float)win_width, (float)win_height, pixel_ratio);
 
 		update_hoevered_element();
-		input_manager.send_global_event(input::event::frame_start::id, {});
+		input_manager.frame_start.send_global_event();
 
 		// user defined function
 		loop_function();

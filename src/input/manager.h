@@ -8,135 +8,33 @@ namespace input
 {
 	struct element;
 
-	using any_callback = std::function<void(std::any&&)>;
-
 	/*TODO
 	- global events context that the user can switch between
 	*/
 	struct manager
 	{
-		using event_ID = size_t;
-		using callbacks_t = std::list<any_callback>;
-
 		vector2 mouse_pos;
 
 		element* focused_element = nullptr; // keyboard focus
 		element* hovered_element = nullptr; // mouse focus
 		element* pressed_element = nullptr; // element which was hovered when mouse press happened
 
-	protected:
-		// map from element to subscribed events
-		//NOTE: using list for stable iterators
-		std::unordered_map<element*, std::unordered_map<event_ID, callbacks_t>> focused_events;
-		//NOTE: while technically it isn't a requirement for a subscriber to be an element (unlike focused event which listens to the subscribing element's events), it's
-		// still useful for automatic unsubscription on destruction and unified API.
-		std::unordered_map<event_ID, std::unordered_map<element*, any_callback>> global_events;
-		// only one callback per event
-		std::unordered_map<event_ID, any_callback> exclusive_events;
-
-		// used to handle deleting subsription while iterating
-		element* active_callback_element = nullptr;
-		event_ID active_callback_event_id = -1;
-		std::unordered_map<element*, any_callback>::iterator active_callback_global_iter;
-
-		// used to track if an element deleted itself from one of its callbacks, to prevent calling the rest of its callbacks.
-		// it's marked as deleted by setting the pointer to nullptr.
-		element* callback_element = nullptr;
-
-	public:
-		// focused
-		template<typename Event>
-		callbacks_t::iterator subscribe(element* subscriber, std::function<void(std::any&&)>&& callback)
-		{
-			// add removal callback
-			if (focused_events.find(subscriber) != focused_events.end())
-			{
-				subscriber->destructor_callbacks.emplace_back([this, subscriber]() {
-					focused_events.erase(subscriber);
-				});
-			}
-
-			// subscribe
-			auto& callbacks = focused_events[subscriber][Event::id];
-			callbacks.emplace_back(std::move(callback));
-
-			return --callbacks.end();
-		}
-
-		// global, when no specific element has focus.
-		template<typename Event>
-		void subscribe_global(element* subscriber, std::function<void(std::any&&)>&& callback)
-		{
-			auto& event = global_events[Event::id];
-
-			// add removal callback
-			if (event.find(subscriber) != event.end())
-			{
-				subscriber->destructor_callbacks.emplace_back([this, subscriber]() {
-					global_events[Event::id].erase(subscriber);
-				});
-			}
-
-			// subscribe
-			event[subscriber] = std::move(callback);
-		}
-
-		// return false if the event already has exclusive subscription
-		template<typename Event>
-		bool subscribe_exclusive(std::function<void(std::any&&)>&& callback)
-		{
-			if(exclusive_events.count(Event::id) != 0)
-				return false;
-
-			exclusive_events[Event::id] = callback;
-			return true;
-		}
-
-		// focused
-		template<typename Event>
-		void unsubscribe(element* subscriber)
-		{
-			auto iter = focused_events.find(subscriber);
-			if(iter != focused_events.end())
-				iter->second.erase(Event::id);
-		}
-
-		// global
-		template<typename Event>
-		void unsubscribe_global(element* subscriber)
-		{
-			auto& event = global_events[Event::id];
-
-			if (active_callback_element == subscriber &&
-				active_callback_event_id == Event::id)
-			{
-				// if self-unsubscribing, update iterator
-				active_callback_global_iter = event.erase(event.find(subscriber));
-			}
-			else {
-				event.erase(subscriber);
-			}
-		}
-
-		// exclusive
-		template<typename Event>
-		void unsubscribe_exclusive()
-		{
-			exclusive_events.erase(Event::id);
-		}
-
-		void send_event(element* element, size_t event_id, std::any&& args);
-
-		// return the element that captured the event
-		element* send_focused_event(element& element, size_t event_id, std::any&& args);
-
-		void send_global_event(size_t event_id, std::any&& args);
-
+		// events
+		event::key_press key_press;
+		event::key_release key_release;
+		event::key_repeat key_repeat;
+		event::hover_start hover_start;
+		event::hover_end hover_end;
+		event::mouse_press mouse_press;
+		event::mouse_release mouse_release;
+		event::scroll scroll;
+		event::character character;
+		event::frame_start frame_start;
+		event::focus_start focus_start;
+		event::focus_end focus_end;
 
 		void set_hovered_element(element* new_element);
 		void set_focused_element(element* new_element);
-
-		decltype(focused_events) const& get_focused_events();
 
 		void on_element_delete(element& element);
 

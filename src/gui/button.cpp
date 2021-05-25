@@ -11,20 +11,20 @@ button::button()
 
 	auto& input_manager = context->input_manager;
 
-	input_manager.subscribe<input::event::hover_start>(this, [this](std::any&& args) {
+	input_manager.hover_start.subscribe(this, [this](vector2 const& mouse_position) {
 		color = hover_color;
 	});
 
-	input_manager.subscribe<input::event::hover_end>(this, [this](std::any&& args) {
+	input_manager.hover_end.subscribe(this, [this]() {
 		color = background_color;
 	});
 
-	input_manager.subscribe<input::event::mouse_press>(this, [this](std::any&& args) {
+	input_manager.mouse_press.subscribe(this, [this](int key, int mods) {
 		color = press_color;
 		is_pressed = true;
 	});
 
-	input_manager.subscribe<input::event::mouse_release>(this, [this](std::any&& args) {
+	input_manager.mouse_release.subscribe(this, [this](int key, int mods) {
 		color = hover_color;
 		//execute callback if the button was pressed before release event
 		if (is_pressed) {

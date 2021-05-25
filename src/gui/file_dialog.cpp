@@ -95,8 +95,7 @@ file_dialog::file_dialog() :
 	}
 
 	// events
-	context->input_manager.subscribe<input::event::key_press>(filename_field, [this](std::any&& args) {
-		auto const& [key, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+	context->input_manager.key_press.subscribe(filename_field, [this](int key, int mods) {
 		filename_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
 
 		if(key == GLFW_KEY_ENTER)
@@ -117,8 +116,7 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 
 	path_field->set_text(canon.string());
 
-	context->input_manager.subscribe<input::event::key_press>(path_field, [this, callback, extensions](std::any&& args) {
-		auto const& [key, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+	context->input_manager.key_press.subscribe(path_field, [this, callback, extensions](int key, int mods) {
 		path_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
 
 		if(key == GLFW_KEY_ENTER && fs::exists(path_field->str))
@@ -196,8 +194,7 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 
 	path_field->set_text(canon.string());
 
-	context->input_manager.subscribe<input::event::key_press>(path_field, [this, callback, extension](std::any&& args) {
-		auto const& [key, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+	context->input_manager.key_press.subscribe(path_field, [this, callback, extension](int key, int mods) {
 		path_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
 
 		if(key == GLFW_KEY_ENTER && fs::exists(path_field->str))

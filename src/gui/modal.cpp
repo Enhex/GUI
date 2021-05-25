@@ -10,11 +10,11 @@ modal::modal()
 
 	auto& input_manager = context->input_manager;
 
-	input_manager.subscribe<input::event::mouse_press>(this, [this](std::any&& args) {
+	input_manager.mouse_press.subscribe(this, [this](int button, int mods) {
 		is_pressed = true;
 	});
 
-	input_manager.subscribe<input::event::mouse_release>(this, [this](std::any&& args) {
+	input_manager.mouse_release.subscribe(this, [this](int button, int mods) {
 		if (is_pressed) {
 			is_pressed = false;
 			visible = false;

@@ -371,12 +371,12 @@ int main()
 		auto& name = text_bg.create_child<text>();
 		name.set_text("focus");
 
-		app.input_manager.subscribe<input::event::focus_start>(&root, [&](std::any&& args) {
+		app.input_manager.focus_start.subscribe(&root, [&]() {
 			root.color = nvgRGBA(255,0,0,255);
 			std::cout << "focus start\n";
 		});
 
-		app.input_manager.subscribe<input::event::focus_end>(&root, [&](std::any&& args) {
+		app.input_manager.focus_end.subscribe(&root, [&]() {
 			root.color = nvgRGBA(0,255,0,255);
 			std::cout << "focus end\n";
 		});
@@ -389,8 +389,7 @@ int main()
 	}
 
 	// test global event
-	app.input_manager.subscribe_global<input::event::key_press>(&app.root, [&app, &root](std::any&& args) {
-		auto&[key, mods] = std::any_cast<input::event::key_press::params&>(args);
+	app.input_manager.key_press.subscribe_global(&app.root, [&app, &root](int key, int mods) {
 		std::cout << "(global) key pressed: " << key << "\n";
 
 		if (key == GLFW_KEY_C)
@@ -400,27 +399,26 @@ int main()
 		}
 		else if(key == GLFW_KEY_U)
 		{
-			app.input_manager.unsubscribe_global<input::event::key_press>(&app.root);
+			app.input_manager.key_press.unsubscribe_global(&app.root);
 			std::cout << "unsubscribed!\n";
 		}
 	});
 
 	// test focused hover events
-	app.input_manager.subscribe<input::event::hover_start>(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](std::any&& args) {
+	app.input_manager.hover_start.subscribe(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](vector2 const& mouse_position) {
 		el->color = nvgRGBA(255,0,0,255);
 		std::cout << "hover start\n";
 	});
-	app.input_manager.subscribe<input::event::hover_end>(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](std::any&& args) {
+	app.input_manager.hover_end.subscribe(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())]() {
 		el->color = nvgRGBA(255, 255, 255, 255);
 		std::cout << "hover end\n";
 	});
-	app.input_manager.subscribe<input::event::mouse_press>(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](std::any&& args) {
-		auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+	// test multiple event callbacks
+	app.input_manager.mouse_press.subscribe(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](int button, int mods) {
 		el->color = nvgRGBA(0, 255, 0, 255);
 		std::cout << "mouse press: " << button << "\n";
 	});
-	app.input_manager.subscribe<input::event::mouse_press>(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](std::any&& args) {
-		auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+	app.input_manager.mouse_press.subscribe(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](int button, int mods) {
 		std::cout << "mouse press second callback\n";
 	});
 

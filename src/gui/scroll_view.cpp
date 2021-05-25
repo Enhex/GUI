@@ -35,8 +35,7 @@ scroll_view::scroll_view() :
 	// input
 	auto& input_manager = context->input_manager;
 
-	input_manager.subscribe<input::event::scroll>(this, [&](std::any&& args) {
-		auto&[xoffset, yoffset] = std::any_cast<input::event::scroll::params&>(args);
+	input_manager.scroll.subscribe(this, [&](double xoffset, double yoffset) {
 		move_content(horizontal, scroll_step * xoffset);
 		move_content(vertical, scroll_step * yoffset);
 	});
@@ -49,16 +48,15 @@ void scroll_view::subscribe_scroll_events(layout::orientation const orient)
 {
 	auto& input_manager = context->input_manager;
 
-	input_manager.subscribe<input::event::mouse_press>(&scroll[orient]->scroll_up, [&, orient](std::any&& args) {
+	input_manager.mouse_press.subscribe(&scroll[orient]->scroll_up, [&, orient](int button, int mods) {
 		move_content(orient, scroll_step);
 	});
 
-	input_manager.subscribe<input::event::mouse_press>(&scroll[orient]->scroll_down, [&, orient](std::any&& args) {
+	input_manager.mouse_press.subscribe(&scroll[orient]->scroll_down, [&, orient](int button, int mods) {
 		move_content(orient, -scroll_step);
 	});
 
-	input_manager.subscribe<input::event::mouse_press>(&scroll[orient]->handle, [&, orient](std::any&& args) {
-		auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+	input_manager.mouse_press.subscribe(&scroll[orient]->handle, [&, orient](int button, int mods) {
 		if(button != GLFW_MOUSE_BUTTON_LEFT)
 			return;
 
@@ -66,7 +64,7 @@ void scroll_view::subscribe_scroll_events(layout::orientation const orient)
 		handle_drag_ancor = input_manager.mouse_pos.a[orient] - scroll[orient]->handle.get_position().a[orient];
 
 		// subscribe to events
-		input_manager.subscribe_global<input::event::frame_start>(this, [&, orient](std::any&& args) {
+		input_manager.frame_start.subscribe_global(this, [&, orient]() {
 			// update handle position
 			auto const new_absolute_pos = input_manager.mouse_pos.a[orient] - handle_drag_ancor;
 			auto const change = scroll[orient]->handle.get_position().a[orient] - new_absolute_pos;
@@ -74,13 +72,11 @@ void scroll_view::subscribe_scroll_events(layout::orientation const orient)
 				move_content(orient, change);
 		});
 
-		input_manager.subscribe<input::event::mouse_release>(&scroll[orient]->handle, [&, orient](std::any&& args) {
-			auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+		input_manager.mouse_release.subscribe(&scroll[orient]->handle, [&, orient](int button, int mods) {
 			stop_dragging(orient, button);
 		});
 
-		input_manager.subscribe_exclusive<input::event::mouse_release>([&, orient](std::any&& args) {
-			auto&[button, mods] = std::any_cast<input::event::mouse_press::params&>(args);
+		input_manager.mouse_release.subscribe_exclusive([&, orient](int button, int mods) {
 			stop_dragging(orient, button);
 		});
 	});
@@ -95,9 +91,9 @@ void scroll_view::stop_dragging(layout::orientation const orient, int const butt
 
 	// unsubscribe for optimization to not call callbacks needlessly when not dragging
 	auto& input_manager = context->input_manager;
-	input_manager.unsubscribe<input::event::mouse_release>(&scroll[orient]->handle);
-	input_manager.unsubscribe_exclusive<input::event::mouse_release>();
-	input_manager.unsubscribe_global<input::event::frame_start>(this);
+	input_manager.mouse_release.unsubscribe(&scroll[orient]->handle);
+	input_manager.mouse_release.unsubscribe_exclusive();
+	input_manager.frame_start.unsubscribe_global(this);
 }
 
 float scroll_view::get_scroll_length(layout::orientation const orient) const

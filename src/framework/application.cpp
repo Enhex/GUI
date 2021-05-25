@@ -5,7 +5,6 @@
 
 #include <fstream>
 #include <stdexcept>
-#include <tuple>
 
 application::application(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share)
 {
@@ -118,25 +117,23 @@ void application::key_callback(GLFWwindow * window, int key, int scancode, int a
 {
 	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
 
-	auto const event_id = [&]() {
-		if (action == GLFW_RELEASE)
-			return input::event::key_release::id;
-		if (action == GLFW_PRESS)
-			return input::event::key_press::id;
-		if (action == GLFW_REPEAT)
-			return input::event::key_repeat::id;
-		//throw std::invalid_argument("unknown action");
-		return input::event::invalid_id;
-	}();
-
-	input_manager.send_event(input_manager.focused_element, event_id, std::tuple{ key, mods });
+	switch (action) {
+	case GLFW_RELEASE:
+		input_manager.key_release.send_event(input_manager.focused_element, key, mods);
+		break;
+	case GLFW_PRESS:
+		input_manager.key_press.send_event(input_manager.focused_element, key, mods);
+		break;
+	case GLFW_REPEAT:
+		input_manager.key_repeat.send_event(input_manager.focused_element, key, mods);
+		break;
+	}
 }
 
 void application::character_callback(GLFWwindow * window, unsigned int codepoint)
 {
 	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
-
-	input_manager.send_event(input_manager.focused_element, input::event::character::id, std::tuple{ codepoint });
+	input_manager.character.send_event(input_manager.focused_element, codepoint);
 }
 
 void application::cursor_pos_callback(GLFWwindow * window, double xpos, double ypos)
@@ -184,37 +181,30 @@ void application::mouse_button_callback(GLFWwindow * window, int button, int act
 {
 	using namespace input;
 
-	auto const event_id = [&]() {
-		if (action == GLFW_RELEASE)
-			return event::mouse_release::id;
-		if (action == GLFW_PRESS)
-			return event::mouse_press::id;
-		return event::invalid_id;
-	}();
-
-
 	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
-
 
 	if (input_manager.hovered_element != nullptr) {
 		//TODO allow controlling if an element auto gains focus on click
 		input_manager.set_focused_element(input_manager.hovered_element);
 
-		if(event_id == event::mouse_press::id)
+		if (action == GLFW_PRESS)
 			input_manager.pressed_element = input_manager.hovered_element;
 	}
 
-	input_manager.send_event(input_manager.hovered_element, event_id, std::tuple{ button, mods });
+	if (action == GLFW_RELEASE)
+		input_manager.mouse_release.send_event(input_manager.hovered_element, button, mods);
+	if (action == GLFW_PRESS)
+		input_manager.mouse_press.send_event(input_manager.hovered_element, button, mods);
 
 	// reset pressed element after release event was sent, so the callback can know which element was pressed
-	if (event_id == event::mouse_release::id)
+	if (action == GLFW_RELEASE)
 		input_manager.pressed_element = nullptr;
 }
 
 void application::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
-	input_manager.send_event(input_manager.hovered_element, input::event::scroll::id, std::tuple{ xoffset, yoffset });
+	input_manager.scroll.send_event(input_manager.hovered_element, xoffset, yoffset);
 }
 
 void application::window_size_callback(GLFWwindow* window, int width, int height)
