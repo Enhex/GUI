@@ -29,6 +29,12 @@ text_edit::text_edit()
 	input_manager.focus_start.subscribe(this, [this]() {});
 }
 
+void text_edit::on_str_changed()
+{
+	update_glyphs();
+	on_text_changed();
+}
+
 void text_edit::update_glyph_positions()
 {
 	auto& vg = context->vg;
@@ -125,7 +131,7 @@ void text_edit::on_key_press(int key, int mods)
 		}
 		else if (cursor_pos > 0) {
 			str.erase(--cursor_pos, 1);
-			update_glyphs();
+			on_str_changed();
 		}
 		break;
 
@@ -135,7 +141,7 @@ void text_edit::on_key_press(int key, int mods)
 		}
 		else if (cursor_pos < str.size()) {
 			str.erase(cursor_pos, 1);
-			update_glyphs();
+			on_str_changed();
 		}
 		break;
 
@@ -192,7 +198,7 @@ void text_edit::on_key_press(int key, int mods)
 			auto const cstr = glfwGetClipboardString(app.window);
 			str.insert(cursor_pos, cstr);
 			cursor_pos += strlen(cstr);
-			update_glyphs();
+			on_str_changed();
 		}
 		break;
 
@@ -207,7 +213,7 @@ void text_edit::on_key_press(int key, int mods)
 void text_edit::on_character(unsigned codepoint)
 {
 	str.insert(str.begin() + cursor_pos++, codepoint);
-	update_glyphs();
+	on_str_changed();
 	//NOTE: no need to update glyphs when deleting since the deleted glyphs won't be accessed.
 }
 
@@ -264,8 +270,8 @@ void text_edit::draw(NVGcontext* vg)
 
 void text_edit::set_text(std::string const& new_str)
 {
-	text::set_text(new_str);
-	update_glyphs_no_bounds();
+	str = new_str;
+	on_str_changed();
 }
 
 
@@ -293,7 +299,7 @@ void text_edit::delete_selection()
 	str.erase(low_pos, high_pos - low_pos);
 	cursor_pos = low_pos;
 	clear_selection();
-	update_glyphs();
+	on_str_changed();
 }
 
 void text_edit::select_all()

@@ -29,6 +29,10 @@ struct text_edit : text
 	// callback for when the text is changed
 	std::function<void()> on_text_changed = []{};
 
+	// what to do when the string changes.
+	// default is to update the glyphs and call a callback.
+	virtual void on_str_changed();
+
 	void update_glyph_positions();
 
 	void update_glyphs_no_bounds();
