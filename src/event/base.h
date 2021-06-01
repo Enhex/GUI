@@ -20,33 +20,27 @@ namespace input
 			// focused
 			typename callbacks_t::iterator subscribe(element* subscriber, callback_t&& callback)
 			{
-				// add removal callback
-				if (focused_events.find(subscriber) != focused_events.end())
-				{
-					subscriber->destructor_callbacks.emplace_back([this, subscriber]() {
-						focused_events.erase(subscriber);
-					});
-				}
-
 				// subscribe
 				auto& callbacks = focused_events[subscriber];
 				callbacks.emplace_back(std::move(callback));
+
+				// add removal callback
+				subscriber->destructor_callbacks.emplace_back([this, subscriber]() {
+					focused_events.erase(subscriber);
+				});
 
 				return --callbacks.end();
 			}
 
 			void subscribe_global(element* subscriber, callback_t&& callback)
 			{
-				// add removal callback
-				if (global_event.find(subscriber) != global_event.end())
-				{
-					subscriber->destructor_callbacks.emplace_back([this, subscriber]() {
-						global_event.erase(subscriber);
-					});
-				}
-
 				// subscribe
 				global_event[subscriber] = std::move(callback);
+
+				// add removal callback
+				subscriber->destructor_callbacks.emplace_back([this, subscriber]() {
+					global_event.erase(subscriber);
+				});
 			}
 
 			// return false if the event already has exclusive subscription
