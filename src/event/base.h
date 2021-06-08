@@ -2,6 +2,8 @@
 
 #include "../input/element.h"
 
+#include <optional>
+
 namespace input
 {
 	namespace event
