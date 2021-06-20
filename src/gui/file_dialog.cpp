@@ -110,95 +110,155 @@ void file_dialog::set_visible(bool visible)
 	visibility_element->visible = visible;
 }
 
+button& file_dialog::create_path(fs::path const& path, std::string str)
+{
+	auto update_text = [&](text& txt) {
+		if(str.empty())
+			txt.set_text(path.filename().string());
+		else
+			txt.set_text(str);
+	};
+
+	button* btn;
+
+	// reuse existing buttons if available
+	if(paths_count < view->content.children.size()) {
+		btn = static_cast<button*>(view->content.children.at(paths_count).get());
+		auto& txt = static_cast<text&>(*btn->children.at(0));
+		update_text(txt);
+	}
+	else {
+		btn = &view->content.create_child<button>();
+		btn->expand[layout::horizontal] = true;
+
+		auto& txt = btn->create_child<text>();
+		update_text(txt);
+	}
+
+	++paths_count;
+	return *btn;
+}
+
+void file_dialog::add_path_pick(fs::path const& path, std::string str)
+{
+	auto& btn = create_path(path, str);
+
+	// display directory's content when clicked
+	if(fs::is_directory(path))
+	{
+		btn.callback = [this, path]{
+			// callback may be overwitten from within itself, deleting path.
+			auto const path_copy = path;
+			pick_change_dir(path_copy);
+		};
+	}
+	else {
+		btn.callback = [this, path]{
+			set_visible(false);
+			current_callback(path);
+		};
+	}
+}
+void file_dialog::add_path_save(fs::path const& path, std::string str)
+{
+	auto& btn = create_path(path, str);
+
+	// display directory's content when clicked
+	if(fs::is_directory(path))
+	{
+		btn.callback = [this, path]{
+			// callback may be overwitten from within itself, deleting path.
+			auto const path_copy = path;
+			save_change_dir(path_copy);
+		};
+	}
+	// set filename to clicked file
+	else {
+		btn.callback = [this, path]{
+			filename_field->set_text(path.filename().string());
+		};
+	}
+}
+
 void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback, std::vector<fs::path> const& extensions)
 {
+	current_callback = callback;
+	current_extensions = extensions;
+
 	auto canon = fs::canonical(dir);
 
 	path_field->set_text(canon.string());
 
-	context->input_manager.key_press.subscribe(path_field, [this, callback, extensions](int key, int mods) {
+	context->input_manager.key_press.subscribe(path_field, [this](int key, int mods) {
 		path_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
 
 		if(key == GLFW_KEY_ENTER && fs::exists(path_field->str))
-			pick_file(path_field->str, callback, extensions);
+			pick_change_dir(path_field->str);
 	});
 
-	title.set_text("choose file...");
+	title.set_text("pick file...");
 
 	set_visible(true);
 	filename_container.visible = false;
 	confirm->visible = false;
 
-	auto add_path = [&](fs::path const& path, std::string str = "")
-	{
-		auto& btn = view->content.create_child<button>();
-		btn.expand[layout::horizontal] = true;
+	pick_change_dir(canon);
+}
 
-		auto& txt = btn.create_child<text>();
-		if(str.empty())
-			txt.set_text(path.filename().string());
-		else
-			txt.set_text(str);
+void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback, fs::path extension)
+{
+	auto const extentions = std::vector{extension};
+	pick_file(dir, callback, extentions);
+}
 
-		// display directory's content when clicked
-		if(fs::is_directory(path))
-		{
-			btn.callback = [this, path, callback, extensions]{
-				pick_file(path, callback, extensions);
-			};
-		}
-		else {
-			btn.callback = [this, path, callback]{
-				set_visible(false);
-				callback(path);
-			};
-		}
-	};
 
-	view->content.children.clear();
+void file_dialog::pick_change_dir(fs::path const& dir)
+{
+	paths_count = 0;
 
 	// "go back" button
-	if(canon.has_parent_path())
+	if(dir.has_parent_path())
 	{
-		auto const parent = canon / "..";
-		add_path(parent, "..");
+		auto const parent = dir.parent_path();
+		add_path_pick(parent, "..");
 	}
 
 	// create representations for paths in the viewed directory
 	for(auto const& p : fs::directory_iterator(dir))
 	{
-		if(extensions.empty() || fs::is_directory(p.path())) {
-			add_path(p.path());
+		if(current_extensions.empty() || fs::is_directory(p.path())) {
+			add_path_pick(p.path());
 			continue;
 		}
 
 		auto const p_ext = p.path().extension();
-		for(auto const& ext : extensions) {
+		for(auto const& ext : current_extensions) {
 			if(p_ext == ext) {
-				add_path(p.path());
+				add_path_pick(p.path());
 				continue;
 			}
 		}
 	}
-}
 
-void file_dialog::pick_file(std::filesystem::path dir, std::function<void(std::filesystem::path)> callback, std::filesystem::path extension)
-{
-	pick_file(dir, callback, std::vector{extension});
+	// delete unused buttons
+	view->content.children.resize(paths_count);
 }
 
 
 void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback, fs::path extension)
 {
+	current_callback = callback;
+	current_extension = extension;
+
 	auto canon = fs::canonical(dir);
 
 	path_field->set_text(canon.string());
 
-	context->input_manager.key_press.subscribe(path_field, [this, callback, extension](int key, int mods) {
+	context->input_manager.key_press.subscribe(path_field, [this](int key, int mods) {
 		path_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
 
 		if(key == GLFW_KEY_ENTER && fs::exists(path_field->str))
-			save_file(path_field->str, callback, extension);
+			save_change_dir(path_field->str);
 	});
 
 	title.set_text("save file...");
@@ -207,55 +267,37 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 	filename_container.visible = true;
 	confirm->visible = true;
 
-	auto add_path = [&](fs::path const& path, std::string str = "")
-	{
-		auto& btn = view->content.create_child<button>();
-		btn.expand[layout::horizontal] = true;
+	save_change_dir(canon);
+}
 
-		auto& txt = btn.create_child<text>();
-		if(str.empty())
-			txt.set_text(path.filename().string());
-		else
-			txt.set_text(str);
-
-		// display directory's content when clicked
-		if(fs::is_directory(path))
-		{
-			btn.callback = [this, path, callback, extension]{
-				save_file(path, callback, extension);
-			};
-		}
-		// set filename to clicked file
-		else {
-			btn.callback = [this, path, callback]{
-				filename_field->set_text(path.filename().string());
-			};
-		}
-	};
-
-	view->content.children.clear();
+void file_dialog::save_change_dir(fs::path const& dir)
+{
+	paths_count = 0;
 
 	// "go back" button
-	if(canon.has_parent_path())
+	if(dir.has_parent_path())
 	{
-		auto const parent = canon / "..";
-		add_path(parent, "..");
+		auto const parent = dir.parent_path();
+		add_path_save(parent, "..");
 	}
 
 	// create representations for paths in the viewed directory
 	for(auto const& p : fs::directory_iterator(dir))
 	{
-		if(extension.empty() || fs::is_directory(p.path()) || p.path().extension() == extension)
-			add_path(p.path());
+		if(current_extension.empty() || fs::is_directory(p.path()) || p.path().extension() == current_extension)
+			add_path_save(p.path());
 	}
 
-	confirm->callback = [this, canon, callback, extension]{
+	confirm->callback = [this, dir]{
 		set_visible(false);
 
 		fs::path filename = filename_field->str;
-		if(filename.extension() != extension)
-			filename += extension;
+		if(filename.extension() != current_extension)
+			filename += current_extension;
 
-		callback(canon / filename);
+		current_callback(dir / filename);
 	};
+
+	// delete unused buttons
+	view->content.children.resize(paths_count);
 }

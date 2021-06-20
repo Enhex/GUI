@@ -38,7 +38,20 @@ struct file_dialog : panel
 	// extension: filter displayed files
 	void pick_file(std::filesystem::path dir, std::function<void(std::filesystem::path)> callback, std::vector<std::filesystem::path> const& extensions = {});
 	void pick_file(std::filesystem::path dir, std::function<void(std::filesystem::path)> callback, std::filesystem::path extension);
+	void pick_change_dir(std::filesystem::path const& dir);
 	// can enter new file name
 	// extension: filter displayed files and save file with the extension
 	void save_file(std::filesystem::path dir, std::function<void(std::filesystem::path)> callback, std::filesystem::path extension = "");
+	void save_change_dir(std::filesystem::path const& dir);
+
+protected:
+	std::function<void(std::filesystem::path)> current_callback;
+	std::vector<std::filesystem::path> current_extensions;
+	std::filesystem::path current_extension;
+
+	size_t paths_count = 0;
+
+	button& create_path(std::filesystem::path const& path, std::string str = "");
+	void add_path_pick(std::filesystem::path const& path, std::string str = "");
+	void add_path_save(std::filesystem::path const& path, std::string str = "");
 };
