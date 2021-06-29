@@ -25,6 +25,10 @@ text_edit::text_edit()
 		on_character(codepoint);
 	});
 
+	input_manager.focus_end.subscribe(this, [this]() {
+		clear_selection();
+	});
+
 	// subscribe so text_edit will be able to capture focus
 	input_manager.focus_start.subscribe(this, [this]() {});
 }
