@@ -183,12 +183,11 @@ void application::mouse_button_callback(GLFWwindow * window, int button, int act
 
 	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
 
-	if (input_manager.hovered_element != nullptr) {
+	// hovered element only gains focus on mouse press (not release)
+	if (action == GLFW_PRESS && input_manager.hovered_element != nullptr) {
 		//TODO allow controlling if an element auto gains focus on click
 		input_manager.set_focused_element(input_manager.hovered_element);
-
-		if (action == GLFW_PRESS)
-			input_manager.pressed_element = input_manager.hovered_element;
+		input_manager.pressed_element = input_manager.hovered_element;
 	}
 
 	if (action == GLFW_RELEASE)
