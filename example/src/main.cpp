@@ -100,6 +100,7 @@ int main()
 
 
 	// editable text
+	text_edit* txt_edit = nullptr;
 	{
 		auto& background = app.root.create_child<panel>();
 		background.position = { 50,100 };
@@ -107,8 +108,8 @@ int main()
 		background.min_size = { 200,0 };
 		background.create_layout<gui::layout::box>();
 
-		auto& txt_edit = background.create_child<text_edit>();
-		txt_edit.set_text("editable text");
+		txt_edit = &background.create_child<text_edit>();
+		txt_edit->set_text("editable text");
 
 		background.child_layout->perform();
 	}
@@ -389,7 +390,7 @@ int main()
 	}
 
 	// test global event
-	app.input_manager.key_press.subscribe_global(&app.root, [&app, &root](int key, int mods) {
+	app.input_manager.key_press.subscribe_global(&app.root, [&app, &root, &txt_edit](int key, int mods) {
 		std::cout << "(global) key pressed: " << key << "\n";
 
 		if (key == GLFW_KEY_C)
@@ -401,6 +402,11 @@ int main()
 		{
 			app.input_manager.key_press.unsubscribe_global(&app.root);
 			std::cout << "unsubscribed!\n";
+		}
+		else if(key == GLFW_KEY_F2)
+		{
+			txt_edit->set_text("new text");
+			std::cout << "new text\n";
 		}
 	});
 

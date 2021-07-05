@@ -274,6 +274,7 @@ void text_edit::draw(NVGcontext* vg)
 
 void text_edit::set_text(std::string const& new_str)
 {
+	clear_selection();
 	str = new_str;
 	on_str_changed();
 }
