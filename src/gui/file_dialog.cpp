@@ -43,13 +43,63 @@ file_dialog::file_dialog() :
 	}
 
 	{
-		auto& bg = create_child<panel>();
-		bg.create_layout<gui::layout::box>();
-		bg.expand[layout::horizontal] = true;
-		bg.color = NVGcolor{0.15,0.15,0.15,1};
+		auto& container = create_child<element>();
+		container.create_layout<gui::layout::box>().orient = layout::horizontal;
+		container.expand[layout::horizontal] = true;
+		{
+			auto& bg = container.create_child<panel>();
+			bg.create_layout<gui::layout::box>();
+			bg.expand[layout::horizontal] = true;
+			bg.color = NVGcolor{0.15,0.15,0.15,1};
 
-		path_field = &bg.create_child<text_edit>();
-		path_field->expand[layout::horizontal] = true;
+			path_field = &bg.create_child<text_edit>();
+			path_field->expand[layout::horizontal] = true;
+
+			folder_field = &bg.create_child<text_edit>();
+			folder_field->expand[layout::horizontal] = true;
+			folder_field->visible = false;
+			// pressing enter confirms the name
+			context->input_manager.key_press.subscribe(folder_field, [this](int key, int mods) {
+				folder_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
+
+				if(key == GLFW_KEY_ENTER)
+					confirm_folder_dialog();
+			});
+		}
+		{
+			auto& spacer = container.create_child<element>();
+			X(spacer.min_size) = 32;
+		}
+		{
+			add_folder = &container.create_child<button>();
+			auto& add_folder_txt = add_folder->create_child<text>();
+			add_folder_txt.set_text("add folder");
+			add_folder->callback = [this]{
+				toggle_add_folder_dialog(true);
+			};
+		}
+		{
+			folder_dialog = &container.create_child<element>();
+			folder_dialog->create_layout<gui::layout::box>().orient = layout::horizontal;
+			folder_dialog->visible = false;
+
+			auto& confirm_folder = folder_dialog->create_child<button>();
+			auto& confirm_folder_txt = confirm_folder.create_child<text>();
+			confirm_folder_txt.set_text("confirm");
+			confirm_folder.callback = [this]{
+				confirm_folder_dialog();
+			};
+			{
+				auto& spacer = folder_dialog->create_child<element>();
+				X(spacer.min_size) = 5;
+			}
+			auto& cancel_folder = folder_dialog->create_child<button>();
+			auto& cancel_folder_txt = cancel_folder.create_child<text>();
+			cancel_folder_txt.set_text("cancel");
+			cancel_folder.callback = [this]{
+				toggle_add_folder_dialog(false);
+			};
+		}
 	}
 	{
 		auto& border = create_child<panel>();
@@ -182,8 +232,10 @@ void file_dialog::add_path_save(fs::path const& path, std::string str)
 
 void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback, std::vector<fs::path> const& extensions)
 {
+	mode = Mode::pick;
 	current_callback = callback;
 	current_extensions = extensions;
+	current_dir = dir;
 
 	auto canon = fs::canonical(dir);
 
@@ -201,6 +253,7 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 	set_visible(true);
 	filename_container.visible = false;
 	confirm->visible = false;
+	add_folder->visible = false;
 
 	pick_change_dir(canon);
 }
@@ -214,6 +267,7 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 
 void file_dialog::pick_change_dir(fs::path const& dir)
 {
+	current_dir = dir;
 	paths_count = 0;
 
 	// "go back" button
@@ -247,8 +301,10 @@ void file_dialog::pick_change_dir(fs::path const& dir)
 
 void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback, fs::path extension)
 {
+	mode = Mode::save;
 	current_callback = callback;
 	current_extension = extension;
+	current_dir = dir;
 
 	auto canon = fs::canonical(dir);
 
@@ -266,12 +322,14 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 	set_visible(true);
 	filename_container.visible = true;
 	confirm->visible = true;
+	add_folder->visible = true;
 
 	save_change_dir(canon);
 }
 
 void file_dialog::save_change_dir(fs::path const& dir)
 {
+	current_dir = dir;
 	paths_count = 0;
 
 	// "go back" button
@@ -288,16 +346,53 @@ void file_dialog::save_change_dir(fs::path const& dir)
 			add_path_save(p.path());
 	}
 
-	confirm->callback = [this, dir]{
+	confirm->callback = [this]{
 		set_visible(false);
 
 		fs::path filename = filename_field->str;
 		if(filename.extension() != current_extension)
 			filename += current_extension;
 
-		current_callback(dir / filename);
+		current_callback(current_dir / filename);
 	};
 
 	// delete unused buttons
 	view->content.children.resize(paths_count);
+}
+
+void file_dialog::toggle_add_folder_dialog(bool show)
+{
+	path_field->visible = !show;
+	add_folder->visible = !show;
+	folder_field->visible = show;
+	folder_dialog->visible = show;
+
+	folder_field->set_text("");
+	context->input_manager.set_focused_element(folder_field);
+
+	// make sure the file_dialog's width doesn't change
+	if(show) {
+		original_min_size = X(min_size);
+		X(min_size) = X(size);
+	}
+	else {
+		X(min_size) = original_min_size;
+	}
+}
+
+void file_dialog::confirm_folder_dialog()
+{
+	fs::create_directory(current_dir / folder_field->str);
+	refresh(); // refresh listed paths to show the new dir
+	toggle_add_folder_dialog(false);
+}
+
+void file_dialog::refresh()
+{
+	if(mode == Mode::pick) {
+		pick_change_dir(current_dir);
+	}
+	else if(mode == Mode::save) {
+		save_change_dir(current_dir);
+	}
 }

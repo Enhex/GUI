@@ -14,6 +14,12 @@ widget for selecting files
 */
 struct file_dialog : panel
 {
+	enum Mode : uint_fast8_t {
+		none,
+		pick,
+		save
+	};
+
 	inline static constexpr auto element_name{ "file_dialog" };
 	std::string get_element_name() override { return element_name; }
 
@@ -27,8 +33,11 @@ struct file_dialog : panel
 	element& filename_container;
 	scroll_view* view;
 	text_edit* path_field;
+	text_edit* folder_field;
 	text_edit* filename_field;
 	button* confirm;
+	button* add_folder;
+	element* folder_dialog;
 
 	file_dialog();
 
@@ -49,9 +58,17 @@ protected:
 	std::vector<std::filesystem::path> current_extensions;
 	std::filesystem::path current_extension;
 
+	std::filesystem::path current_dir;
+
 	size_t paths_count = 0;
+	float original_min_size;
+	Mode mode = Mode::none;
 
 	button& create_path(std::filesystem::path const& path, std::string str = "");
 	void add_path_pick(std::filesystem::path const& path, std::string str = "");
 	void add_path_save(std::filesystem::path const& path, std::string str = "");
+
+	void toggle_add_folder_dialog(bool show);
+	void confirm_folder_dialog();
+	void refresh();
 };
