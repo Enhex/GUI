@@ -167,6 +167,12 @@ button& file_dialog::create_path(fs::path const& path, std::string str)
 			txt.set_text(path.filename().string());
 		else
 			txt.set_text(str);
+
+		// distinguish file/dir by color
+		if(fs::is_directory(path))
+			txt.color = nvgRGBA(255, 255, 255, 255);
+		else
+			txt.color = nvgRGBA(180, 255, 180, 255);
 	};
 
 	button* btn;
