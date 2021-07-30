@@ -276,6 +276,8 @@ void file_dialog::pick_change_dir(fs::path const& dir)
 	current_dir = dir;
 	paths_count = 0;
 
+	path_field->set_text(dir.string());
+
 	// "go back" button
 	if(dir.has_parent_path())
 	{
@@ -337,6 +339,8 @@ void file_dialog::save_change_dir(fs::path const& dir)
 {
 	current_dir = dir;
 	paths_count = 0;
+
+	path_field->set_text(dir.string());
 
 	// "go back" button
 	if(dir.has_parent_path())
