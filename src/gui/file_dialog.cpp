@@ -248,8 +248,6 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 	path_field->set_text(canon.string());
 
 	context->input_manager.key_press.subscribe(path_field, [this](int key, int mods) {
-		path_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
-
 		if(key == GLFW_KEY_ENTER && fs::exists(path_field->str))
 			pick_change_dir(path_field->str);
 	});
