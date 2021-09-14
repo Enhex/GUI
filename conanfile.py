@@ -24,13 +24,13 @@ class GuiConan(ConanFile):
 	description = "<Description of Gui here>"
 	settings = "os", "compiler", "build_type", "arch"
 	options = {"shared": [True, False]}
-	default_options = "shared=False"
+	default_options = "shared=False", "boost:without_stacktrace=True"
 	generators = "premake"
 	exports = "premake5.lua"
 	exports_sources = "src/*"
 
 	requires = (
-		"boost/1.76.0",
+		"boost/1.77.0",
 		"glfw/3.3.4",
 		"glad/0.1.34",
 		"nanovg/master@enhex/stable",
