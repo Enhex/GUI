@@ -390,8 +390,17 @@ void file_dialog::toggle_add_folder_dialog(bool show)
 
 void file_dialog::confirm_folder_dialog()
 {
-	fs::create_directory(current_dir / folder_field->str);
-	refresh(); // refresh listed paths to show the new dir
+	auto new_dir = current_dir / folder_field->str;
+	fs::create_directory(new_dir);
+
+	// open the new directory
+	if(mode == Mode::pick) {
+		pick_change_dir(new_dir);
+	}
+	else if(mode == Mode::save) {
+		save_change_dir(new_dir);
+	}
+
 	toggle_add_folder_dialog(false);
 }
 
