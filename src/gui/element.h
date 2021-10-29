@@ -66,6 +66,8 @@ public:
 
 	void draw_recursive();
 	virtual void draw_recursive(NVGcontext* vg);
+
+	bool is_focused() const;
 };
 
 namespace gui::layout

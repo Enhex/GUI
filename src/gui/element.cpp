@@ -113,3 +113,8 @@ void element::draw_recursive(NVGcontext* vg)
 		child->draw_recursive(vg);
 	}
 }
+
+bool element::is_focused() const
+{
+	return context->input_manager.focused_element == this;
+}
