@@ -60,6 +60,7 @@ public:
 
 	//NOTE: takes ownership of the child element
 	void add_child(std::unique_ptr<element> child);
+	void add_child(std::unique_ptr<element> child, size_t position);
 
 	void draw();
 	virtual void draw(NVGcontext* vg) {}
