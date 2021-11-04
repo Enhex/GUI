@@ -97,8 +97,13 @@ void element::add_child(std::unique_ptr<element> child, size_t position)
 {
 	child->parent = this;
 	auto iter = children.begin();
-	std::advance(iter, position);
-	children.emplace(iter, std::move(child));
+	if(position == children.size()) {
+		children.emplace_back(std::move(child));
+	}
+	else {
+		std::advance(iter, position);
+		children.emplace(iter, std::move(child));
+	}
 }
 
 void element::draw()

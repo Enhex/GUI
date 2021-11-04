@@ -60,6 +60,7 @@ public:
 
 	//NOTE: takes ownership of the child element
 	void add_child(std::unique_ptr<element> child);
+	// add child before position
 	void add_child(std::unique_ptr<element> child, size_t position);
 
 	void draw();
