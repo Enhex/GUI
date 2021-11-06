@@ -355,6 +355,12 @@ void file_dialog::save_change_dir(fs::path const& dir)
 	}
 
 	confirm->callback = [this]{
+		// don't allow empty filename
+		if(filename_field->str.empty()) {
+			context->input_manager.set_focused_element(filename_field);
+			return;
+		}
+
 		set_visible(false);
 
 		fs::path filename = filename_field->str;
