@@ -16,7 +16,10 @@ button::button()
 	});
 
 	input_manager.hover_end.subscribe(this, [this]() {
-		color = background_color;
+		if(is_focused())
+			color = focus_color;
+		else
+			color = background_color;
 	});
 
 	input_manager.mouse_press.subscribe(this, [this](int key, int mods) {
@@ -32,6 +35,16 @@ button::button()
 			if(callback)
 				callback();
 		}
+	});
+
+	input_manager.focus_start.subscribe(this, [this]() {
+		color = focus_color;
+	});
+	input_manager.focus_end.subscribe(this, [this]() {
+		if(is_hovered())
+			color = hover_color;
+		else
+			color = background_color;
 	});
 }
 
