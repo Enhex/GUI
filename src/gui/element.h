@@ -70,6 +70,7 @@ public:
 	virtual void draw_recursive(NVGcontext* vg);
 
 	bool is_focused() const;
+	bool is_hovered() const;
 };
 
 namespace gui::layout
