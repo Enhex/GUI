@@ -389,6 +389,29 @@ int main()
 		cb.position = {300, 700};
 	}
 
+	// radio button test
+	{
+		auto make_radio_button = [&](vector2 pos, std::string group, std::string name){
+			auto& rb = app.root.create_child<radio_button>();
+			rb.position = pos;
+			rb.set_group(group);
+			rb.on_select = [name]{
+				std::cout << name << "\n";
+			};
+		};
+
+		make_radio_button({300, 750}, "a", "a1");
+		make_radio_button({350, 750}, "a", "a2");
+		// test not having a callback for a3
+		auto& a3 = app.root.create_child<radio_button>();
+		a3.position = {400, 750};
+		a3.set_group("a");
+
+		make_radio_button({300, 775}, "b", "b1");
+		make_radio_button({350, 775}, "b", "b2");
+		make_radio_button({400, 775}, "b", "b3");
+	}
+
 	// test global event
 	app.input_manager.key_press.subscribe_global(&app.root, [&app, &root, &txt_edit](int key, int mods) {
 		std::cout << "(global) key pressed: " << key << "\n";

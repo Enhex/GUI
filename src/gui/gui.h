@@ -9,6 +9,7 @@
 #include "file_dialog_modal.h"
 #include "modal.h"
 #include "panel.h"
+#include "radio_button.h"
 #include "scissor.h"
 #include "scroll_view.h"
 #include "text_edit.h"
