@@ -71,6 +71,8 @@ public:
 
 	bool is_focused() const;
 	bool is_hovered() const;
+
+	void focus();
 };
 
 namespace gui::layout

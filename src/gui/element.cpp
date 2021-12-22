@@ -136,3 +136,8 @@ bool element::is_hovered() const
 {
 	return context->input_manager.hovered_element == this;
 }
+
+void element::focus()
+{
+	context->input_manager.set_focused_element(this);
+}
