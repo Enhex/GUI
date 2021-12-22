@@ -216,6 +216,9 @@ void text_edit::on_key_press(int key, int mods)
 
 void text_edit::on_character(unsigned codepoint)
 {
+	if(has_selection()) {
+		delete_selection();
+	}
 	str.insert(str.begin() + cursor_pos++, codepoint);
 	on_str_changed();
 	//NOTE: no need to update glyphs when deleting since the deleted glyphs won't be accessed.
