@@ -10,7 +10,8 @@ def run_premake(self):
 					'12': '2013',
 					'14': '2015',
 					'15': '2017',
-					'16': '2019'}
+					'16': '2019',
+					'17': '2022'}
 		premake_command = "premake5 vs%s" % _visuals.get(str(self.settings.compiler.version), "UnknownVersion %s" % str(self.settings.compiler.version))
 		self.run(premake_command)
 	else:
