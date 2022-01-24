@@ -153,7 +153,7 @@ file_dialog::file_dialog() :
 	});
 }
 
-void file_dialog::set_visible(bool visible)
+void file_dialog::show(bool visible)
 {
 	if(visibility_element == nullptr)
 		visibility_element = this;

@@ -41,7 +41,7 @@ struct file_dialog : panel
 
 	file_dialog();
 
-	void set_visible(bool visible);
+	void show(bool visible);
 
 	// only choose existing files
 	// extension: filter displayed files
