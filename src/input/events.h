@@ -28,5 +28,7 @@ namespace input
 		struct frame_start : base<>{};
 		struct focus_start : base<>{};
 		struct focus_end : base<>{};
+		struct visible_start : base<>{};
+		struct visible_end : base<>{};
 	}
 }

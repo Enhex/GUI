@@ -324,7 +324,7 @@ int main()
 
 			el.callback = [&]() {
 				std::cout << "button 3 clicked\n";
-				toggle_el.visible = !toggle_el.visible;
+				toggle_el.set_visible(!toggle_el.get_visible());
 				root.child_layout->perform();
 			};
 		}

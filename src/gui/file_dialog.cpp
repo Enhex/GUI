@@ -57,7 +57,7 @@ file_dialog::file_dialog() :
 
 			folder_field = &bg.create_child<text_edit>();
 			folder_field->expand[layout::horizontal] = true;
-			folder_field->visible = false;
+			folder_field->set_visible(false);
 			// pressing enter confirms the name
 			context->input_manager.key_press.subscribe(folder_field, [this](int key, int mods) {
 				folder_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
@@ -81,7 +81,7 @@ file_dialog::file_dialog() :
 		{
 			folder_dialog = &container.create_child<element>();
 			folder_dialog->create_layout<gui::layout::box>().orient = layout::horizontal;
-			folder_dialog->visible = false;
+			folder_dialog->set_visible(false);
 
 			auto& confirm_folder = folder_dialog->create_child<button>();
 			auto& confirm_folder_txt = confirm_folder.create_child<text>();
@@ -157,7 +157,7 @@ void file_dialog::set_visible(bool visible)
 {
 	if(visibility_element == nullptr)
 		visibility_element = this;
-	visibility_element->visible = visible;
+	visibility_element->set_visible(visible);
 }
 
 button& file_dialog::create_path(fs::path const& path, std::string str)
@@ -255,9 +255,9 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 	title.set_text("pick file...");
 
 	set_visible(true);
-	filename_container.visible = false;
-	confirm->visible = false;
-	add_folder->visible = false;
+	filename_container.set_visible(false);
+	confirm->set_visible(false);
+	add_folder->set_visible(false);
 
 	pick_change_dir(canon);
 }
@@ -326,9 +326,9 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 	title.set_text("save file...");
 
 	set_visible(true);
-	filename_container.visible = true;
-	confirm->visible = true;
-	add_folder->visible = true;
+	filename_container.set_visible(true);
+	confirm->set_visible(true);
+	add_folder->set_visible(true);
 
 	save_change_dir(canon);
 }
@@ -376,10 +376,10 @@ void file_dialog::save_change_dir(fs::path const& dir)
 
 void file_dialog::toggle_add_folder_dialog(bool show)
 {
-	path_field->visible = !show;
-	add_folder->visible = !show;
-	folder_field->visible = show;
-	folder_dialog->visible = show;
+	path_field->set_visible(!show);
+	add_folder->set_visible(!show);
+	folder_field->set_visible(show);
+	folder_dialog->set_visible(show);
 
 	folder_field->set_text("");
 	context->input_manager.set_focused_element(folder_field);

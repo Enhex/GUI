@@ -154,7 +154,7 @@ void application::update_hoevered_element()
 	{
 		auto recurse_impl = [&](element* el, auto& func) -> bool
 		{
-			if(!el->visible)
+			if(!el->get_visible())
 				return false;
 
 			for (auto child = el->children.rbegin(); child != el->children.rend(); ++child) {

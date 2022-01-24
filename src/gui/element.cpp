@@ -66,6 +66,18 @@ vector2 element::get_position() {
 	return parent != nullptr ? get_parent()->get_position() + position : position;
 }
 
+void element::set_visible(bool new_visible)
+{
+	layout::element<element>::set_visible(new_visible);
+	// send event
+	if(visible) {
+		context->input_manager.visible_start.send_focused_event(*this);
+	}
+	else {
+		context->input_manager.visible_end.send_focused_event(*this);
+	}
+}
+
 bool element::is_inside(vector2 const& point) {
 	rectangle absolute_rectangle{ get_position(), size };
 	return absolute_rectangle.is_inside(point);

@@ -42,6 +42,8 @@ public:
 
 	element* get_parent() override;
 
+	void set_visible(bool new_visible) override;
+
 	// get absolute position. regular `position` variable being relative to the parent
 	vector2 get_position();
 

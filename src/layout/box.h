@@ -28,7 +28,7 @@ namespace layout
 
 			std::vector<derived_element*> visible_children;
 			for (auto& child : parent->children) {
-				if(child->visible)
+				if(child->get_visible())
 					visible_children.emplace_back(child.get());
 			}
 
@@ -66,7 +66,7 @@ namespace layout
 
 			std::vector<derived_element*> visible_children;
 			for (auto& child : parent->children) {
-				if(child->visible)
+				if(child->get_visible())
 					visible_children.emplace_back(child.get());
 			}
 
@@ -105,7 +105,7 @@ namespace layout
 			auto last_orient_position = 0.f;
 			for (auto& child : parent->children)
 			{
-				if(!child->visible)
+				if(!child->get_visible())
 					continue;
 
 				// position relative to parent/previous child

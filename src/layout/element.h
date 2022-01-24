@@ -20,7 +20,6 @@ namespace layout
 		std::array<bool, layout::orientation::count> expand{ false };
 
 		vector2 min_size{ 0,0 };
-		bool visible = true;
 
 		void apply_min_size()
 		{
@@ -54,5 +53,18 @@ namespace layout
 		{
 			// do nothing by default
 		}
+
+		virtual bool get_visible() const
+		{
+			return visible;
+		}
+
+		virtual void set_visible(bool new_visible)
+		{
+			visible = new_visible;
+		}
+
+	protected:
+		bool visible = true;
 	};
 }

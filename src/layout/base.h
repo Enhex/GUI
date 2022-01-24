@@ -26,7 +26,7 @@ namespace layout
 
 			std::vector<derived_element*> visible_children;
 			for (auto& child : parent->children) {
-				if(child->visible)
+				if(child->get_visible())
 					visible_children.emplace_back(child.get());
 			}
 
@@ -51,7 +51,7 @@ namespace layout
 
 		void layout_start_recurse(element_t& element)
 		{
-			if(!element.visible)
+			if(!element.get_visible())
 				return;
 
 			element.pre_layout();
@@ -66,7 +66,7 @@ namespace layout
 
 		void layout_complete_recurse(element_t& element)
 		{
-			if(!element.visible)
+			if(!element.get_visible())
 				return;
 
 			element.post_layout();

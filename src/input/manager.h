@@ -32,6 +32,8 @@ namespace input
 		event::frame_start frame_start;
 		event::focus_start focus_start;
 		event::focus_end focus_end;
+		event::visible_start visible_start;
+		event::visible_end visible_end;
 
 		void set_hovered_element(element* new_element);
 		void set_focused_element(element* new_element);
