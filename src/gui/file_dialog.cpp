@@ -131,7 +131,7 @@ file_dialog::file_dialog() :
 		auto& txt = cancel.create_child<text>();
 		txt.set_text("cancel");
 		cancel.callback = [this]{
-			set_visible(false);
+			show(false);
 		};
 	}
 	{
@@ -210,7 +210,7 @@ void file_dialog::add_path_pick(fs::path const& path, std::string str)
 	}
 	else {
 		btn.callback = [this, path]{
-			set_visible(false);
+			show(false);
 			current_callback(path);
 		};
 	}
@@ -254,7 +254,7 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 
 	title.set_text("pick file...");
 
-	set_visible(true);
+	show(true);
 	filename_container.set_visible(false);
 	confirm->set_visible(false);
 	add_folder->set_visible(false);
@@ -325,7 +325,7 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 
 	title.set_text("save file...");
 
-	set_visible(true);
+	show(true);
 	filename_container.set_visible(true);
 	confirm->set_visible(true);
 	add_folder->set_visible(true);
@@ -361,7 +361,7 @@ void file_dialog::save_change_dir(fs::path const& dir)
 			return;
 		}
 
-		set_visible(false);
+		show(false);
 
 		fs::path filename = filename_field->str;
 		if(filename.extension() != current_extension)
