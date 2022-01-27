@@ -149,8 +149,9 @@ void application::update_hoevered_element()
 	*/
 
 	// recursively search for the leaf-most element that the mouse fits inside.
-	// also need to search child order back-to-front, because child rendering is front-to-back (so child that's rendered on top of others takes priority).
-	auto find_hoevered_element = [&](element* parent)
+	// also need to search child order back-to-front, because
+	// child rendering is front-to-back (so child that's rendered on top of others takes priority).
+	auto find_hovered_element = [&](element* parent)
 	{
 		auto recurse_impl = [&](element* el, auto& func) -> bool
 		{
@@ -173,7 +174,7 @@ void application::update_hoevered_element()
 		return recurse_impl(parent, recurse_impl);
 	};
 
-	if(!find_hoevered_element(&root))
+	if(!find_hovered_element(&root))
 		input_manager.set_hovered_element(nullptr);
 }
 
