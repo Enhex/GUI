@@ -158,6 +158,16 @@ void file_dialog::show(bool visible)
 	if(visibility_element == nullptr)
 		visibility_element = this;
 	visibility_element->set_visible(visible);
+
+	if(visible) {
+		context->input_manager.key_press.subscribe_global(this, [this](int key, int mods) {
+			if(key == GLFW_KEY_ESCAPE)
+				show(false);
+		});
+	}
+	else {
+		context->input_manager.key_press.unsubscribe_global(this);
+	}
 }
 
 button& file_dialog::create_path(fs::path const& path, std::string str)
