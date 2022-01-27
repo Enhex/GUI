@@ -78,8 +78,13 @@ void element::set_visible(bool new_visible)
 	}
 }
 
+rectangle element::get_abs_rect()
+{
+	return rectangle{get_position(), size};
+}
+
 bool element::is_inside(vector2 const& point) {
-	rectangle absolute_rectangle{ get_position(), size };
+	auto absolute_rectangle = get_abs_rect();
 	return absolute_rectangle.is_inside(point);
 }
 
