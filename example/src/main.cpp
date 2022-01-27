@@ -169,6 +169,15 @@ int main()
 			p2.position = { 50, 490 };
 			p2.min_size = { 50, 10 };
 			p2.color = random_color();
+
+			// test scissor hidden element not behing hovered.
+			// to test it try click outside the bottom right corner of the scroll view.
+			auto& btn = sv.content.create_child<button>();
+			btn.position = root.min_size;
+			btn.min_size = { 100, 100 };
+			btn.callback = []{
+				std::cout << "scissor button clicked." << std::endl;
+			};
 		}
 
 		auto& t1 = sv.content.create_child<text>();

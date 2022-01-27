@@ -144,17 +144,25 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 
 element* application::find_hovered_element(element& el)
 {
-	/*TODO
+	/*
+	recursively search for the leaf-most element that the mouse fits inside.
+	also need to search child order back-to-front, because
+	child rendering is front-to-back (so child that's rendered on top of others takes priority).
+
+	TODO:
 	- spatial partitioning to optimize search
 	*/
-
-	// recursively search for the leaf-most element that the mouse fits inside.
-	// also need to search child order back-to-front, because
-	// child rendering is front-to-back (so child that's rendered on top of others takes priority).
 
 	// don't consider invisible element
 	if(!el.get_visible())
 		return nullptr;
+
+	// exclude cursor position which is outside the intersection of all visited scissors.
+	if(auto* sci = dynamic_cast<scissor*>(&el)) {
+		if(!sci->is_inside(input_manager.mouse_pos)) {
+			return nullptr;
+		}
+	}
 
 	// check if a descendant is hovered first
 	for (auto child_iter = el.children.rbegin(); child_iter != el.children.rend(); ++child_iter) {
