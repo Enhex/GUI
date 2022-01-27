@@ -142,7 +142,7 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 	app.input_manager.mouse_pos = { (float)xpos, (float)ypos };
 }
 
-void application::update_hoevered_element()
+element* application::find_hovered_element(element& el)
 {
 	/*TODO
 	- spatial partitioning to optimize search
@@ -151,31 +151,30 @@ void application::update_hoevered_element()
 	// recursively search for the leaf-most element that the mouse fits inside.
 	// also need to search child order back-to-front, because
 	// child rendering is front-to-back (so child that's rendered on top of others takes priority).
-	auto find_hovered_element = [&](element* parent)
-	{
-		auto recurse_impl = [&](element* el, auto& func) -> bool
-		{
-			if(!el->get_visible())
-				return false;
 
-			for (auto child = el->children.rbegin(); child != el->children.rend(); ++child) {
-				if (func(child->get(), func))
-					return true;
-			}
+	// don't consider invisible element
+	if(!el.get_visible())
+		return nullptr;
 
-			if (el->is_inside(input_manager.mouse_pos)) {
-				input_manager.set_hovered_element(el);
-				return true;
-			}
+	// check if a descendant is hovered first
+	for (auto child_iter = el.children.rbegin(); child_iter != el.children.rend(); ++child_iter) {
+		auto hovered_descendant = find_hovered_element(**child_iter);
+		if (hovered_descendant != nullptr)
+			return hovered_descendant;
+	}
 
-			return false;
-		};
+	// check if current element is hovered
+	if (el.is_inside(input_manager.mouse_pos)) {
+		return &el;
+	}
 
-		return recurse_impl(parent, recurse_impl);
-	};
+	return nullptr;
+}
 
-	if(!find_hovered_element(&root))
-		input_manager.set_hovered_element(nullptr);
+void application::update_hoevered_element()
+{
+	auto hovered_el = find_hovered_element(root);
+	input_manager.set_hovered_element(hovered_el);
 }
 
 void application::mouse_button_callback(GLFWwindow * window, int button, int action, int mods)

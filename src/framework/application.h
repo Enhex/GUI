@@ -39,6 +39,7 @@ protected:
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 	static void window_size_callback(GLFWwindow* window, int width, int height);
 
+	element* find_hovered_element(element& el);
 	void update_hoevered_element();
 };
 
