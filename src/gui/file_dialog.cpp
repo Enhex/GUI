@@ -60,8 +60,6 @@ file_dialog::file_dialog() :
 			folder_field->set_visible(false);
 			// pressing enter confirms the name
 			context->input_manager.key_press.subscribe(folder_field, [this](int key, int mods) {
-				folder_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
-
 				if(key == GLFW_KEY_ENTER)
 					confirm_folder_dialog();
 			});
@@ -146,8 +144,6 @@ file_dialog::file_dialog() :
 
 	// events
 	context->input_manager.key_press.subscribe(filename_field, [this](int key, int mods) {
-		filename_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
-
 		if(key == GLFW_KEY_ENTER)
 			confirm->callback();
 	});
@@ -327,8 +323,6 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 	path_field->set_text(canon.string());
 
 	context->input_manager.key_press.subscribe(path_field, [this](int key, int mods) {
-		path_field->on_key_press(key, mods);//TODO need a way to additively subscribe to events
-
 		if(key == GLFW_KEY_ENTER && fs::exists(path_field->str))
 			save_change_dir(path_field->str);
 	});
