@@ -306,8 +306,7 @@ void file_dialog::pick_change_dir(fs::path const& dir)
 		}
 	}
 
-	// delete unused buttons
-	view->content.children.resize(paths_count);
+	change_dir_end();
 }
 
 
@@ -374,8 +373,20 @@ void file_dialog::save_change_dir(fs::path const& dir)
 		current_callback(current_dir / filename);
 	};
 
+	change_dir_end();
+}
+
+void file_dialog::change_dir_end()
+{
 	// delete unused buttons
 	view->content.children.resize(paths_count);
+
+	// sort buttons by name
+	std::sort(view->content.children.begin(), view->content.children.end(), [](auto const& a, auto const& b){
+		auto const& txt_a = static_cast<text&>(*a->children.at(0));
+		auto const& txt_b = static_cast<text&>(*b->children.at(0));
+		return txt_a.str < txt_b.str;
+	});
 }
 
 void file_dialog::toggle_add_folder_dialog(bool show)

@@ -64,6 +64,9 @@ protected:
 	float original_min_size;
 	Mode mode = Mode::none;
 
+	// code reuse
+	void change_dir_end();
+
 	button& create_path(std::filesystem::path const& path, std::string str = "");
 	void add_path_pick(std::filesystem::path const& path, std::string str = "");
 	void add_path_save(std::filesystem::path const& path, std::string str = "");
