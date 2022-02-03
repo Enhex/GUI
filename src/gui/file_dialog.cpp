@@ -383,9 +383,16 @@ void file_dialog::change_dir_end()
 
 	// sort buttons by name
 	std::sort(view->content.children.begin(), view->content.children.end(), [](auto const& a, auto const& b){
-		auto const& txt_a = static_cast<text&>(*a->children.at(0));
-		auto const& txt_b = static_cast<text&>(*b->children.at(0));
-		return txt_a.str < txt_b.str;
+		auto const& str_a = static_cast<text&>(*a->children.at(0)).str;
+		auto const& str_b = static_cast<text&>(*b->children.at(0)).str;
+		using namespace std;
+		return lexicographical_compare(
+			begin(str_a), end(str_a),
+			begin(str_b), end(str_b),
+			[](const char& char1, const char& char2) {
+				return tolower(char1) < tolower(char2);
+			}
+		);
 	});
 }
 
