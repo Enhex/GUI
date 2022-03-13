@@ -265,6 +265,9 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 	confirm->set_visible(false);
 	add_folder->set_visible(false);
 
+	path_field->focus();
+	path_field->move_cursor_to_end();
+
 	pick_change_dir(canon);
 }
 

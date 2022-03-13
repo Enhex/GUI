@@ -61,4 +61,6 @@ struct text_edit : text
 	void clear_selection();
 	void delete_selection();
 	void select_all();
+
+	void move_cursor_to_end();
 };

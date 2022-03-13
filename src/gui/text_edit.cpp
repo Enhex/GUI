@@ -316,3 +316,8 @@ void text_edit::select_all()
 	selection_end_pos = str.size();
 	cursor_pos = selection_end_pos;
 }
+
+void text_edit::move_cursor_to_end()
+{
+	cursor_pos = str.size();
+}
