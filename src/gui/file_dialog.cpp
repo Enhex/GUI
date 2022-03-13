@@ -333,6 +333,8 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 	confirm->set_visible(true);
 	add_folder->set_visible(true);
 
+	filename_field->focus();
+
 	save_change_dir(canon);
 }
 
@@ -404,15 +406,16 @@ void file_dialog::toggle_add_folder_dialog(bool show)
 	folder_dialog->set_visible(show);
 
 	folder_field->set_text("");
-	context->input_manager.set_focused_element(folder_field);
 
 	// make sure the file_dialog's width doesn't change
 	if(show) {
 		original_min_size = X(min_size);
 		X(min_size) = X(size);
+		folder_field->focus();
 	}
 	else {
 		X(min_size) = original_min_size;
+		filename_field->focus();
 	}
 }
 
