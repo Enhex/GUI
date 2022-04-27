@@ -223,6 +223,9 @@ namespace deco
 			else if (child->type_info() == typeid(text_edit)) {
 				serialize(stream, make_list(text_edit::element_name, static_cast<text_edit&>(*child)));
 			}
+			else if (child->type_info() == typeid(textbox)) {
+				serialize(stream, make_list(textbox::element_name, static_cast<textbox&>(*child)));
+			}
 			else if (child->type_info() == typeid(scroll_view)) {
 				serialize(stream, make_list(scroll_view::element_name, static_cast<scroll_view&>(*child)));
 			}
@@ -289,4 +292,18 @@ namespace deco
 	}
 
 	void read(deco::EntryObject& entry, text_edit& value);
+
+
+	template<typename Stream>
+	void serialize(Stream& stream, textbox& value)
+	{
+		if (value.style != value.get_element_name())
+			serialize(stream, make_list("style", value.style));
+		if(value.position != text().position)
+			serialize(stream, make_list("position", value.position));
+		if (value.str != text().str)
+			serialize(stream, make_list("string", value.str));
+	}
+
+	void read(deco::EntryObject& entry, textbox& value);
 }

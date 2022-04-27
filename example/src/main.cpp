@@ -421,6 +421,17 @@ int main()
 		make_radio_button({400, 775}, "b", "b3");
 	}
 
+	// textbox test
+	{
+		auto& b = app.root.create_child<border>();
+		b.position = {600, 600};
+		b.set_color(nvgRGBA(255, 0, 0, 255));
+
+		auto& tb = b.content.create_child<textbox>();
+		tb.size = tb.min_size = {150, 100};
+		tb.setup(font, 14, "multi line\nstring.\na very long sentence that will be split across lines.");
+	}
+
 	// test global event
 	app.input_manager.key_press.subscribe_global(&app.root, [&app, &root, &txt_edit](int key, int mods) {
 		std::cout << "(global) key pressed: " << key << "\n";

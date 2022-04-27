@@ -89,6 +89,10 @@ namespace deco
 			auto& child_element = parent.create_child<text_edit>();
 			read(entry, child_element);
 		}
+		else if (name == textbox::element_name) {
+			auto& child_element = parent.create_child<textbox>();
+			read(entry, child_element);
+		}
 		if (name == scroll_view::element_name) {
 			auto& child_element = parent.create_child<scroll_view>();
 			read(entry, child_element);
@@ -167,7 +171,7 @@ namespace deco
 	}
 
 
-	void read(deco::EntryObject & entry, text & value)
+	void read(deco::EntryObject& entry, text& value)
 	{
 		read(entry, static_cast<element&>(value));
 
@@ -181,11 +185,8 @@ namespace deco
 				if(num_lines == 0)
 					continue;
 
-				value.str = entry.entries[0].content;
-				for (size_t i = 1; i < num_lines; ++i) {
-					value.str += '\n';
-					value.str += lines[i].content;
-				}
+				// can only display a single line
+				value.str = lines[0].content;
 				// once done constructing the string, update the text size
 				value.update_bounds();
 			}
@@ -197,5 +198,29 @@ namespace deco
 	{
 		read(entry, static_cast<text&>(value));
 		value.update_glyphs_no_bounds();
+	}
+
+
+	void read(deco::EntryObject& entry, textbox& value)
+	{
+		read(entry, static_cast<element&>(value));
+
+		for (auto const& entry : entry.entries)
+		{
+			auto const& name = entry.content;
+
+			if (name == "string") {
+				auto const& lines = entry.entries;
+				auto const num_lines = lines.size();
+				if(num_lines == 0)
+					continue;
+
+				value.str = lines[0].content;
+				for (size_t i = 1; i < num_lines; ++i) {
+					value.str += '\n';
+					value.str += lines[i].content;
+				}
+			}
+		}
 	}
 }
