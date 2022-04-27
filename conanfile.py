@@ -35,7 +35,7 @@ class GuiConan(ConanFile):
 		"glfw/3.3.6",
 		"glad/0.1.34",
 		"nanovg/master@enhex/stable",
-		"Deco/master@enhex/stable"
+		"deco/master@enhex/stable"
 	)
 
 	def build(self):
