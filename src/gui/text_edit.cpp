@@ -46,7 +46,6 @@ void text_edit::update_glyph_positions()
 	init_font(vg); // for correct font size
 
 	auto const max_glyphs = str.size();
-	// TODO can cache glyphs and update only when text changes
 	auto absolute_position = get_position();
 	num_glyphs = nvgTextGlyphPositions(vg, X(absolute_position), Y(absolute_position), str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
 
@@ -286,7 +285,8 @@ void text_edit::set_text(std::string const& new_str)
 void text_edit::post_layout()
 {
 	// glyph positions may change
-	update_glyph_positions();
+	if (glyphs != nullptr)
+		update_glyph_positions();
 }
 
 bool text_edit::has_selection() const
