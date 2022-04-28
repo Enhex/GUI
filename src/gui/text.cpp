@@ -24,7 +24,7 @@ void text::setup(NVGcontext* vg, int new_font, float new_font_size, std::string 
 void text::set_text(std::string const& new_str)
 {
 	str = new_str;
-	update_bounds(context->vg);
+	update_bounds();
 }
 
 void text::set_style(style::style_t const& style)

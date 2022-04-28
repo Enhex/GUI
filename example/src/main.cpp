@@ -429,6 +429,7 @@ int main()
 
 		auto& tb = b.content.create_child<textbox>();
 		tb.size = tb.min_size = {150, 100};
+		tb.fixed_size = true;
 		tb.setup(font, 14, "multi line\nstring.\na very long sentence that will be split across lines.");
 	}
 
