@@ -1,5 +1,6 @@
 #include "textbox.h"
 
+#include "nvgTextBoxRows.h"
 
 textbox::textbox()
 {
@@ -101,5 +102,6 @@ void textbox::draw(NVGcontext* vg)
 	float ascender, descender, lineh;
 	nvgTextMetrics(vg, &ascender, &descender, &lineh);
 	auto absolute_position = get_position();
-	nvgTextBox(vg, X(absolute_position), Y(absolute_position) + ascender, X(size), str.c_str(), nullptr);
+	rows.clear();
+	nvgTextBox(vg, X(absolute_position), Y(absolute_position) + ascender, X(size), str.c_str(), nullptr, rows);
 }

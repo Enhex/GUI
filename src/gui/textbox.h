@@ -20,6 +20,7 @@ struct textbox : element
 	float text_bounds[4]; // local space
 	// should the textbox fit its size to the string or should it have fixed size and split the string?
 	bool fixed_size = false;
+	std::vector<NVGtextRow> rows;
 
 
 	textbox();

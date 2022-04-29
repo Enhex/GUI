@@ -51,17 +51,17 @@ void textbox_edit::update_glyph_positions()
 
 	// nvgTextGlyphPositions only works with single line so characters in a new line got wrong X position as if they're all in a single line,
 	// so fix the positions.
-	float glyph_x_offset = 0;
-	for (size_t i = 0; i < num_glyphs; ++i)
+	// starting from i=1 because first line doesn't need offsetting
+	for (size_t i=1; i < rows.size(); ++i)
 	{
-		auto& glyph = glyphs[i];
-		if(str[i] == '\n') {
-			glyph_x_offset = glyph.maxx - X(absolute_position);
-
+		auto const& row = rows[i];
+		auto const glyph_x_offset = glyphs[row.start-1 - str.data()].maxx - X(absolute_position);
+		for(auto p = row.start; p < row.end; ++p) {
+			auto& glyph = glyphs[p - str.data()];
+			glyph.x -= glyph_x_offset;
+			glyph.minx -= glyph_x_offset;
+			glyph.maxx -= glyph_x_offset;
 		}
-		glyph.x -= glyph_x_offset;
-		glyph.minx -= glyph_x_offset;
-		glyph.maxx -= glyph_x_offset;
 	}
 
 	if(cursor_pos > num_glyphs)
@@ -97,12 +97,19 @@ void textbox_edit::set_cursor_to_mouse_pos()
 	nvgTextMetrics(context->vg, &ascender, &descender, &lineh);
 
 	auto glyph_y = Y(abs_pos);
+	size_t row_index = 0;
 
 	bool glyph_clicked = false;
 
 	for (size_t i = 0; i < num_glyphs; ++i)
 	{
 		auto const& glyph = glyphs[i];
+
+		// update line height
+		if(str.data()+i >= rows[row_index].end) {
+			++row_index;
+			glyph_y += ascender;
+		}
 
 		// check if inside Y
 		if (mouse_y >= glyph_y &&
@@ -129,10 +136,6 @@ void textbox_edit::set_cursor_to_mouse_pos()
 				break;
 			}
 		}
-
-		// update line height
-		if(str[i] == '\n')
-			glyph_y += ascender;
 	}
 
 	// if clicked past the last character, position the cursor at the end of the text
@@ -307,16 +310,25 @@ void textbox_edit::draw(NVGcontext* vg)
 		// y_pos for line height
 		// multiply the number of previous newlines by line height
 		size_t y_pos = 0;
-		for(size_t i=0; i < cursor_pos; ++i) {
-			if(str[i] == '\n')
-				++y_pos;
+		// starting from i=1 because if cursor is in the first row y_pos is 0
+		for(size_t i=1; i < rows.size(); ++i) {
+			if(cursor_pos < rows[i].start - str.data()) {
+				y_pos = i-1;
+				break;
+			}
 		}
+		if(cursor_pos >= rows.back().start - str.data())
+			y_pos = rows.size()-1;
 		y_pos *= ascender;
 		y_pos += Y(absolute_position);
 
-		auto const x_pos = cursor_pos == 0 ?
-			X(absolute_position) : // may have no characters, position at the start.
-			glyphs[cursor_pos-1].maxx; // position at the end of the previous character
+		auto const x_pos = [&]{
+			if(cursor_pos == 0)
+				return X(absolute_position); // may have no characters, position at the start.
+			else if(cursor_pos == num_glyphs)
+				return glyphs[cursor_pos-1].maxx;
+			return glyphs[cursor_pos].minx; // position at the end of the previous character
+		}();
 
 		nvgBeginPath(vg);
 		nvgMoveTo(vg, x_pos, y_pos);
