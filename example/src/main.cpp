@@ -427,7 +427,7 @@ int main()
 		b.position = {600, 600};
 		b.set_color(nvgRGBA(255, 0, 0, 255));
 
-		auto& tb = b.content.create_child<textbox>();
+		auto& tb = b.content.create_child<textbox_edit>();
 		tb.size = tb.min_size = {150, 100};
 		tb.fixed_size = true;
 		tb.setup(font, 14, "multi line\nstring.\na very long sentence that will be split across lines.");
