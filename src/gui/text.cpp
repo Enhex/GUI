@@ -16,9 +16,7 @@ void text::setup(NVGcontext* vg, int new_font, float new_font_size, std::string 
 {
 	font = new_font;
 	font_size = new_font_size;
-	str = new_str;
-
-	update_bounds(vg);
+	set_text(new_str);
 }
 
 void text::set_text(std::string const& new_str)

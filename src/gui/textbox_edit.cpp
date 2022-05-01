@@ -55,9 +55,16 @@ void textbox_edit::update_glyph_positions()
 	for (size_t i=1; i < rows.size(); ++i)
 	{
 		auto const& row = rows[i];
-		auto const glyph_x_offset = glyphs[row.start-1 - str.data()].maxx - X(absolute_position);
+		auto const glyph_x_offset = glyphs[row.start - str.data()].minx - X(absolute_position);
 		for(auto p = row.start; p < row.end; ++p) {
 			auto& glyph = glyphs[p - str.data()];
+			glyph.x -= glyph_x_offset;
+			glyph.minx -= glyph_x_offset;
+			glyph.maxx -= glyph_x_offset;
+		}
+		// newline also gets a glyph
+		if(i < rows.size()-1) {
+			auto& glyph = glyphs[row.end - str.data()];
 			glyph.x -= glyph_x_offset;
 			glyph.minx -= glyph_x_offset;
 			glyph.maxx -= glyph_x_offset;
@@ -94,55 +101,55 @@ void textbox_edit::set_cursor_to_mouse_pos()
 	auto const abs_pos = get_position();
 
 	float ascender, descender, lineh;
+	init_font(context->vg);
 	nvgTextMetrics(context->vg, &ascender, &descender, &lineh);
 
-	auto glyph_y = Y(abs_pos);
-	size_t row_index = 0;
-
-	bool glyph_clicked = false;
-
-	for (size_t i = 0; i < num_glyphs; ++i)
+	/*
+	for each row check if the cursor is inside its Y interval.
+	if it is check if it's inside one of its glyphs' X interval.
+	if it isn't place the cursor at the end of the line.
+		- need to check row X interval?
+			- if clicked outside the element it shouldn't have focus thus no cursor.
+	*/
+	for (size_t i=0; i < rows.size(); ++i)
 	{
-		auto const& glyph = glyphs[i];
-
-		// update line height
-		if(str.data()+i >= rows[row_index].end) {
-			++row_index;
-			glyph_y += ascender;
-		}
+		auto const& row = rows[i];
+		auto const row_y = Y(abs_pos) + (i * lineh);
 
 		// check if inside Y
-		if (mouse_y >= glyph_y &&
-			mouse_y <= glyph_y + ascender)
+		if (mouse_y >= row_y &&
+			mouse_y <= row_y + lineh)
 		{
-			// clicking on the left side of a glyph positions the cursor before it, and right side after it.
-			auto const x_mid = glyph.x + (glyph.maxx - glyph.minx) / 2;
-
-			//TODO glyph X positions are incorrect for ones that are after a newline?
-
-			// check if the glyph was clicked
-			if (mouse_x >= glyph.minx &&
-				mouse_x <= x_mid)
+			// check if inside a glyph
+			auto const row_end = row.end - str.data();
+			for(auto glyph_index = row.start - str.data(); glyph_index != row_end; ++glyph_index)
 			{
-				cursor_pos = i;
-				glyph_clicked = true;
-				break;
-			}
-			else if(mouse_x >= x_mid &&
-					mouse_x <= glyph.maxx)
-			{
-				cursor_pos = i+1;
-				glyph_clicked = true;
-				break;
-			}
-		}
-	}
+				auto const& glyph = glyphs[glyph_index];
 
-	// if clicked past the last character, position the cursor at the end of the text
-	if(!glyph_clicked) {
-		auto const abs_text_end = X(abs_pos) + text_bounds[2];
-		if(mouse_x > abs_text_end) {
-			cursor_pos = str.size();
+				// clicking on the left side of a glyph positions the cursor before it, and right side after it.
+				auto const x_mid = glyph.x + (glyph.maxx - glyph.minx) / 2;
+
+				// check if the glyph was clicked on its left side
+				if (mouse_x >= glyph.minx &&
+					mouse_x <= x_mid)
+				{
+					cursor_pos = glyph_index;
+					goto glyph_found;
+				}
+				// or right side
+				else if(mouse_x >= x_mid &&
+						mouse_x <= glyph.maxx)
+				{
+					cursor_pos = glyph_index+1;
+					goto glyph_found;
+				}
+			}
+
+			// place at the end of the row
+			cursor_pos = row_end;
+			glyph_found:
+			// if inside this row can't be inside other rows
+			break;
 		}
 	}
 }
@@ -266,6 +273,7 @@ void textbox_edit::on_character(unsigned codepoint)
 void textbox_edit::draw(NVGcontext* vg)
 {
 	float ascender, descender, lineh;
+	init_font(vg);
 	nvgTextMetrics(vg, &ascender, &descender, &lineh);
 
 	// draw selection background
@@ -319,7 +327,7 @@ void textbox_edit::draw(NVGcontext* vg)
 		}
 		if(cursor_pos >= rows.back().start - str.data())
 			y_pos = rows.size()-1;
-		y_pos *= ascender;
+		y_pos *= lineh;
 		y_pos += Y(absolute_position);
 
 		auto const x_pos = [&]{
@@ -329,10 +337,9 @@ void textbox_edit::draw(NVGcontext* vg)
 				return glyphs[cursor_pos-1].maxx;
 			return glyphs[cursor_pos].minx; // position at the end of the previous character
 		}();
-
 		nvgBeginPath(vg);
 		nvgMoveTo(vg, x_pos, y_pos);
-		nvgLineTo(vg, x_pos, y_pos + ascender);
+		nvgLineTo(vg, x_pos, y_pos + lineh);
 		nvgStrokeColor(vg, nvgRGBA(255, 255, 255, 255));
 		nvgStrokeWidth(vg, 1.0f);
 		nvgStroke(vg);
