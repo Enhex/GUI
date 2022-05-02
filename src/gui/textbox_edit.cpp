@@ -283,24 +283,65 @@ void textbox_edit::draw(NVGcontext* vg)
 			update_glyphs();
 
 		auto const absolute_position = get_position();
+		// sort positions
+		auto const start_pos = selection_start_pos > selection_end_pos ? selection_end_pos : selection_start_pos;
+		auto const end_pos = selection_start_pos > selection_end_pos ? selection_start_pos : selection_end_pos;
+
+		bool selection_started = false;
+		bool selection_ended = false;
 
 		// draw rectangle for each line
-		//TODO
+		for(size_t i=0; i < rows.size(); ++i) {
+			auto const& row = rows[i];
+			auto const start_ptr = str.data() + start_pos;
+			auto const end_ptr = str.data() + end_pos;
 
-		auto const x_start = selection_start_pos == 0 ?
-			X(absolute_position) : // may have no characters, position at the start.
-			glyphs[selection_start_pos-1].maxx; // position at the end of the previous character
+			// skip rows before selection
+			auto const is_start_in_row = start_ptr >= row.start && start_ptr < row.end;
+			if(!is_start_in_row && !selection_started)
+				continue;
 
-		auto const x_end = selection_end_pos == 0 ?
-			X(absolute_position) :
-			glyphs[selection_end_pos-1].maxx;
+			auto const y_start = Y(absolute_position) + i * lineh;
 
-		nvgBeginPath(vg);
-		nvgRect(vg,
-				x_start, Y(absolute_position),
-				x_end - x_start, lineh);
-		nvgFillColor(vg, selection_color);
-		nvgFill(vg);
+			auto const x_start = [&]{
+				// if selection already started highlight from the start of the row
+				if(!selection_started && is_start_in_row && start_pos > 0) {
+					return glyphs[start_pos-1].maxx; // position at the end of the previous character
+				}
+				return X(absolute_position);
+			}();
+
+			// mark after using it to check if selection already started
+			selection_started = true;
+
+			auto const x_end = [&]{
+				// if not the last row include the end pointer (should be a newline)
+				bool is_in_row;
+				if(i != rows.size()-1) {
+					is_in_row = end_ptr >= row.start && end_ptr <= row.end;
+				}
+				else {
+					is_in_row = end_ptr >= row.start && end_ptr < row.end;
+				}
+				if(is_in_row && selection_started)
+					selection_ended = true;
+				if(is_in_row && end_pos > 0) {
+					return glyphs[end_pos-1].maxx; // position at the end of the previous character
+				}
+				return X(absolute_position) + row.maxx;
+			}();
+
+			nvgBeginPath(vg);
+			nvgRect(vg,
+					x_start, y_start,
+					x_end - x_start, lineh);
+			nvgFillColor(vg, selection_color);
+			nvgFill(vg);
+
+			// skip rows after selection
+			if(selection_ended)
+				break;
+		}
 	}
 
 	textbox::draw(vg);
