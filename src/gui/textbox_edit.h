@@ -24,6 +24,7 @@ struct textbox_edit : textbox
 
 	// glyphs' absolute positions
 	std::unique_ptr<NVGglyphPosition[]> glyphs;
+	std::vector<float> glyph_offsets; // used to correct nanovg's X positions after newlines
 	int num_glyphs = 0;
 
 	// callback for when the text is changed

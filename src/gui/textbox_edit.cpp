@@ -51,23 +51,20 @@ void textbox_edit::update_glyph_positions()
 
 	// nvgTextGlyphPositions only works with single line so characters in a new line got wrong X position as if they're all in a single line,
 	// so fix the positions.
+	//NOTE: can't edit positions directly otherwise nanovg crashes.
 	// starting from i=1 because first line doesn't need offsetting
+	glyph_offsets.resize(max_glyphs);
 	for (size_t i=1; i < rows.size(); ++i)
 	{
 		auto const& row = rows[i];
 		auto const glyph_x_offset = glyphs[row.start - str.data()].minx - X(absolute_position);
 		for(auto p = row.start; p < row.end; ++p) {
-			auto& glyph = glyphs[p - str.data()];
-			glyph.x -= glyph_x_offset;
-			glyph.minx -= glyph_x_offset;
-			glyph.maxx -= glyph_x_offset;
+			glyph_offsets[p - str.data()] = glyph_x_offset;
 		}
-		// newline also gets a glyph
+		// newline also gets a glyph, excluding the last row since it doesn't have newline.
+		//last row actually doesn't have a newline?
 		if(i < rows.size()-1) {
-			auto& glyph = glyphs[row.end - str.data()];
-			glyph.x -= glyph_x_offset;
-			glyph.minx -= glyph_x_offset;
-			glyph.maxx -= glyph_x_offset;
+			glyph_offsets[row.end - str.data()] = glyph_x_offset;
 		}
 	}
 
@@ -125,12 +122,15 @@ void textbox_edit::set_cursor_to_mouse_pos()
 			for(auto glyph_index = row.start - str.data(); glyph_index != row_end; ++glyph_index)
 			{
 				auto const& glyph = glyphs[glyph_index];
+				auto const& x_offset = glyph_offsets[glyph_index];
+				auto const minx = glyph.minx - x_offset;
+				auto const maxx = glyph.maxx - x_offset;
 
 				// clicking on the left side of a glyph positions the cursor before it, and right side after it.
-				auto const x_mid = glyph.x + (glyph.maxx - glyph.minx) / 2;
+				auto const x_mid = glyph.x + (maxx - minx) / 2;
 
 				// check if the glyph was clicked on its left side
-				if (mouse_x >= glyph.minx &&
+				if (mouse_x >= minx &&
 					mouse_x <= x_mid)
 				{
 					cursor_pos = glyph_index;
@@ -138,7 +138,7 @@ void textbox_edit::set_cursor_to_mouse_pos()
 				}
 				// or right side
 				else if(mouse_x >= x_mid &&
-						mouse_x <= glyph.maxx)
+						mouse_x <= maxx)
 				{
 					cursor_pos = glyph_index+1;
 					goto glyph_found;
@@ -306,7 +306,8 @@ void textbox_edit::draw(NVGcontext* vg)
 			auto const x_start = [&]{
 				// if selection already started highlight from the start of the row
 				if(!selection_started && is_start_in_row && start_pos > 0) {
-					return glyphs[start_pos-1].maxx; // position at the end of the previous character
+					auto const index = start_pos-1;
+					return glyphs[index].maxx - glyph_offsets[index]; // position at the end of the previous character
 				}
 				return X(absolute_position);
 			}();
@@ -326,7 +327,8 @@ void textbox_edit::draw(NVGcontext* vg)
 				if(is_in_row && selection_started)
 					selection_ended = true;
 				if(is_in_row && end_pos > 0) {
-					return glyphs[end_pos-1].maxx; // position at the end of the previous character
+					auto const index = end_pos-1;
+					return glyphs[index].maxx - glyph_offsets[index]; // position at the end of the previous character
 				}
 				return X(absolute_position) + row.maxx;
 			}();
@@ -374,9 +376,11 @@ void textbox_edit::draw(NVGcontext* vg)
 		auto const x_pos = [&]{
 			if(cursor_pos == 0)
 				return X(absolute_position); // may have no characters, position at the start.
-			else if(cursor_pos == num_glyphs)
-				return glyphs[cursor_pos-1].maxx;
-			return glyphs[cursor_pos].minx; // position at the end of the previous character
+			else if(cursor_pos == num_glyphs) {
+				auto const index = cursor_pos-1;
+				return glyphs[index].maxx - glyph_offsets[index];
+			}
+			return glyphs[cursor_pos].minx - glyph_offsets[cursor_pos]; // position at the end of the previous character
 		}();
 		nvgBeginPath(vg);
 		nvgMoveTo(vg, x_pos, y_pos);
