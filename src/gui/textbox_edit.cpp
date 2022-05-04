@@ -82,7 +82,7 @@ void textbox_edit::update_glyph_positions()
 	}
 
 	if(cursor_pos > num_glyphs)
-		cursor_pos = num_glyphs;
+		set_cursor_pos(num_glyphs);
 
 	nvgRestore(vg);
 }
@@ -147,20 +147,20 @@ void textbox_edit::set_cursor_to_mouse_pos()
 				if (mouse_x >= minx &&
 					mouse_x <= x_mid)
 				{
-					cursor_pos = glyph_index;
+					set_cursor_pos(glyph_index);
 					goto glyph_found;
 				}
 				// or right side
 				else if(mouse_x >= x_mid &&
 						mouse_x <= maxx)
 				{
-					cursor_pos = glyph_index+1;
+					set_cursor_pos(glyph_index+1);
 					goto glyph_found;
 				}
 			}
 
 			// place at the end of the row
-			cursor_pos = row_end;
+			set_cursor_pos(row_end);
 			glyph_found:
 			// if inside this row can't be inside other rows
 			break;
@@ -239,12 +239,68 @@ void textbox_edit::on_key_press(int key, int mods)
 		}
 		break;
 
+	case GLFW_KEY_DOWN:
+		// move a line down
+		if (cursor_row < rows.size()-1)
+		{
+			auto const select = mods & GLFW_MOD_SHIFT;
+			if(select && !has_selection()) {
+				selection_start_pos = cursor_pos;
+			}
+
+			auto const pos_in_row = cursor_pos- (rows[cursor_row].start - str.data());
+			auto const& next_row = rows[cursor_row+1];
+			auto const next_row_size = next_row.end - next_row.start;
+			if(pos_in_row <= next_row_size) {
+				auto const next_row_start_pos = next_row.start - str.data();
+				cursor_pos = next_row_start_pos + pos_in_row;
+				++cursor_row;
+			}
+			else {
+				auto const next_row_end_pos = next_row.end-1 - str.data();
+				cursor_pos = next_row_end_pos;
+				++cursor_row;
+			}
+
+			if(select)
+				selection_end_pos = cursor_pos;
+		}
+		break;
+
+	case GLFW_KEY_UP:
+		// move a line up
+		if (cursor_row > 0)
+		{
+			auto const select = mods & GLFW_MOD_SHIFT;
+			if(select && !has_selection()) {
+				selection_start_pos = cursor_pos;
+			}
+
+			auto const pos_in_row = cursor_pos - (rows[cursor_row].start - str.data());
+			auto const& prev_row = rows[cursor_row-1];
+			auto const prev_row_size = prev_row.end - prev_row.start;
+			if(pos_in_row <= prev_row_size) {
+				auto const prev_row_start_pos = prev_row.start - str.data();
+				cursor_pos = prev_row_start_pos + pos_in_row;
+				--cursor_row;
+			}
+			else {
+				auto const prev_row_end_pos = prev_row.end-1 - str.data();
+				cursor_pos = prev_row_end_pos;
+				--cursor_row;
+			}
+
+			if(select)
+				selection_end_pos = cursor_pos;
+		}
+		break;
+
 	case GLFW_KEY_HOME:
-		cursor_pos = 0;
+		set_cursor_pos(0);
 		break;
 
 	case GLFW_KEY_END:
-		cursor_pos = str.size();
+		set_cursor_pos(str.size());
 		break;
 
 	case GLFW_KEY_C:
@@ -409,6 +465,24 @@ void textbox_edit::draw(NVGcontext* vg)
 	}
 }
 
+void textbox_edit::set_cursor_pos(size_t pos)
+{
+	cursor_pos = pos;
+	cursor_row = get_cursor_row();
+}
+
+size_t textbox_edit::get_cursor_row()
+{
+	size_t y_pos = 0;
+	for(size_t i=1; i < rows.size(); ++i) {
+		if(cursor_pos < rows[i].start - str.data()) {
+			y_pos = i-1;
+			break;
+		}
+	}
+	return y_pos;
+}
+
 void textbox_edit::set_text(std::string const& new_str)
 {
 	clear_selection();
@@ -440,7 +514,7 @@ void textbox_edit::delete_selection()
 	auto low_pos = std::min(selection_start_pos, selection_end_pos);
 	auto high_pos = std::max(selection_start_pos, selection_end_pos);
 	str.erase(low_pos, high_pos - low_pos);
-	cursor_pos = low_pos;
+	set_cursor_pos(low_pos);
 	clear_selection();
 	on_str_changed();
 }
@@ -449,10 +523,10 @@ void textbox_edit::select_all()
 {
 	selection_start_pos = 0;
 	selection_end_pos = str.size();
-	cursor_pos = selection_end_pos;
+	set_cursor_pos(selection_end_pos);
 }
 
 void textbox_edit::move_cursor_to_end()
 {
-	cursor_pos = str.size();
+	set_cursor_pos(str.size());
 }

@@ -19,6 +19,7 @@ struct textbox_edit : textbox
 	NVGcolor selection_color{ 0,0.5,1,1 };
 
 	size_t cursor_pos = 0;
+	size_t cursor_row = 0; // the row the cursor position is inside
 	size_t selection_start_pos = 0;
 	size_t selection_end_pos = 0;
 
@@ -64,4 +65,7 @@ struct textbox_edit : textbox
 	void select_all();
 
 	void move_cursor_to_end();
+
+	void set_cursor_pos(size_t pos);
+	size_t get_cursor_row();
 };
