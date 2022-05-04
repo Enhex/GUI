@@ -265,6 +265,9 @@ void textbox_edit::on_key_press(int key, int mods)
 			if(select)
 				selection_end_pos = cursor_pos;
 		}
+		else {
+			move_cursor_to_end();
+		}
 		break;
 
 	case GLFW_KEY_UP:
@@ -292,6 +295,9 @@ void textbox_edit::on_key_press(int key, int mods)
 
 			if(select)
 				selection_end_pos = cursor_pos;
+		}
+		else {
+			move_cursor_to_start();
 		}
 		break;
 
@@ -528,5 +534,12 @@ void textbox_edit::select_all()
 
 void textbox_edit::move_cursor_to_end()
 {
-	set_cursor_pos(str.size());
+	cursor_pos = str.size();
+	cursor_row = rows.size()-1;
+}
+
+void textbox_edit::move_cursor_to_start()
+{
+	cursor_pos = 0;
+	cursor_row = 0;
 }
