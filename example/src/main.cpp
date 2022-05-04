@@ -456,10 +456,11 @@ int main()
 	{
 		// empty fit textbox
 		auto& b = app.root.create_child<border>();
-		b.position = {570, 600};
+		b.position = {500, 600};
 		b.set_color(nvgRGBA(255, 0, 0, 255));
 
 		auto& tb = b.content.create_child<textbox_edit>();
+		tb.size = tb.min_size = {20, 0};
 		tb.setup(font, 14, "");
 	}
 
