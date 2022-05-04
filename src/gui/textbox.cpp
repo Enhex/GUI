@@ -1,7 +1,13 @@
 #include "textbox.h"
 
+#include "text.h"
+
 textbox::textbox()
 {
+	// apply text's style by default
+	style = text::element_name;
+	apply_style();
+	// and then textbox specific style
 	style = element_name;
 	apply_style();
 }
