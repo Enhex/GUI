@@ -36,6 +36,9 @@ textbox_edit::textbox_edit()
 
 void textbox_edit::update_rows()
 {
+	if(!fixed_size)
+		update_bounds();
+
 	init_font(context->vg);
 	float ascender;
 	nvgTextMetrics(context->vg, &ascender, nullptr, nullptr);
