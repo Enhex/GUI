@@ -432,6 +432,17 @@ int main()
 		tb.fixed_size = true;
 		tb.setup(font, 14, "multi line\nstring.\na very long sentence that will be split across lines.");
 	}
+	{
+		// empty textbox
+		auto& b = app.root.create_child<border>();
+		b.position = {755, 700};
+		b.set_color(nvgRGBA(255, 0, 0, 255));
+
+		auto& tb = b.content.create_child<textbox_edit>();
+		tb.size = tb.min_size = {40, 50};
+		tb.fixed_size = true;
+		tb.setup(font, 14, "");
+	}
 
 	// test global event
 	app.input_manager.key_press.subscribe_global(&app.root, [&app, &root, &txt_edit](int key, int mods) {

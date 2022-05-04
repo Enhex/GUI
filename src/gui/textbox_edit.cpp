@@ -245,7 +245,7 @@ void textbox_edit::on_key_press(int key, int mods)
 
 	case GLFW_KEY_DOWN:
 		// move a line down
-		if (cursor_row < rows.size()-1)
+		if (!rows.empty() && cursor_row < rows.size()-1)
 		{
 			auto const select = mods & GLFW_MOD_SHIFT;
 			if(select && !has_selection()) {
@@ -532,7 +532,7 @@ void textbox_edit::select_all()
 void textbox_edit::move_cursor_to_end()
 {
 	cursor_pos = str.size();
-	cursor_row = rows.size()-1;
+	cursor_row = rows.empty() ? 0 : rows.size()-1;
 }
 
 void textbox_edit::move_cursor_to_start()
