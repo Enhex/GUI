@@ -123,11 +123,12 @@ void textbox_edit::set_cursor_to_mouse_pos()
 			{
 				auto const& glyph = glyphs[glyph_index];
 				auto const& x_offset = glyph_offsets[glyph_index];
+				auto const glyph_x = glyph.x - x_offset;
 				auto const minx = glyph.minx - x_offset;
 				auto const maxx = glyph.maxx - x_offset;
 
 				// clicking on the left side of a glyph positions the cursor before it, and right side after it.
-				auto const x_mid = glyph.x + (maxx - minx) / 2;
+				auto const x_mid = glyph_x + (maxx - minx) / 2;
 
 				// check if the glyph was clicked on its left side
 				if (mouse_x >= minx &&
