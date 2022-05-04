@@ -224,7 +224,7 @@ void textbox_edit::on_key_press(int key, int mods)
 				selection_start_pos = cursor_pos;
 			}
 
-			--cursor_pos;
+			set_cursor_pos(cursor_pos-1);
 
 			if(select)
 				selection_end_pos = cursor_pos;
@@ -239,7 +239,7 @@ void textbox_edit::on_key_press(int key, int mods)
 				selection_start_pos = cursor_pos;
 			}
 
-			++cursor_pos;
+			set_cursor_pos(cursor_pos+1);
 
 			if(select)
 				selection_end_pos = cursor_pos;
