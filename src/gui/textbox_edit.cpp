@@ -444,18 +444,7 @@ void textbox_edit::draw(NVGcontext* vg)
 
 		// y_pos for line height
 		// multiply the number of previous newlines by line height
-		size_t y_pos = 0;
-		// starting from i=1 because if cursor is in the first row y_pos is 0
-		for(size_t i=1; i < rows.size(); ++i) {
-			if(cursor_pos < rows[i].start - str.data()) {
-				y_pos = i-1;
-				break;
-			}
-		}
-		if(cursor_pos >= rows.back().start - str.data())
-			y_pos = rows.size()-1;
-		y_pos *= lineh;
-		y_pos += Y(absolute_position);
+		auto const y_pos = cursor_row * lineh + Y(absolute_position);
 
 		auto const x_pos = [&]{
 			if(cursor_pos == 0)
@@ -484,12 +473,16 @@ void textbox_edit::set_cursor_pos(size_t pos)
 size_t textbox_edit::get_cursor_row()
 {
 	size_t y_pos = 0;
+	// starting from i=1 because if cursor is in the first row y_pos is 0
 	for(size_t i=1; i < rows.size(); ++i) {
 		if(cursor_pos < rows[i].start - str.data()) {
 			y_pos = i-1;
 			break;
 		}
 	}
+	// last line
+	if(!rows.empty() && cursor_pos >= rows.back().start - str.data())
+		y_pos = rows.size()-1;
 	return y_pos;
 }
 
