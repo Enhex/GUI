@@ -289,16 +289,6 @@ void text_edit::post_layout()
 		update_glyph_positions();
 }
 
-bool text_edit::has_selection() const
-{
-	return selection_start_pos != selection_end_pos;
-}
-
-void text_edit::clear_selection()
-{
-	selection_start_pos = selection_end_pos = 0;
-}
-
 void text_edit::delete_selection()
 {
 	//NOTE: if there's no selection 0 chars will be erased

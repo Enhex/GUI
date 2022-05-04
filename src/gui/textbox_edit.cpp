@@ -504,16 +504,6 @@ void textbox_edit::post_layout()
 		update_glyph_positions();
 }
 
-bool textbox_edit::has_selection() const
-{
-	return selection_start_pos != selection_end_pos;
-}
-
-void textbox_edit::clear_selection()
-{
-	selection_start_pos = selection_end_pos = 0;
-}
-
 void textbox_edit::delete_selection()
 {
 	//NOTE: if there's no selection 0 chars will be erased

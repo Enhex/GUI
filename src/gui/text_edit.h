@@ -1,13 +1,10 @@
 #pragma once
 
 #include "text.h"
+#include "text_edit_shared.h"
 
 // editable text
-/*TODO
-- draw selection rectangle before drawing text
-- draw cursor(caret) after drawing text
-*/
-struct text_edit : text
+struct text_edit : text, text_edit_shared
 {
 	inline static constexpr auto element_name{ "text_edit" };
 	std::string get_element_name() override { return element_name; }
@@ -15,19 +12,6 @@ struct text_edit : text
 	std::type_info const& type_info() const override { return typeid(text_edit); }
 
 	text_edit();
-
-	NVGcolor selection_color{ 0,0.5,1,1 };
-
-	size_t cursor_pos = 0;
-	size_t selection_start_pos = 0;
-	size_t selection_end_pos = 0;
-
-	// glyphs' absolute positions
-	std::unique_ptr<NVGglyphPosition[]> glyphs;
-	int num_glyphs = 0;
-
-	// callback for when the text is changed
-	std::function<void()> on_text_changed = []{};
 
 	// what to do when the string changes.
 	// default is to update the glyphs and call a callback.
@@ -57,8 +41,6 @@ struct text_edit : text
 	//TODO would be better to only update when position changes
 	void post_layout() override;
 
-	bool has_selection() const;
-	void clear_selection();
 	void delete_selection();
 	void select_all();
 
