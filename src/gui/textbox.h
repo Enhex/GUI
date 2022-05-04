@@ -20,6 +20,5 @@ struct textbox : text
 	textbox();
 
 	void update_bounds();
-	void update_bounds(NVGcontext* vg);
 	void draw(NVGcontext* vg) override;
 };

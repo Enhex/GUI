@@ -27,7 +27,6 @@ struct text : element
 	void set_style(style::style_t const& style) override;
 
 	void update_bounds();
-	void update_bounds(NVGcontext* vg);
 
 	void init_font(NVGcontext* vg);
 

@@ -59,10 +59,7 @@ void text::set_style(style::style_t const& style)
 
 void text::update_bounds()
 {
-	update_bounds(context->vg);
-}
-void text::update_bounds(NVGcontext* vg)
-{
+	auto& vg = context->vg;
 	nvgSave(vg);
 
 	init_font(vg);

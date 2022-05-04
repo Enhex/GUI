@@ -7,13 +7,10 @@ textbox::textbox()
 
 void textbox::update_bounds()
 {
-	update_bounds(context->vg);
-}
-void textbox::update_bounds(NVGcontext* vg)
-{
 	if(fixed_size)
 		return;
 
+	auto& vg = context->vg;
 	nvgSave(vg);
 
 	init_font(vg);
