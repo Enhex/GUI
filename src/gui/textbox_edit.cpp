@@ -1,7 +1,8 @@
 #include "textbox_edit.h"
 
-#include "../include_glfw.h"
 #include "../framework/application.h"
+#include "../include_glfw.h"
+#include "nvgTextBoxRows.h"
 
 textbox_edit::textbox_edit()
 {
@@ -35,6 +36,12 @@ textbox_edit::textbox_edit()
 
 void textbox_edit::on_str_changed()
 {
+	init_font(context->vg);
+	float ascender;
+	nvgTextMetrics(context->vg, &ascender, nullptr, nullptr);
+	auto absolute_position = get_position();
+	rows = nvgTextBoxGetRows(context->vg, X(absolute_position), Y(absolute_position) + ascender, X(size), str.c_str(), nullptr);
+
 	update_glyphs();
 	on_text_changed();
 }
@@ -52,9 +59,15 @@ void textbox_edit::update_glyph_positions()
 	// nvgTextGlyphPositions only works with single line so characters in a new line got wrong X position as if they're all in a single line,
 	// so fix the positions.
 	//NOTE: can't edit positions directly otherwise nanovg crashes.
-	// starting from i=1 because first line doesn't need offsetting
+	//NOTE: starting from i=1 because first line doesn't need offsetting, except the newline of the first line.
 	glyph_offsets.resize(max_glyphs);
-	for (size_t i=1; i < rows.size(); ++i)
+	// offset the first line's newline
+	if(rows.size() > 1) { // at least 1 line and it isn't the last one
+		auto const glyph_x_offset = glyphs[rows[0].start - str.data()].minx - X(absolute_position);
+		glyph_offsets[rows[0].end - str.data()] = glyph_x_offset;
+	}
+	// offset the rest of the lines
+	for (size_t i=0; i < rows.size(); ++i)
 	{
 		auto const& row = rows[i];
 		auto const glyph_x_offset = glyphs[row.start - str.data()].minx - X(absolute_position);

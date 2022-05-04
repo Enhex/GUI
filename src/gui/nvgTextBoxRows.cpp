@@ -127,3 +127,28 @@ void nvgTextBox(NVGcontext* ctx, float x, float y, float breakRowWidth, const ch
 
 	state->textAlign = oldAlign;
 }
+
+std::vector<NVGtextRow> nvgTextBoxGetRows(NVGcontext* ctx, float x, float y, float breakRowWidth, const char* string, const char* end)
+{
+	auto* state = nvg__getState(ctx);
+	NVGtextRow rows[2];
+	int nrows = 0, i;
+	int oldAlign = state->textAlign;
+	int valign = state->textAlign & (NVG_ALIGN_TOP | NVG_ALIGN_MIDDLE | NVG_ALIGN_BOTTOM | NVG_ALIGN_BASELINE);
+
+	if (state->fontId == FONS_INVALID)
+		return {};
+
+	state->textAlign = NVG_ALIGN_LEFT | valign;
+
+	std::vector<NVGtextRow> rows_out;
+	while ((nrows = nvgTextBreakLines(ctx, string, end, breakRowWidth, rows, 2))) {
+		for (i = 0; i < nrows; i++) {
+			rows_out.emplace_back(rows[i]);
+		}
+		string = rows[nrows-1].next;
+	}
+
+	state->textAlign = oldAlign;
+	return rows_out;
+}
