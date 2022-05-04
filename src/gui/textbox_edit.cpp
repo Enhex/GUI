@@ -34,14 +34,18 @@ textbox_edit::textbox_edit()
 	input_manager.focus_start.subscribe(this, [this]() {});
 }
 
-void textbox_edit::on_str_changed()
+void textbox_edit::update_rows()
 {
 	init_font(context->vg);
 	float ascender;
 	nvgTextMetrics(context->vg, &ascender, nullptr, nullptr);
 	auto absolute_position = get_position();
 	rows = nvgTextBoxGetRows(context->vg, X(absolute_position), Y(absolute_position) + ascender, X(size), str.c_str(), nullptr);
+}
 
+void textbox_edit::on_str_changed()
+{
+	update_rows();
 	update_glyphs();
 	on_text_changed();
 }

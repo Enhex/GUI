@@ -18,6 +18,8 @@ struct textbox_edit : textbox
 
 	NVGcolor selection_color{ 0,0.5,1,1 };
 
+	std::vector<NVGtextRow> rows;
+
 	size_t cursor_pos = 0;
 	size_t cursor_row = 0; // the row the cursor position is inside
 	size_t selection_start_pos = 0;
@@ -40,6 +42,8 @@ struct textbox_edit : textbox
 	void update_glyphs_no_bounds();
 
 	void update_glyphs();
+
+	void update_rows();
 
 	void set_cursor_to_mouse_pos();
 
