@@ -443,7 +443,7 @@ int main()
 		tb.setup(font, 14, "multi line\nstring.\na long sentence that won't split across lines.");
 	}
 	{
-		// empty textbox
+		// empty fixed textbox
 		auto& b = app.root.create_child<border>();
 		b.position = {755, 600};
 		b.set_color(nvgRGBA(255, 0, 0, 255));
@@ -451,6 +451,15 @@ int main()
 		auto& tb = b.content.create_child<textbox_edit>();
 		tb.size = tb.min_size = {40, 50};
 		tb.fixed_size = true;
+		tb.setup(font, 14, "");
+	}
+	{
+		// empty fit textbox
+		auto& b = app.root.create_child<border>();
+		b.position = {570, 600};
+		b.set_color(nvgRGBA(255, 0, 0, 255));
+
+		auto& tb = b.content.create_child<textbox_edit>();
 		tb.setup(font, 14, "");
 	}
 

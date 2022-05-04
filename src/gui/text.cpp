@@ -67,16 +67,20 @@ void text::update_bounds(NVGcontext* vg)
 
 	init_font(vg);
 
-	nvgTextBounds(vg, 0, 0, str.c_str(), nullptr, text_bounds);
-
 	float ascender, descender, lineh;
 	nvgTextMetrics(vg, &ascender, &descender, &lineh);
+	if(str.empty()) {
+		Y(size) = Y(min_size) = lineh;
+	}
+	else {
+		nvgTextBounds(vg, 0, 0, str.c_str(), nullptr, text_bounds);
 
-	// using local space with position 0, can directly use max point instead of calculating bounding box size
-	X(min_size) = text_bounds[2];
-	Y(min_size) = text_bounds[3] + ascender;
+		// using local space with position 0, can directly use max point instead of calculating bounding box size
+		X(min_size) = text_bounds[2];
+		Y(min_size) = text_bounds[3] + ascender;
 
-	size = min_size;
+		size = min_size;
+	}
 
 	nvgRestore(vg);
 }
