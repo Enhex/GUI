@@ -201,7 +201,8 @@ void textbox_edit::on_key_press(int key, int mods)
 			delete_selection();
 		}
 		else if (cursor_pos > 0) {
-			str.erase(--cursor_pos, 1);
+			set_cursor_pos(cursor_pos-1);
+			str.erase(cursor_pos, 1);
 			on_str_changed();
 		}
 		break;
@@ -343,6 +344,7 @@ void textbox_edit::on_key_press(int key, int mods)
 
 	case GLFW_KEY_ENTER:
 		on_character('\n');
+		set_cursor_pos(cursor_pos+1);
 		break;
 	}
 }
