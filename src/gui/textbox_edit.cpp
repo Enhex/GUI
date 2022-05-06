@@ -249,11 +249,17 @@ void textbox_edit::on_key_press(int key, int mods)
 		break;
 
 	case GLFW_KEY_HOME:
-		set_cursor_pos(0);
+		if(!rows.empty()) {
+			auto const row_start_pos = rows[cursor_row].start - str.data();
+			set_cursor_pos(row_start_pos);
+		}
 		break;
 
 	case GLFW_KEY_END:
-		set_cursor_pos(str.size());
+		if(!rows.empty()) {
+			auto const row_end_pos = rows[cursor_row].end - str.data();
+			set_cursor_pos(row_end_pos);
+		}
 		break;
 
 	case GLFW_KEY_C:
