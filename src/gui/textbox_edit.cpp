@@ -283,7 +283,7 @@ void textbox_edit::on_key_press(int key, int mods)
 
 	case GLFW_KEY_ENTER:
 		on_character('\n');
-		set_cursor_pos(cursor_pos+1);
+		++cursor_row;
 		break;
 	}
 }
