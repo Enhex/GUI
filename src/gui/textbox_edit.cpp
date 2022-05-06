@@ -34,18 +34,6 @@ textbox_edit::textbox_edit()
 	input_manager.focus_start.subscribe(this, [this]() {});
 }
 
-void textbox_edit::update_rows()
-{
-	if(!fixed_size)
-		update_bounds();
-
-	init_font(context->vg);
-	float ascender;
-	nvgTextMetrics(context->vg, &ascender, nullptr, nullptr);
-	auto absolute_position = get_position();
-	rows = nvgTextBoxGetRows(context->vg, X(absolute_position), Y(absolute_position) + ascender, X(size), str.c_str(), nullptr);
-}
-
 void textbox_edit::on_str_changed()
 {
 	update_rows();
@@ -55,58 +43,9 @@ void textbox_edit::on_str_changed()
 
 void textbox_edit::update_glyph_positions()
 {
-	auto& vg = context->vg;
-	nvgSave(vg);
-	init_font(vg); // for correct font size
-
-	auto const max_glyphs = str.size();
-	auto const absolute_position = get_position();
-	num_glyphs = nvgTextGlyphPositions(vg, X(absolute_position), Y(absolute_position), str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
-
-	// nvgTextGlyphPositions only works with single line so characters in a new line got wrong X position as if they're all in a single line,
-	// so fix the positions.
-	//NOTE: can't edit positions directly otherwise nanovg crashes.
-	//NOTE: starting from i=1 because first line doesn't need offsetting, except the newline of the first line.
-	glyph_offsets.resize(max_glyphs);
-	// offset the first line's newline
-	if(rows.size() > 1) { // at least 1 line and it isn't the last one
-		auto const glyph_x_offset = glyphs[rows[0].start - str.data()].minx - X(absolute_position);
-		glyph_offsets[rows[0].end - str.data()] = glyph_x_offset;
-	}
-	// offset the rest of the lines
-	for (size_t i=0; i < rows.size(); ++i)
-	{
-		auto const& row = rows[i];
-		auto const glyph_x_offset = glyphs[row.start - str.data()].minx - X(absolute_position);
-		for(auto p = row.start; p < row.end; ++p) {
-			glyph_offsets[p - str.data()] = glyph_x_offset;
-		}
-		// newline also gets a glyph, excluding the last row since it doesn't have newline.
-		//last row actually doesn't have a newline?
-		if(i < rows.size()-1) {
-			glyph_offsets[row.end - str.data()] = glyph_x_offset;
-		}
-	}
-
+	textbox::update_glyph_positions();
 	if(cursor_pos > num_glyphs)
 		set_cursor_pos(num_glyphs);
-
-	nvgRestore(vg);
-}
-
-void textbox_edit::update_glyphs_no_bounds()
-{
-	auto const max_glyphs = str.size();
-
-	glyphs = std::make_unique<NVGglyphPosition[]>(max_glyphs);
-
-	update_glyph_positions();
-}
-
-void textbox_edit::update_glyphs()
-{
-	update_glyphs_no_bounds();
-	update_bounds();
 }
 
 void textbox_edit::set_cursor_to_mouse_pos()
@@ -419,7 +358,8 @@ void textbox_edit::draw(NVGcontext* vg)
 					auto const index = end_pos-1;
 					return glyphs[index].maxx - glyph_offsets[index]; // position at the end of the previous character
 				}
-				return X(absolute_position) + row.maxx;
+				auto const row_end_pos = row.end-1 - str.data();
+				return glyphs[row_end_pos].maxx - glyph_offsets[row_end_pos]; // position at the end of the row
 			}();
 
 			nvgBeginPath(vg);
@@ -455,7 +395,9 @@ void textbox_edit::draw(NVGcontext* vg)
 			if(cursor_pos == 0)
 				return X(absolute_position); // may have no characters, position at the start.
 			else if(cursor_pos == num_glyphs) {
-				auto const index = cursor_pos-1;
+				auto index = cursor_pos-1;
+				if(str[index] == '\n')
+					return X(absolute_position);
 				return glyphs[index].maxx - glyph_offsets[index];
 			}
 			return glyphs[cursor_pos].minx - glyph_offsets[cursor_pos]; // position at the end of the previous character
@@ -494,7 +436,7 @@ size_t textbox_edit::get_cursor_row()
 void textbox_edit::set_text(std::string const& new_str)
 {
 	clear_selection();
-	str = new_str;
+	textbox::set_text(new_str);
 	on_str_changed();
 }
 

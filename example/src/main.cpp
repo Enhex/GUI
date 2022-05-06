@@ -423,17 +423,6 @@ int main()
 
 	// textbox test
 	{
-		// fixed
-		auto& b = app.root.create_child<border>();
-		b.position = {600, 600};
-		b.set_color(nvgRGBA(255, 0, 0, 255));
-
-		auto& tb = b.content.create_child<textbox_edit>();
-		tb.size = tb.min_size = {150, 100};
-		tb.fixed_size = true;
-		tb.setup(font, 14, "multi line\nstring.\na very long sentence that will be split across lines.");
-	}
-	{
 		// fit
 		auto& b = app.root.create_child<border>();
 		b.position = {500, 710};
@@ -443,18 +432,7 @@ int main()
 		tb.setup(font, 14, "multi line\nstring.\na long sentence that won't split across lines.");
 	}
 	{
-		// empty fixed textbox
-		auto& b = app.root.create_child<border>();
-		b.position = {755, 600};
-		b.set_color(nvgRGBA(255, 0, 0, 255));
-
-		auto& tb = b.content.create_child<textbox_edit>();
-		tb.size = tb.min_size = {40, 50};
-		tb.fixed_size = true;
-		tb.setup(font, 14, "");
-	}
-	{
-		// empty fit textbox
+		// empty fit
 		auto& b = app.root.create_child<border>();
 		b.position = {500, 600};
 		b.set_color(nvgRGBA(255, 0, 0, 255));

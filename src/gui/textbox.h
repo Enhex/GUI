@@ -8,17 +8,32 @@ across lines so the size isn't derived from the text.
 */
 struct textbox : text
 {
+	struct Row {
+		const char* start = nullptr;
+		const char* end = nullptr; // either newline or string end (one past the last character)
+	};
+
 	inline static constexpr auto element_name{ "textbox" };
 	std::string get_element_name() override { return element_name; }
 
 	std::type_info const& type_info() const override { return typeid(textbox); }
 
-	// should the textbox fit its size to the string or should it have fixed size and split the string?
-	bool fixed_size = false;
+	std::vector<Row> rows;
 
+	// glyphs' absolute positions
+	std::unique_ptr<NVGglyphPosition[]> glyphs;
+	int num_glyphs = 0;
+	std::vector<float> glyph_offsets; // used to correct nanovg's X positions after newlines
 
 	textbox();
 
+	void set_text(std::string const& new_str) override;
+
+	void update_glyph_positions();
+	void update_glyphs_no_bounds();
+	void update_glyphs();
+
+	void update_rows();
 	void update_bounds();
 	void draw(NVGcontext* vg) override;
 };

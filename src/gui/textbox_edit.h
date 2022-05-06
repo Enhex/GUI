@@ -13,10 +13,7 @@ struct textbox_edit : textbox, text_edit_shared
 
 	textbox_edit();
 
-	std::vector<NVGtextRow> rows;
 	size_t cursor_row = 0; // the row the cursor position is inside
-
-	std::vector<float> glyph_offsets; // used to correct nanovg's X positions after newlines
 
 	// what to do when the string changes.
 	// default is to update the glyphs and call a callback.
@@ -24,20 +21,12 @@ struct textbox_edit : textbox, text_edit_shared
 
 	void update_glyph_positions();
 
-	void update_glyphs_no_bounds();
-
-	void update_glyphs();
-
-	void update_rows();
-
 	void set_cursor_to_mouse_pos();
-
 	void on_mouse_press();
 
 	void on_frame_start();
 
 	void on_key_press(int key, int mods);
-
 	void on_character(unsigned codepoint);
 
 	void draw(NVGcontext* vg) override;

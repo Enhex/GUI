@@ -11,6 +11,10 @@ struct text_edit : text, text_edit_shared
 
 	std::type_info const& type_info() const override { return typeid(text_edit); }
 
+	// glyphs' absolute positions
+	std::unique_ptr<NVGglyphPosition[]> glyphs;
+	int num_glyphs = 0;
+
 	text_edit();
 
 	// what to do when the string changes.

@@ -10,10 +10,6 @@ struct text_edit_shared
 	size_t selection_start_pos = 0;
 	size_t selection_end_pos = 0;
 
-	// glyphs' absolute positions
-	std::unique_ptr<NVGglyphPosition[]> glyphs;
-	int num_glyphs = 0;
-
 	// callback for when the text is changed
 	std::function<void()> on_text_changed = []{};
 
