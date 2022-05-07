@@ -73,8 +73,30 @@ void textbox_edit::set_cursor_to_mouse_pos()
 		auto const row_y = Y(abs_pos) + (i * lineh);
 
 		// check if inside Y
-		if (mouse_y >= row_y &&
-			mouse_y <= row_y + lineh)
+		// exluding upper bound check for first row and lower bound check for last row
+		bool is_in_row;
+		if(i == 0) {
+			is_in_row = mouse_y <= row_y + lineh;
+			// if before first row move to start
+			if(is_in_row && mouse_y < row_y) {
+				move_cursor_to_start();
+				return;
+			}
+		}
+		else if(i == rows.size()-1) {
+			is_in_row = mouse_y >= row_y;
+			// if after last row move to end
+			if(is_in_row && mouse_y > row_y + lineh) {
+				move_cursor_to_end();
+				return;
+			}
+		}
+		else {
+			is_in_row = mouse_y >= row_y &&
+						mouse_y <= row_y + lineh;
+		}
+
+		if (is_in_row)
 		{
 			// check if inside a glyph
 			auto const row_end = row.end - str.data();
