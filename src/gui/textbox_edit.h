@@ -29,6 +29,7 @@ struct textbox_edit : textbox, text_edit_shared
 	void on_key_press(int key, int mods);
 	void on_character(unsigned codepoint);
 
+	void draw_selection_background(NVGcontext* vg, float const lineh);
 	void draw(NVGcontext* vg) override;
 
 	void set_text(std::string const& new_str) override;
