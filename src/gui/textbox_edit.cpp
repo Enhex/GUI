@@ -209,14 +209,15 @@ void textbox_edit::on_key_press(int key, int mods)
 		break;
 
 	case GLFW_KEY_DOWN:
+	{
 		// move a line down
+		auto const select = mods & GLFW_MOD_SHIFT;
+		if(select && !has_selection()) {
+			selection_start_pos = cursor_pos;
+		}
+
 		if (!rows.empty() && cursor_row < rows.size()-1)
 		{
-			auto const select = mods & GLFW_MOD_SHIFT;
-			if(select && !has_selection()) {
-				selection_start_pos = cursor_pos;
-			}
-
 			auto const pos_in_row = cursor_pos- (rows[cursor_row].start - str.data());
 			auto const& next_row = rows[cursor_row+1];
 			auto const next_row_size = next_row.end - next_row.start;
@@ -230,24 +231,26 @@ void textbox_edit::on_key_press(int key, int mods)
 				cursor_pos = next_row_end_pos;
 				++cursor_row;
 			}
-
-			if(select)
-				selection_end_pos = cursor_pos;
 		}
 		else {
 			move_cursor_to_end();
 		}
-		break;
 
+		if(select)
+			selection_end_pos = cursor_pos;
+
+		break;
+	}
 	case GLFW_KEY_UP:
+	{
 		// move a line up
+		auto const select = mods & GLFW_MOD_SHIFT;
+		if(select && !has_selection()) {
+			selection_start_pos = cursor_pos;
+		}
+
 		if (cursor_row > 0)
 		{
-			auto const select = mods & GLFW_MOD_SHIFT;
-			if(select && !has_selection()) {
-				selection_start_pos = cursor_pos;
-			}
-
 			auto const pos_in_row = cursor_pos - (rows[cursor_row].start - str.data());
 			auto const& prev_row = rows[cursor_row-1];
 			auto const prev_row_size = prev_row.end - prev_row.start;
@@ -261,15 +264,16 @@ void textbox_edit::on_key_press(int key, int mods)
 				cursor_pos = prev_row_end_pos;
 				--cursor_row;
 			}
-
-			if(select)
-				selection_end_pos = cursor_pos;
 		}
 		else {
 			move_cursor_to_start();
 		}
-		break;
 
+		if(select)
+			selection_end_pos = cursor_pos;
+
+		break;
+	}
 	case GLFW_KEY_HOME:
 		if(!rows.empty()) {
 			auto const row_start_pos = rows[cursor_row].start - str.data();
