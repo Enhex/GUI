@@ -31,9 +31,9 @@ class GuiConan(ConanFile):
 	exports_sources = "src/*"
 
 	requires = (
-		"boost/1.78.0",
-		"glfw/3.3.6",
-		"glad/0.1.34",
+		"boost/1.79.0",
+		"glfw/3.3.7",
+		"glad/0.1.35",
 		"nanovg/master@enhex/stable",
 		"deco/master@enhex/stable"
 	)
