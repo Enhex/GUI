@@ -156,6 +156,17 @@ void textbox_edit::on_frame_start()
 
 void textbox_edit::on_key_press(int key, int mods)
 {
+	auto shared_select_code = [&]{
+		auto const select = mods & GLFW_MOD_SHIFT;
+		if(select && !has_selection()) {
+			selection_start_pos = cursor_pos;
+		}
+		if(!select && has_selection()) {
+			clear_selection();
+		}
+		return select;
+	};
+
 	switch (key) {
 	case GLFW_KEY_BACKSPACE:
 		if(has_selection()) {
@@ -181,10 +192,7 @@ void textbox_edit::on_key_press(int key, int mods)
 	case GLFW_KEY_LEFT:
 		if (cursor_pos > 0)
 		{
-			auto const select = mods & GLFW_MOD_SHIFT;
-			if(select && !has_selection()) {
-				selection_start_pos = cursor_pos;
-			}
+			auto const select = shared_select_code();
 
 			set_cursor_pos(cursor_pos-1);
 
@@ -196,10 +204,7 @@ void textbox_edit::on_key_press(int key, int mods)
 	case GLFW_KEY_RIGHT:
 		if (cursor_pos < str.size())
 		{
-			auto const select = mods & GLFW_MOD_SHIFT;
-			if(select && !has_selection()) {
-				selection_start_pos = cursor_pos;
-			}
+			auto const select = shared_select_code();
 
 			set_cursor_pos(cursor_pos+1);
 
@@ -211,10 +216,7 @@ void textbox_edit::on_key_press(int key, int mods)
 	case GLFW_KEY_DOWN:
 	{
 		// move a line down
-		auto const select = mods & GLFW_MOD_SHIFT;
-		if(select && !has_selection()) {
-			selection_start_pos = cursor_pos;
-		}
+		auto const select = shared_select_code();
 
 		if (!rows.empty() && cursor_row < rows.size()-1)
 		{
@@ -243,10 +245,7 @@ void textbox_edit::on_key_press(int key, int mods)
 	case GLFW_KEY_UP:
 	{
 		// move a line up
-		auto const select = mods & GLFW_MOD_SHIFT;
-		if(select && !has_selection()) {
-			selection_start_pos = cursor_pos;
-		}
+		auto const select = shared_select_code();
 
 		if (cursor_row > 0)
 		{
