@@ -190,29 +190,31 @@ void textbox_edit::on_key_press(int key, int mods)
 		break;
 
 	case GLFW_KEY_LEFT:
+	{
+		auto const select = shared_select_code();
+
 		if (cursor_pos > 0)
 		{
-			auto const select = shared_select_code();
-
 			set_cursor_pos(cursor_pos-1);
 
 			if(select)
 				selection_end_pos = cursor_pos;
 		}
 		break;
-
+	}
 	case GLFW_KEY_RIGHT:
+	{
+		auto const select = shared_select_code();
+
 		if (cursor_pos < str.size())
 		{
-			auto const select = shared_select_code();
-
 			set_cursor_pos(cursor_pos+1);
 
 			if(select)
 				selection_end_pos = cursor_pos;
 		}
 		break;
-
+	}
 	case GLFW_KEY_DOWN:
 	{
 		// move a line down
