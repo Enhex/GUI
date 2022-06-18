@@ -224,13 +224,15 @@ void textbox_edit::on_key_press(int key, int mods)
 			if(pos_in_row <= next_row_size) {
 				auto const next_row_start_pos = next_row.start - str.data();
 				cursor_pos = next_row_start_pos + pos_in_row;
-				++cursor_row;
 			}
-			else {
+			else if(next_row_size > 0) {
 				auto const next_row_end_pos = next_row.end-1 - str.data();
 				cursor_pos = next_row_end_pos;
-				++cursor_row;
 			}
+			else {
+				cursor_pos = 0;
+			}
+			++cursor_row;
 		}
 		else {
 			move_cursor_to_end();
@@ -257,13 +259,15 @@ void textbox_edit::on_key_press(int key, int mods)
 			if(pos_in_row <= prev_row_size) {
 				auto const prev_row_start_pos = prev_row.start - str.data();
 				cursor_pos = prev_row_start_pos + pos_in_row;
-				--cursor_row;
 			}
-			else {
+			else if(prev_row_size > 0) {
 				auto const prev_row_end_pos = prev_row.end-1 - str.data();
 				cursor_pos = prev_row_end_pos;
-				--cursor_row;
 			}
+			else {
+				cursor_pos = 0;
+			}
+			--cursor_row;
 		}
 		else {
 			move_cursor_to_start();
