@@ -4,6 +4,9 @@
 //NOTE: should be inherited after text
 struct text_edit_shared
 {
+	//NOTE: using pointer because it allows reusing character sets and takes less space than u32string
+	std::u32string const* valid_characters = nullptr;
+
 	NVGcolor selection_color{ 0,0.5,1,1 };
 
 	size_t cursor_pos = 0;
@@ -15,4 +18,6 @@ struct text_edit_shared
 
 	bool has_selection() const;
 	void clear_selection();
+
+	bool is_valid_character(unsigned const codepoint) const;
 };

@@ -322,6 +322,9 @@ void textbox_edit::on_key_press(int key, int mods)
 
 void textbox_edit::on_character(unsigned codepoint)
 {
+	if(!is_valid_character(codepoint))
+		return;
+
 	if(has_selection()) {
 		delete_selection();
 	}
