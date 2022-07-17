@@ -38,11 +38,15 @@ void checkbox::set_state(bool new_state)
 {
 	state = new_state;
 	if(state) {
-		color = background_color = selected_color;
+		background_color = selected_color;
+		if(!is_focused())
+			color = background_color;
 		fill->color = selected_color;
 	}
 	else {
-		color = background_color = unselected_color;
+		background_color = unselected_color;
+		if(!is_focused())
+			color = background_color;
 		fill->color = inner_color;
 	}
 }
