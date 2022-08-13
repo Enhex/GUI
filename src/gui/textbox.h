@@ -11,6 +11,11 @@ struct textbox : text
 	struct Row {
 		const char* start = nullptr;
 		const char* end = nullptr; // either newline or string end (one past the last character)
+
+		size_t size() const
+		{
+			return end - start;
+		}
 	};
 
 	inline static constexpr auto element_name{ "textbox" };
