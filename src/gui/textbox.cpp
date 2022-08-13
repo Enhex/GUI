@@ -115,13 +115,15 @@ void textbox::update_bounds()
 		Y(size) = Y(min_size) = lineh;
 	}
 	else {
-		X(min_size) = 0;
-		auto abs_pos = get_position();
+		auto const abs_pos = get_position();
+		X(min_size) = glyphs[0].maxx - glyph_offsets[0] - X(abs_pos);
+
 		for(auto const& row : rows) {
-			//nvgTextBounds(vg, 0, 0, row.start, row.end, text_bounds);
-			// if a row doesn't end with newline and there's only one row it means there must be a char before end
-			// because the only way to have single char string with end==newline is a single newline.
-			auto glyph_index = *row.end == '\n' ? row.end - str.data() : row.end-1 - str.data();
+			// if it's an empty row its width is 0
+			if(row.size() == 0)
+				continue;
+
+			auto const glyph_index = row.end-1 - str.data();
 			auto const row_width = glyphs[glyph_index].maxx - glyph_offsets[glyph_index] - X(abs_pos);
 			// using local space with position 0, can directly use max point instead of calculating bounding box size
 			if(X(min_size) < row_width)
