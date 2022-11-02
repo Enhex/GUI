@@ -83,6 +83,11 @@ void application::load_layout(std::string const & filepath, element& parent)
 	}
 }
 
+bool application::key_pressed(int key) const
+{
+	return glfwGetKey(window, key) == GLFW_PRESS;
+}
+
 void application::initialize()
 {
 	if (!glfwInit())

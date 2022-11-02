@@ -27,6 +27,9 @@ struct application : gui::context
 
 	void load_layout(std::string const& filepath, element& parent);
 
+	// return true if the key is pressed
+	bool key_pressed(int key) const;
+
 protected:
 	void initialize();
 	void create_window(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share);
