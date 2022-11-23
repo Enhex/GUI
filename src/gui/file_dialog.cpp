@@ -239,6 +239,9 @@ void file_dialog::add_path_save(fs::path const& path, std::string str)
 		btn.callback = [this, path]{
 			filename_field->set_text(path.filename().string());
 		};
+		btn.double_click_callback = [this, path]{
+			confirm->callback();
+		};
 	}
 }
 
