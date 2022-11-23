@@ -2,6 +2,10 @@
 
 button::button()
 {
+	// initialize with a time point furthest away from now()
+	// as a way to tell if a time press was stored yet or not.
+	press_time[0] = press_time[1] = time_point_t(std::chrono::steady_clock::now() - time_point_t::max());
+
 	color = background_color;
 
 	style = element_name;
@@ -25,6 +29,8 @@ button::button()
 	input_manager.mouse_press.subscribe(this, [this](int key, int mods) {
 		color = press_color;
 		is_pressed = true;
+		press_time_index = !press_time_index;
+		press_time[press_time_index] = std::chrono::steady_clock::now();
 	});
 
 	input_manager.mouse_release.subscribe(this, [this](int key, int mods) {
@@ -32,7 +38,14 @@ button::button()
 		//execute callback if the button was pressed before release event
 		if (is_pressed) {
 			is_pressed = false;
-			if(callback)
+			auto const time_passed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - press_time[!press_time_index]).count();
+			auto const double_click_ready = (time_passed < double_click_time) & (time_passed >= 0);
+			if(double_click_ready &&
+				double_click_callback)
+			{
+				double_click_callback();
+			}
+			else if(callback)
 				callback();
 		}
 	});
