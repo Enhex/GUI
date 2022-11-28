@@ -1,4 +1,4 @@
-Copyright (c) 2018-2020 Yehonatan Ballas
+Copyright (c) 2018-2022 Yehonatan Ballas
 
                                  Apache License
                            Version 2.0, January 2004
