@@ -73,7 +73,9 @@ void button::disable()
 	input_manager.hover_start.unsubscribe(this);
 	input_manager.hover_end.unsubscribe(this);
 	input_manager.mouse_press.unsubscribe(this);
-	input_manager.mouse_release.unsubscribe(this);
+	// unsubscrubing from mouse_release causes a crash
+	// input_manager.mouse_release.unsubscribe(this);
+	input_manager.focus_start.unsubscribe(this);
 	input_manager.focus_end.unsubscribe(this);
 }
 

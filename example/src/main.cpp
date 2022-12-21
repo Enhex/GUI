@@ -303,7 +303,6 @@ int main()
 			el.hover_color = nvgRGBA(120, 120, 120, 255);
 			el.press_color = nvgRGBA(0, 120, 210, 255);
 			el.color = el.background_color;
-			el.disable();
 
 			auto& label = el.create_child<text>();
 			label.set_text("disabled button");
@@ -312,7 +311,10 @@ int main()
 			el.size = { 100,50 };
 
 			el.callback = [&]() {
-				std::cout << "this shouldn't happen because the button is disabled!\n";
+				el.disable();
+				el.callback = [&]() {
+					std::cout << "this shouldn't happen because the button is disabled!\n";
+				};
 			};
 		}
 		{
