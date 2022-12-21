@@ -298,6 +298,25 @@ int main()
 		}
 		{
 			auto& el = btns_root.create_child<button>();
+			el.position = { 550,50 };
+			el.background_color = nvgRGBA(80, 80, 80, 255);
+			el.hover_color = nvgRGBA(120, 120, 120, 255);
+			el.press_color = nvgRGBA(0, 120, 210, 255);
+			el.color = el.background_color;
+			el.disable();
+
+			auto& label = el.create_child<text>();
+			label.set_text("disabled button");
+
+			el.child_layout->perform();
+			el.size = { 100,50 };
+
+			el.callback = [&]() {
+				std::cout << "this shouldn't happen because the button is disabled!\n";
+			};
+		}
+		{
+			auto& el = btns_root.create_child<button>();
 			el.position = { 500,150 };
 			el.background_color = nvgRGBA(80, 80, 80, 255);
 			el.hover_color = nvgRGBA(120, 120, 120, 255);

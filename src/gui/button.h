@@ -24,6 +24,9 @@ struct button : panel
 
 	void set_style(style::style_t const& style) override;
 
+	void enable();
+	void disable();
+
 protected:
 	bool is_pressed = false;
 	using time_point_t = std::chrono::time_point<std::chrono::steady_clock>;

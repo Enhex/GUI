@@ -13,6 +13,11 @@ button::button()
 
 	create_layout<gui::layout::box>();
 
+	enable();
+}
+
+void button::enable()
+{
 	auto& input_manager = context->input_manager;
 
 	input_manager.hover_start.subscribe(this, [this](vector2 const& mouse_position) {
@@ -59,6 +64,17 @@ button::button()
 		else
 			color = background_color;
 	});
+}
+
+void button::disable()
+{
+	auto& input_manager = context->input_manager;
+
+	input_manager.hover_start.unsubscribe(this);
+	input_manager.hover_end.unsubscribe(this);
+	input_manager.mouse_press.unsubscribe(this);
+	input_manager.mouse_release.unsubscribe(this);
+	input_manager.focus_end.unsubscribe(this);
 }
 
 
