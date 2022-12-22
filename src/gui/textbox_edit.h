@@ -32,7 +32,7 @@ struct textbox_edit : textbox, text_edit_shared
 	void draw_selection_background(NVGcontext* vg, float const lineh);
 	void draw(NVGcontext* vg) override;
 
-	void set_text(std::string const& new_str) override;
+	void update_text() override;
 
 	// absolute position may change after layout
 	//TODO would be better to only update when position changes

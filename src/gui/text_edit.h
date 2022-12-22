@@ -39,7 +39,7 @@ struct text_edit : text, text_edit_shared
 
 	void draw(NVGcontext* vg) override;
 
-	void set_text(std::string const& new_str) override;
+	void update_text() override;
 
 	// absolute position may change after layout
 	//TODO would be better to only update when position changes

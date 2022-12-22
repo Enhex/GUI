@@ -32,7 +32,7 @@ struct textbox : text
 
 	textbox();
 
-	void set_text(std::string const& new_str) override;
+	void update_text() override;
 
 	void update_glyph_positions();
 	void update_glyphs_no_bounds();

@@ -5,9 +5,8 @@ textbox::textbox()
 	style = element_name;
 }
 
-void textbox::set_text(std::string const& new_str)
+void textbox::update_text()
 {
-	str = new_str;
 	update_bounds();
 }
 

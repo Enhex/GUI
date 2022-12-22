@@ -22,7 +22,8 @@ struct text : element
 
 	void setup(NVGcontext* vg, int new_font, float new_font_size, std::string const& new_str);
 
-	virtual void set_text(std::string const& new_str);
+	void set_text(std::string const& new_str);
+	virtual void update_text();
 
 	void set_style(style::style_t const& style) override;
 

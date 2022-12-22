@@ -476,10 +476,9 @@ size_t textbox_edit::get_cursor_row()
 	return y_pos;
 }
 
-void textbox_edit::set_text(std::string const& new_str)
+void textbox_edit::update_text()
 {
 	clear_selection();
-	textbox::set_text(new_str);
 	on_str_changed();
 }
 
