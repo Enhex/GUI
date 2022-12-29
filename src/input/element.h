@@ -6,7 +6,7 @@
 //TODO move to a separate file/lib
 struct dynamic_destructor
 {
-	std::vector<std::function<void()>> destructor_callbacks;
+	std::list<std::function<void()>> destructor_callbacks;
 
 	virtual ~dynamic_destructor()
 	{

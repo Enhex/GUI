@@ -30,6 +30,8 @@ namespace input
 				subscriber->destructor_callbacks.emplace_back([this, subscriber]() {
 					focused_events.erase(subscriber);
 				});
+				auto dtor_callback_iter = --subscriber->destructor_callbacks.end();
+				focused_events_dtor_callbacks[subscriber] = dtor_callback_iter;
 
 				return --callbacks.end();
 			}
@@ -43,6 +45,8 @@ namespace input
 				subscriber->destructor_callbacks.emplace_back([this, subscriber]() {
 					global_event.erase(subscriber);
 				});
+				auto dtor_callback_iter = --subscriber->destructor_callbacks.end();
+				global_events_dtor_callbacks[subscriber] = dtor_callback_iter;
 			}
 
 			// return false if the event already has exclusive subscription
@@ -60,6 +64,12 @@ namespace input
 			void unsubscribe(element* subscriber)
 			{
 				focused_events.erase(subscriber);
+				// remove dtor callback
+				auto dtor_callback_iter = focused_events_dtor_callbacks.find(subscriber);
+				if(dtor_callback_iter != focused_events_dtor_callbacks.end()){
+					subscriber->destructor_callbacks.erase(dtor_callback_iter->second);
+					focused_events_dtor_callbacks.erase(subscriber);
+				}
 			}
 
 			void unsubscribe_global(element* subscriber)
@@ -72,6 +82,13 @@ namespace input
 				}
 				else {
 					global_event.erase(subscriber);
+				}
+
+				// remove dtor callback
+				auto dtor_callback_iter = global_events_dtor_callbacks.find(subscriber);
+				if(dtor_callback_iter != global_events_dtor_callbacks.end()){
+					subscriber->destructor_callbacks.erase(dtor_callback_iter->second);
+					global_events_dtor_callbacks.erase(subscriber);
 				}
 			}
 
@@ -150,6 +167,9 @@ namespace input
 			std::unordered_map<element*, callback_t> global_event;
 			// only one callback per event
 			std::optional<callback_t> exclusive_event;
+			// store destructor callback iterators to remove them when unsubscribing
+			std::unordered_map<element*, decltype(element::destructor_callbacks)::iterator> focused_events_dtor_callbacks;
+			std::unordered_map<element*, decltype(element::destructor_callbacks)::iterator> global_events_dtor_callbacks;
 		};
 	}
 }
