@@ -31,6 +31,8 @@ text_edit::text_edit()
 
 	// subscribe so text_edit will be able to capture focus
 	input_manager.focus_start.subscribe(this, [this]() {});
+
+	input_manager.mouse_release.set_continue_propagating(this, true);
 }
 
 void text_edit::on_str_changed()

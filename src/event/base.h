@@ -97,6 +97,29 @@ namespace input
 				exclusive_event.reset();
 			}
 
+			void set_continue_propagating(element* subscriber, bool const propagate)
+			{
+				if(propagate){
+					continue_propagating.insert(subscriber);
+
+					// add removal callback
+					subscriber->destructor_callbacks.emplace_back([this, subscriber]() {
+						continue_propagating.erase(subscriber);
+					});
+					auto dtor_callback_iter = --subscriber->destructor_callbacks.end();
+					propagate_dtor_callbacks[subscriber] = dtor_callback_iter;
+				}
+				else{
+					continue_propagating.erase(subscriber);
+					// remove dtor callback
+					auto dtor_callback_iter = propagate_dtor_callbacks.find(subscriber);
+					if(dtor_callback_iter != propagate_dtor_callbacks.end()){
+						subscriber->destructor_callbacks.erase(dtor_callback_iter->second);
+						propagate_dtor_callbacks.erase(subscriber);
+					}
+				}
+			}
+
 
 			void send_event(element* element, Args... args)
 			{
@@ -108,8 +131,13 @@ namespace input
 				}
 
 				// try focused
-				if(element)
-					send_focused_event(*element, args...);
+				if(element){
+					if(send_focused_event(*element, args...) != nullptr &&
+					   continue_propagating.count(element) == 0)
+					{
+						return;
+					}
+				}
 
 				// no focused callback was found, propagate into a global event
 				send_global_event(args...);
@@ -167,9 +195,14 @@ namespace input
 			std::unordered_map<element*, callback_t> global_event;
 			// only one callback per event
 			std::optional<callback_t> exclusive_event;
+
+			// elements that let the event continue propagating
+			std::unordered_set<element*> continue_propagating;
+
 			// store destructor callback iterators to remove them when unsubscribing
 			std::unordered_map<element*, decltype(element::destructor_callbacks)::iterator> focused_events_dtor_callbacks;
 			std::unordered_map<element*, decltype(element::destructor_callbacks)::iterator> global_events_dtor_callbacks;
+			std::unordered_map<element*, decltype(element::destructor_callbacks)::iterator> propagate_dtor_callbacks;
 		};
 	}
 }
