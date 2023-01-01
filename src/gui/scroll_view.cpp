@@ -37,7 +37,12 @@ scroll_view::scroll_view() :
 
 	input_manager.scroll.subscribe(this, [&](double xoffset, double yoffset) {
 		move_content(horizontal, scroll_step * xoffset);
-		move_content(vertical, scroll_step * yoffset);
+		if(input_manager.key_pressed(GLFW_KEY_LEFT_SHIFT)){
+			move_content(horizontal, scroll_step * yoffset);
+		}
+		else{
+			move_content(vertical, scroll_step * yoffset);
+		}
 	});
 
 	subscribe_scroll_events(horizontal);
