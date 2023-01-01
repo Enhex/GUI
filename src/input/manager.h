@@ -35,6 +35,9 @@ namespace input
 		event::visible_start visible_start;
 		event::visible_end visible_end;
 
+		// to be implemented without inheritance
+		std::function<bool(int)> key_pressed;
+
 		void set_hovered_element(element* new_element);
 		void set_focused_element(element* new_element);
 

@@ -16,6 +16,10 @@ application::application(int width, int height, const char* title, GLFWmonitor* 
 
 	vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 
+	input_manager.key_pressed = [this](int key){
+		return key_pressed(key);
+	};
+
 	element::context = this;
 }
 
