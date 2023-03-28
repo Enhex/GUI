@@ -132,8 +132,9 @@ namespace input
 
 				// try focused
 				if(element){
-					if(send_focused_event(*element, args...) != nullptr &&
-					   continue_propagating.count(element) == 0)
+					auto* recieve_element = send_focused_event(*element, args...);
+					if(recieve_element != nullptr &&
+					   continue_propagating.count(recieve_element) == 0)
 					{
 						return;
 					}
