@@ -119,6 +119,32 @@ void scroll_view::move_content(layout::orientation const orient, float change)
 	update_handle_position(orient);
 }
 
+void scroll_view::scroll_to(layout::orientation const orient, float pos)
+{
+	auto const view_bottom_pos = view.size.a[orient] - content.position.a[orient];
+	if(pos > view_bottom_pos){
+		auto const scroll_amount = pos - view_bottom_pos - content.position.a[orient];
+		move_content(orient, -scroll_amount);
+	}
+	else{
+		auto const view_top_pos = -content.position.a[orient];
+		if(pos < view_top_pos){
+		auto const scroll_amount = view_top_pos - pos;
+			move_content(orient, scroll_amount);
+		}
+	}
+}
+
+void scroll_view::scroll_to_top()
+{
+	content.position.a[layout::vertical] = 0;
+}
+
+void scroll_view::scroll_to_bottom()
+{
+	content.position.a[layout::vertical] = -get_scroll_length(layout::vertical);
+}
+
 void scroll_view::update_handle_size(layout::orientation const orient)
 {
 	auto& handle = scroll[orient]->handle;

@@ -36,6 +36,12 @@ struct scroll_view : element
 
 	void move_content(layout::orientation const orient, float change);
 
+	// if a given position is not inside the view, scroll so it will be inside the view.
+	//NOTE: pos is relative position to content.
+	void scroll_to(layout::orientation const orient, float pos);
+	void scroll_to_top();
+	void scroll_to_bottom();
+
 	void update_handle_size(layout::orientation const orient);
 
 	void update_handle_position(layout::orientation const orient);
