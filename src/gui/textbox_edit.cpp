@@ -13,7 +13,7 @@ textbox_edit::textbox_edit()
 	input_manager.mouse_press.subscribe(this, [this](int button, int mods) {
 		on_mouse_press();
 	});
-	input_manager.mouse_release.subscribe_global(this, [this](int button, int mods) {
+	input_manager.mouse_release.subscribe_global_unfocused(this, [this](int button, int mods) {
 		context->input_manager.frame_start.unsubscribe_global(this);
 	});
 	input_manager.key_press.subscribe(this, [this](int key, int mods) {

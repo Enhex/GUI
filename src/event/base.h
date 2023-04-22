@@ -17,7 +17,9 @@ namespace input
 			using callback_t = std::function<void(Args...)>;
 			using callbacks_t = std::list<callback_t>;
 
+			// used for self removal
 			typename std::unordered_map<element*, callback_t>::iterator active_callback_global_iter;
+			typename std::unordered_map<element*, callback_t>::iterator active_callback_global_unfocused_iter;
 
 			// focused
 			typename callbacks_t::iterator subscribe(element* subscriber, callback_t&& callback)
@@ -47,6 +49,19 @@ namespace input
 				});
 				auto dtor_callback_iter = --subscriber->destructor_callbacks.end();
 				global_events_dtor_callbacks[subscriber] = dtor_callback_iter;
+			}
+
+			void subscribe_global_unfocused(element* subscriber, callback_t&& callback)
+			{
+				// subscribe
+				global_unfocused_event[subscriber] = std::move(callback);
+
+				// add removal callback
+				subscriber->destructor_callbacks.emplace_back([this, subscriber]() {
+					global_unfocused_event.erase(subscriber);
+				});
+				auto dtor_callback_iter = --subscriber->destructor_callbacks.end();
+				global_unfocused_events_dtor_callbacks[subscriber] = dtor_callback_iter;
 			}
 
 			// return false if the event already has exclusive subscription
@@ -92,6 +107,26 @@ namespace input
 				}
 			}
 
+			void unsubscribe_global_unfocused(element* subscriber)
+			{
+				if (active_callback_element == subscriber) {
+					// if self-unsubscribing, update iterator
+					auto sub_iter = global_unfocused_event.find(subscriber);
+					if(sub_iter != global_unfocused_event.end())
+						active_callback_global_unfocused_iter = global_unfocused_event.erase(sub_iter);
+				}
+				else {
+					global_unfocused_event.erase(subscriber);
+				}
+
+				// remove dtor callback
+				auto dtor_callback_iter = global_unfocused_events_dtor_callbacks.find(subscriber);
+				if(dtor_callback_iter != global_unfocused_events_dtor_callbacks.end()){
+					subscriber->destructor_callbacks.erase(dtor_callback_iter->second);
+					global_unfocused_events_dtor_callbacks.erase(subscriber);
+				}
+			}
+
 			void unsubscribe_exclusive()
 			{
 				exclusive_event.reset();
@@ -133,6 +168,7 @@ namespace input
 				// try focused
 				if(element){
 					auto* recieve_element = send_focused_event(*element, args...);
+					send_global_unfocused_event(args...);
 					if(recieve_element != nullptr &&
 					   continue_propagating.count(recieve_element) == 0)
 					{
@@ -187,6 +223,28 @@ namespace input
 				}
 			}
 
+			void send_global_unfocused_event(Args... args)
+			{
+				// call the callback of all of the global event's subscribers
+				for (active_callback_global_unfocused_iter = global_unfocused_event.begin();
+				     active_callback_global_unfocused_iter != global_unfocused_event.end(); ++active_callback_global_unfocused_iter){
+					auto& [element, callback] = *active_callback_global_unfocused_iter;
+
+					// set active callback
+					active_callback_element = element;
+
+					// call callback
+					callback(args...);
+
+					// unset active callback
+					active_callback_element = nullptr;
+
+					// in case of self-unsubscribe of the last iterator, to avoid trying to increment invalid iterator
+					if (active_callback_global_unfocused_iter == global_event.end())
+						break;
+				}
+			}
+
 		protected:
 			// map from element to subscribed events
 			//NOTE: using list for stable iterators
@@ -194,6 +252,8 @@ namespace input
 			//NOTE: while technically it isn't a requirement for a subscriber to be an element (unlike focused event which listens to the subscribing element's events), it's
 			// still useful for automatic unsubscription on destruction and unified API.
 			std::unordered_map<element*, callback_t> global_event;
+			// executes even if an element already captured the event (non-exclusive)
+			std::unordered_map<element*, callback_t> global_unfocused_event;
 			// only one callback per event
 			std::optional<callback_t> exclusive_event;
 
@@ -203,6 +263,7 @@ namespace input
 			// store destructor callback iterators to remove them when unsubscribing
 			std::unordered_map<element*, decltype(element::destructor_callbacks)::iterator> focused_events_dtor_callbacks;
 			std::unordered_map<element*, decltype(element::destructor_callbacks)::iterator> global_events_dtor_callbacks;
+			std::unordered_map<element*, decltype(element::destructor_callbacks)::iterator> global_unfocused_events_dtor_callbacks;
 			std::unordered_map<element*, decltype(element::destructor_callbacks)::iterator> propagate_dtor_callbacks;
 		};
 	}
