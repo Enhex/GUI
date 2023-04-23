@@ -228,4 +228,7 @@ void application::window_size_callback(GLFWwindow* window, int width, int height
 	// use a callback to avoid resizing every frame, which is useful if layout is only updated when needed.
 	auto& root = static_cast<application*>(glfwGetWindowUserPointer(window))->root;
 	root.size = root.min_size = {(float)width, (float)height};
+
+	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
+	input_manager.window_size.send_global_event(width, height);
 }

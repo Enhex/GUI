@@ -29,6 +29,7 @@ namespace input
 		event::mouse_release mouse_release;
 		event::scroll scroll;
 		event::character character;
+		event::window_size window_size;
 		event::frame_start frame_start;
 		event::focus_start focus_start;
 		event::focus_end focus_end;

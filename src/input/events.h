@@ -24,6 +24,8 @@ namespace input
 		struct scroll : base<double,double>{};
 		// args: codepoint
 		struct character : base<unsigned int>{};
+		// args: width, height
+		struct window_size : base<int,int>{};
 
 		struct frame_start : base<>{};
 		struct focus_start : base<>{};
