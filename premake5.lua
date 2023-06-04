@@ -8,6 +8,11 @@ if not _OPTIONS["location"] then
 	_OPTIONS["location"] = "./"
 end
 
+newoption {
+	trigger     = "mingw",
+	description = "MinGW is being used to cross compile.",
+}
+
 include(_OPTIONS["location"] .. "conanbuildinfo.premake.lua")
 
 workspace("GUI")
@@ -23,6 +28,12 @@ workspace("GUI")
 		files{
 			"src/**",
 		}
+
+		-- needed to cross compile
+		if _OPTIONS["mingw"] then
+			libdirs {"/usr/x86_64-w64-mingw32/lib"}
+			linkoptions{"-static"}
+		end
 
 		defines{"_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"}
 

@@ -4,6 +4,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--release", help="Generate release build (debug by default).", action="store_true")
+parser.add_argument("-lw", "--linux_to_win64", help="Cross compile to Windows.", action="store_true")
 args = parser.parse_args()
 
 build_type = 'Release' if args.release else 'Debug'
@@ -21,8 +22,9 @@ def create_symlink(src, dst):
         pass
 
 def build(source, build_type, symlinks = [], symlink_pairs = []):
-    build_dir = '../../example-build/' + build_type + '/'
-    gui_dir = '../../build/' + build_type + '/'
+    cross_compile_dir = 'mingw-' if args.linux_to_win64 else ''
+    build_dir = '../../example-build/' + cross_compile_dir + build_type + '/'
+    gui_dir = '../../build/' + cross_compile_dir + build_type + '/'
 
     # create build directory
     os.makedirs(build_dir, exist_ok=True)
@@ -37,9 +39,10 @@ def build(source, build_type, symlinks = [], symlink_pairs = []):
 
     # choose premake generator based on OS
     os.chdir(source)
+    cross_compile_arg = ' --mingw' if args.linux_to_win64 else ''
 
     def premake_generate(generator):
-        os.system('premake5 ' + generator + ' --location="' + build_dir + '" --gui-path="' + gui_dir + '"')
+        os.system('premake5 ' + generator + ' --location="' + build_dir + '" --gui-path="' + gui_dir + '"' + cross_compile_arg)
 
     if platform == 'win32':
         premake_generate('vs2019')
