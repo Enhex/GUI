@@ -34,8 +34,7 @@ void button::enable()
 	input_manager.mouse_press.subscribe(this, [this](int key, int mods) {
 		color = press_color;
 		is_pressed = true;
-		press_time_index = !press_time_index;
-		press_time[press_time_index] = std::chrono::steady_clock::now();
+		double_clickable::on_mouse_press();
 	});
 
 	input_manager.mouse_release.subscribe(this, [this](int key, int mods) {
@@ -43,15 +42,9 @@ void button::enable()
 		//execute callback if the button was pressed before release event
 		if (is_pressed) {
 			is_pressed = false;
-			auto const time_passed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - press_time[!press_time_index]).count();
-			auto const double_click_ready = (time_passed < double_click_time) & (time_passed >= 0);
-			if(double_click_ready &&
-				double_click_callback)
-			{
-				double_click_callback();
-			}
-			else if(callback)
+			if(!double_clickable::on_mouse_release()){
 				callback();
+			}
 		}
 	});
 
