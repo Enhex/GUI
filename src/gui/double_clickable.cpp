@@ -18,9 +18,5 @@ bool double_clickable::on_mouse_release()
 	using namespace std::chrono;
 	auto const time_passed = duration_cast<milliseconds>(steady_clock::now() - press_time[!press_time_index]).count();
 	auto const double_click_ready = (time_passed < double_click_time) & (time_passed >= 0);
-	if(double_click_ready && double_click_callback){
-		double_click_callback();
-		return true;
-	}
-	return false;
+	return double_click_ready;
 }

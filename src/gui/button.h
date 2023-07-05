@@ -3,8 +3,6 @@
 #include "panel.h"
 #include "double_clickable.h"
 
-#include <chrono>
-
 struct button : panel, double_clickable
 {
 	inline static constexpr auto element_name{ "button" };
@@ -16,6 +14,7 @@ struct button : panel, double_clickable
 	NVGcolor focus_color{ 0.3,0.3,0.3,1 };
 
 	std::function<void()> callback;
+	std::function<void()> double_click_callback;
 
 	button();
 

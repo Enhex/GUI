@@ -2,10 +2,6 @@
 
 button::button()
 {
-	// initialize with a time point furthest away from now()
-	// as a way to tell if a time press was stored yet or not.
-	press_time[0] = press_time[1] = time_point_t(std::chrono::steady_clock::now() - time_point_t::max());
-
 	color = background_color;
 
 	style = element_name;
@@ -42,7 +38,10 @@ void button::enable()
 		//execute callback if the button was pressed before release event
 		if (is_pressed) {
 			is_pressed = false;
-			if(!double_clickable::on_mouse_release()){
+			if(double_click_callback && double_clickable::on_mouse_release()){
+				double_click_callback();
+			}
+			else{
 				callback();
 			}
 		}
