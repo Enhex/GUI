@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../event/base.h"
-#include "../math/math.h"
+#include "../math/vector.h"
 
 namespace input
 {
