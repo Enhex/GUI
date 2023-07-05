@@ -5,6 +5,7 @@
 #include "button.h"
 #include "checkbox.h"
 #include "context.h"
+#include "double_clickable.h"
 #include "file_dialog.h"
 #include "file_dialog_modal.h"
 #include "modal.h"

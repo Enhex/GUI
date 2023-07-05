@@ -30,7 +30,17 @@ void button::enable()
 	input_manager.mouse_press.subscribe(this, [this](int key, int mods) {
 		color = press_color;
 		is_pressed = true;
-		double_clickable::on_mouse_press();
+	});
+
+	input_manager.double_click.subscribe(this, [this](int key, int mods) {
+		color = hover_color;
+		//execute callback if the button was pressed before release event
+		if (is_pressed) {
+			is_pressed = false;
+			if(double_click_callback){
+				double_click_callback();
+			}
+		}
 	});
 
 	input_manager.mouse_release.subscribe(this, [this](int key, int mods) {
@@ -38,12 +48,7 @@ void button::enable()
 		//execute callback if the button was pressed before release event
 		if (is_pressed) {
 			is_pressed = false;
-			if(double_click_callback && double_clickable::on_mouse_release()){
-				double_click_callback();
-			}
-			else{
-				callback();
-			}
+			callback();
 		}
 	});
 

@@ -207,10 +207,17 @@ void application::mouse_button_callback(GLFWwindow * window, int button, int act
 		input_manager.pressed_element = input_manager.hovered_element;
 	}
 
-	if (action == GLFW_RELEASE)
+	if (action == GLFW_RELEASE){
+		// send double click first so the user can know it for the upcoming mouse release
+		if(double_clickable_.on_mouse_release()){
+			input_manager.double_click.send_event(input_manager.hovered_element, button, mods);
+		}
 		input_manager.mouse_release.send_event(input_manager.hovered_element, button, mods);
-	if (action == GLFW_PRESS)
+	}
+	if (action == GLFW_PRESS){
 		input_manager.mouse_press.send_event(input_manager.hovered_element, button, mods);
+		double_clickable_.on_mouse_press();
+	}
 
 	// reset pressed element after release event was sent, so the callback can know which element was pressed
 	if (action == GLFW_RELEASE)

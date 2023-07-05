@@ -31,6 +31,8 @@ struct application : gui::context
 	bool key_pressed(int key) const;
 
 protected:
+	static inline double_clickable double_clickable_;
+
 	void initialize();
 	void create_window(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share);
 

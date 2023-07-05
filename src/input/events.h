@@ -20,6 +20,8 @@ namespace input
 		struct mouse_press : base<int,int>{};
 		// args: button, mods
 		struct mouse_release : base<int,int>{};
+		// args: button, mods
+		struct double_click : base<int,int>{};
 		// args: x offset, y offset
 		struct scroll : base<double,double>{};
 		// args: codepoint

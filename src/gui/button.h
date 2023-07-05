@@ -1,9 +1,8 @@
 #pragma once
 
 #include "panel.h"
-#include "double_clickable.h"
 
-struct button : panel, double_clickable
+struct button : panel
 {
 	inline static constexpr auto element_name{ "button" };
 	std::string get_element_name() override { return element_name; }

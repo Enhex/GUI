@@ -27,6 +27,7 @@ namespace input
 		event::hover_end hover_end;
 		event::mouse_press mouse_press;
 		event::mouse_release mouse_release;
+		event::double_click double_click;
 		event::scroll scroll;
 		event::character character;
 		event::window_size window_size;
