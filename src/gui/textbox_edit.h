@@ -26,6 +26,8 @@ struct textbox_edit : textbox, text_edit_shared
 
 	void on_frame_start();
 
+	void on_double_click();
+
 	void on_key_press(int key, int mods);
 	void on_character(unsigned codepoint);
 

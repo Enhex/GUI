@@ -16,6 +16,9 @@ text_edit::text_edit()
 		//NOTE: frame_start only sends global events
 		context->input_manager.frame_start.unsubscribe_global(this);
 	});
+	input_manager.double_click.subscribe(this, [this](int button, int mods) {
+		on_double_click();
+	});
 	input_manager.key_press.subscribe(this, [this](int key, int mods) {
 		on_key_press(key, mods);
 	});
@@ -126,6 +129,68 @@ void text_edit::on_frame_start()
 {
 	set_cursor_to_mouse_pos();
 	selection_end_pos = cursor_pos;
+}
+
+void text_edit::on_double_click()
+{
+	// check if didn't start selecting already
+	if(selection_start_pos == selection_end_pos && !str.empty()){
+		// if double clicked whitespace select it and all the adjacent whitespaces
+		if(str[cursor_pos] == ' ')
+		{
+			bool found = false;
+			for(selection_start_pos = cursor_pos; selection_start_pos > 0; --selection_start_pos){
+				if(str[selection_start_pos] != ' '){
+					++selection_start_pos; // exclude whitespace
+					found = true;
+					break;
+				}
+			}
+			if(!found){
+				// for loop ends at index 1, but if the first character is whitespace start should be 0.
+				if(str[0] == ' '){
+					selection_start_pos = 0;
+				}
+			}
+
+			auto const size = str.size();
+			selection_end_pos = size;
+			for(auto i = cursor_pos; i < size; ++i){
+				if(str[i] != ' '){
+					selection_end_pos = i;
+					break;
+				}
+			}
+		}
+		// find previous and next whitespaces and select the text between them
+		else{
+			bool found = false;
+			for(selection_start_pos = cursor_pos; selection_start_pos > 0; --selection_start_pos){
+				if(str[selection_start_pos] == ' '){
+					++selection_start_pos; // exclude whitespace
+					found = true;
+					break;
+				}
+			}
+			if(!found){
+				// for loop ends at index 1, but if the first character is not whitespace start should be 0.
+				if(str[0] != ' '){
+					selection_start_pos = 0;
+				}
+			}
+
+			auto const size = str.size();
+			selection_end_pos = size;
+			for(auto i = cursor_pos; i < size; ++i){
+				if(str[i] == ' '){
+					selection_end_pos = i;
+					break;
+				}
+			}
+		}
+
+		cursor_pos = selection_end_pos;
+	}
 }
 
 void text_edit::on_key_press(int key, int mods)

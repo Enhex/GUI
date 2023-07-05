@@ -16,6 +16,9 @@ textbox_edit::textbox_edit()
 	input_manager.mouse_release.subscribe_global_unfocused(this, [this](int button, int mods) {
 		context->input_manager.frame_start.unsubscribe_global(this);
 	});
+	input_manager.double_click.subscribe(this, [this](int button, int mods) {
+		on_double_click();
+	});
 	input_manager.key_press.subscribe(this, [this](int key, int mods) {
 		on_key_press(key, mods);
 	});
@@ -154,6 +157,73 @@ void textbox_edit::on_frame_start()
 {
 	set_cursor_to_mouse_pos();
 	selection_end_pos = cursor_pos;
+}
+
+void textbox_edit::on_double_click()
+{
+	// check if didn't start selecting already
+	if(selection_start_pos == selection_end_pos){
+		// if double clicked whitespace select it and all the adjacent whitespaces
+		if(str[cursor_pos] == ' ')
+		{
+			bool found = false;
+			for(selection_start_pos = cursor_pos; selection_start_pos > 0; --selection_start_pos){
+				if(str[selection_start_pos] != ' '){
+					++selection_start_pos; // exclude whitespace
+					found = true;
+					break;
+				}
+			}
+			if(!found){
+				// for loop ends at index 1, but if the first character is whitespace start should be 0.
+				if(str[0] == ' '){
+					selection_start_pos = 0;
+				}
+			}
+
+			auto const size = str.size();
+			selection_end_pos = size;
+			for(auto i = cursor_pos; i < size; ++i){
+				if(str[i] != ' '){
+					selection_end_pos = i;
+					break;
+				}
+			}
+		}
+		// find previous and next whitespaces and select the text between them
+		else{
+			if(str[cursor_pos] == '\n'){
+				selection_end_pos = cursor_pos--;
+			}
+			else{
+				auto const size = str.size();
+				selection_end_pos = size;
+				for(auto i = cursor_pos; i < size; ++i){
+					if(str[i] == ' ' || str[i] == '\n'){
+						selection_end_pos = i;
+						break;
+					}
+				}
+			}
+
+			bool found = false;
+			for(selection_start_pos = cursor_pos; selection_start_pos > 0; --selection_start_pos){
+				if(str[selection_start_pos] == ' ' || str[selection_start_pos] == '\n'){
+					++selection_start_pos; // exclude whitespace
+					found = true;
+					break;
+				}
+			}
+			if(!found){
+				// for loop ends at index 1, but if the first character is not whitespace start should be 0.
+				if(str[0] != ' ' || str[0] != '\n'){
+					selection_start_pos = 0;
+				}
+			}
+		}
+
+		cursor_pos = selection_end_pos;
+	}
 }
 
 void textbox_edit::on_key_press(int key, int mods)
