@@ -1,2 +1,3 @@
 /__pycache__/
 /example/__pycache__/
+/test_package/CMakeUserPresets.json

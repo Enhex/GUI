@@ -1,4 +1,6 @@
-from conans import ConanFile
+import os
+from conan import ConanFile
+from conan.tools.files import copy
 
 # automatically choose Premake generator
 def run_premake(self):
@@ -24,18 +26,17 @@ class GuiConan(ConanFile):
 	url = "<Package recipe repository url here, for issues about the package>"
 	description = "<Description of Gui here>"
 	settings = "os", "compiler", "build_type", "arch"
-	options = {"shared": [True, False]}
-	default_options = "shared=False", "boost:without_stacktrace=True"
-	generators = "premake"
-	exports = "premake5.lua"
-	exports_sources = "src/*"
+	options = {"shared": [True, False], "fPIC": [True, False]}
+	default_options = {"shared": False, "fPIC": True, "boost/*:without_stacktrace": True}
+	generators = "PremakeDeps"
+	exports_sources = "premake5.lua", "src/*"
 
 	requires = (
 		"boost/1.86.0",
 		"glfw/3.4",
 		"glad/0.1.36",
-		"nanovg/master@enhex/stable",
-		"deco/master@enhex/stable"
+		"nanovg/master",
+		"deco/master"
 	)
 
 	def build(self):
@@ -43,12 +44,12 @@ class GuiConan(ConanFile):
 		self.run('build')
 
 	def package(self):
-		self.copy("*.h", dst="include", src="src")
-		self.copy("*.lib", dst="lib", keep_path=False)
-		self.copy("*.dll", dst="bin", keep_path=False)
-		self.copy("*.dylib*", dst="lib", keep_path=False)
-		self.copy("*.so", dst="lib", keep_path=False)
-		self.copy("*.a", dst="lib", keep_path=False)
+		copy(self, pattern="*.h", src=os.path.join(self.source_folder, "src"), dst=os.path.join(self.package_folder, "include"))
+		copy(self, pattern="*.a", src=self.build_folder, dst=os.path.join(self.package_folder, "lib"), keep_path=False)
+		copy(self, pattern="*.so", src=self.build_folder, dst=os.path.join(self.package_folder, "lib"), keep_path=False)
+		copy(self, pattern="*.lib", src=self.build_folder, dst=os.path.join(self.package_folder, "lib"), keep_path=False)
+		copy(self, pattern="*.dll", src=self.build_folder, dst=os.path.join(self.package_folder, "bin"), keep_path=False)
+		copy(self, pattern="*.dylib", src=self.build_folder, dst=os.path.join(self.package_folder, "lib"), keep_path=False)
 
 	def package_info(self):
 		self.cpp_info.libs = ["GUI"]
