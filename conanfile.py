@@ -32,12 +32,14 @@ class GuiConan(ConanFile):
 	exports_sources = "premake5.lua", "src/*"
 
 	requires = (
-		"boost/1.86.0",
 		"glfw/3.4",
 		"glad/0.1.36",
 		"nanovg/master",
 		"deco/master"
 	)
+
+	def requirements(self):
+		self.requires("boost/1.86.0", transitive_headers=True)
 
 	def build(self):
 		run_premake(self)

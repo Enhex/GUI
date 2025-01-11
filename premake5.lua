@@ -17,10 +17,7 @@ include(_OPTIONS["location"] .. "conandeps.premake5.lua")
 
 workspace("GUI")
 	location(_OPTIONS["location"])
-	configurations { "Debug", "Release" }
-
-	-- Conan 2 comes with a retarded generator that doesn't work with debug build
-	conan_setup("release_x86_64")
+	conan_setup()
 
 	project("GUI")
 		kind "StaticLib"
