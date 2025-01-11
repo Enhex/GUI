@@ -61,6 +61,15 @@ public:
 		return child;
 	}
 
+	template<typename T, typename... Args>
+	T& create_child_pos(size_t position, Args&&... args){
+		auto iter = children.begin();
+		std::advance(iter, position);
+		auto& child = *static_cast<T*>(children.emplace(iter, std::make_unique<T>(args...))->get());
+		child.parent = this;
+		return child;
+	}
+
 	//NOTE: takes ownership of the child element
 	void add_child(std::unique_ptr<element> child);
 	// add child before position
