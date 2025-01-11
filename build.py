@@ -37,11 +37,11 @@ def build(source, build_type, symlinks = [], symlink_pairs = []):
         create_symlink(source + '/' + src_path, './' + dst_path)
 
     # conan
+    os.chdir(source)
     conan_profile = ' -pr:h=linux_to_win64 -pr:b=default' if args.linux_to_win64 else ''
-    os.system('conan install "' + source + '/" --build=outdated -s arch=x86_64 -s build_type=' + build_type + conan_profile)
+    os.system('conan install . --output-folder="' + build_dir + '" --build=missing -s arch=x86_64 -s build_type=' + build_type + conan_profile)
 
     # choose premake generator based on OS
-    os.chdir(source)
     cross_compile_arg = ' --mingw' if args.linux_to_win64 else ''
 
     def premake_generate(generator):
