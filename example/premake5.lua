@@ -20,11 +20,11 @@ newoption {
 }
 
 -- include GUI lib's dependencies
-include(_OPTIONS["gui-path"] .. "/conanbuildinfo.premake.lua")
+include(_OPTIONS["gui-path"] .. "/conandeps.premake5.lua")
 
 workspace("GUI example")
 	location(_OPTIONS["location"])
-	conan_basic_setup()
+	conan_setup()
 	startproject "gui_example"
 
 	project("gui_example")
