@@ -45,7 +45,7 @@ workspace("GUI")
 
 		filter "toolset:not gcc"
 			pchheader "precompiled.h"
-			forceincludes  { "precompiled.h" }
+			forceincludes { "precompiled.h" }
 
 		filter "configurations:Debug"
 			defines { "DEBUG" }
