@@ -22,9 +22,6 @@ def run_premake(self):
 class GuiConan(ConanFile):
 	name = "gui"
 	version = "master"
-	license = "<Put the package license here>"
-	url = "<Package recipe repository url here, for issues about the package>"
-	description = "<Description of Gui here>"
 	settings = "os", "compiler", "build_type", "arch"
 	options = {"shared": [True, False], "fPIC": [True, False]}
 	default_options = {"shared": False, "fPIC": True, "boost/*:without_stacktrace": True}
@@ -46,12 +43,12 @@ class GuiConan(ConanFile):
 		self.run('build')
 
 	def package(self):
-		copy(self, pattern="*.h", src=os.path.join(self.source_folder, "src"), dst=os.path.join(self.package_folder, "include"))
-		copy(self, pattern="*.a", src=self.build_folder, dst=os.path.join(self.package_folder, "lib"), keep_path=False)
-		copy(self, pattern="*.so", src=self.build_folder, dst=os.path.join(self.package_folder, "lib"), keep_path=False)
-		copy(self, pattern="*.lib", src=self.build_folder, dst=os.path.join(self.package_folder, "lib"), keep_path=False)
-		copy(self, pattern="*.dll", src=self.build_folder, dst=os.path.join(self.package_folder, "bin"), keep_path=False)
-		copy(self, pattern="*.dylib", src=self.build_folder, dst=os.path.join(self.package_folder, "lib"), keep_path=False)
+		copy(self, "*.h", os.path.join(self.source_folder, "src"), os.path.join(self.package_folder, "include"))
+		copy(self, "*.a", self.build_folder, os.path.join(self.package_folder, "lib"), keep_path=False)
+		copy(self, "*.so", self.build_folder, os.path.join(self.package_folder, "lib"), keep_path=False)
+		copy(self, "*.lib", self.build_folder, os.path.join(self.package_folder, "lib"), keep_path=False)
+		copy(self, "*.dll", self.build_folder, os.path.join(self.package_folder, "bin"), keep_path=False)
+		copy(self, "*.dylib", self.build_folder, os.path.join(self.package_folder, "lib"), keep_path=False)
 
 	def package_info(self):
 		self.cpp_info.libs = ["GUI"]
