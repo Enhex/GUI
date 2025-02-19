@@ -62,7 +62,7 @@ element* element::get_parent()
 }
 
 // get absolute position. regular `position` variable being relative to the parent
-vector2 element::get_position() {
+nx::Vector2 element::get_position() {
 	return parent != nullptr ? get_parent()->get_position() + position : position;
 }
 
@@ -83,7 +83,7 @@ rectangle element::get_abs_rect()
 	return rectangle{get_position(), size};
 }
 
-bool element::is_inside(vector2 const& point) {
+bool element::is_inside(nx::Vector2 const& point) {
 	auto absolute_rectangle = get_abs_rect();
 	return absolute_rectangle.is_inside(point);
 }

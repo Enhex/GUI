@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../math/vector.h"
+#include "../math/Vector2.h"
 #include "element.h"
 #include "events.h"
 
@@ -13,7 +13,7 @@ namespace input
 	*/
 	struct manager
 	{
-		vector2 mouse_pos;
+		nx::Vector2 mouse_pos;
 
 		element* focused_element = nullptr; // keyboard focus
 		element* hovered_element = nullptr; // mouse focus

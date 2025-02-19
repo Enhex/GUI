@@ -53,7 +53,7 @@ void text_edit::update_glyph_positions()
 
 	auto const max_glyphs = str.size();
 	auto const absolute_position = get_position();
-	num_glyphs = nvgTextGlyphPositions(vg, X(absolute_position), Y(absolute_position), str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
+	num_glyphs = nvgTextGlyphPositions(vg, absolute_position.x, absolute_position.y, str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
 
 	if(cursor_pos > num_glyphs)
 		cursor_pos = num_glyphs;
@@ -80,7 +80,7 @@ void text_edit::set_cursor_to_mouse_pos()
 {
 	// only need to use X position because it's already known the click is inside the element rectangle, and single-line text is used.
 	auto& input_manager = context->input_manager;
-	auto const mouse_x = X(input_manager.mouse_pos);
+	auto const mouse_x = input_manager.mouse_pos.x;
 
 	bool glyph_clicked = false;
 
@@ -106,7 +106,7 @@ void text_edit::set_cursor_to_mouse_pos()
 
 	// if clicked past the last character, position the cursor at the end of the text
 	if(!glyph_clicked) {
-		auto const abs_text_end = X(get_position()) + text_bounds[2];
+		auto const abs_text_end = get_position().x + text_bounds[2];
 		if(mouse_x > abs_text_end) {
 			cursor_pos = str.size();
 		}
@@ -306,17 +306,17 @@ void text_edit::draw(NVGcontext* vg)
 		auto const absolute_position = get_position();
 
 		auto const x_start = selection_start_pos == 0 ?
-			X(absolute_position) : // may have no characters, position at the start.
+			absolute_position.x : // may have no characters, position at the start.
 			glyphs[selection_start_pos-1].maxx; // position at the end of the previous character
 
 		auto const x_end = selection_end_pos == 0 ?
-			X(absolute_position) :
+			absolute_position.x :
 			glyphs[selection_end_pos-1].maxx;
 
 		nvgBeginPath(vg);
 		nvgRect(vg,
-				x_start, Y(absolute_position),
-				x_end - x_start, Y(size));
+				x_start, absolute_position.y,
+				x_end - x_start, size.y);
 		nvgFillColor(vg, selection_color);
 		nvgFill(vg);
 	}
@@ -334,12 +334,12 @@ void text_edit::draw(NVGcontext* vg)
 		auto const absolute_position = get_position();
 
 		auto const x_pos = cursor_pos == 0 ?
-			X(absolute_position) : // may have no characters, position at the start.
+			absolute_position.x : // may have no characters, position at the start.
 			glyphs[cursor_pos-1].maxx; // position at the end of the previous character
 
 		nvgBeginPath(vg);
-		nvgMoveTo(vg, x_pos, Y(absolute_position));
-		nvgLineTo(vg, x_pos, Y(absolute_position) + Y(size));
+		nvgMoveTo(vg, x_pos, absolute_position.y);
+		nvgLineTo(vg, x_pos, absolute_position.y + size.y);
 		nvgStrokeColor(vg, nvgRGBA(255, 255, 255, 255));
 		nvgStrokeWidth(vg, 1.0f);
 		nvgStroke(vg);

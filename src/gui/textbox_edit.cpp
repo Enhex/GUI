@@ -56,8 +56,8 @@ void textbox_edit::update_glyph_positions()
 void textbox_edit::set_cursor_to_mouse_pos()
 {
 	auto& input_manager = context->input_manager;
-	auto const mouse_x = X(input_manager.mouse_pos);
-	auto const mouse_y = Y(input_manager.mouse_pos);
+	auto const mouse_x = input_manager.mouse_pos.x;
+	auto const mouse_y = input_manager.mouse_pos.y;
 
 	auto const abs_pos = get_position();
 
@@ -75,7 +75,7 @@ void textbox_edit::set_cursor_to_mouse_pos()
 	for (size_t i=0; i < rows.size(); ++i)
 	{
 		auto const& row = rows[i];
-		auto const row_y = Y(abs_pos) + (i * lineh);
+		auto const row_y = abs_pos.y + (i * lineh);
 
 		// check if inside Y
 		// exluding upper bound check for first row and lower bound check for last row
@@ -433,7 +433,7 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 		if(!is_start_in_row && !selection_started)
 			continue;
 
-		auto const y_start = Y(absolute_position) + i * lineh;
+		auto const y_start = absolute_position.y + i * lineh;
 
 		auto const x_start = [&]{
 			// if selection already started highlight from the start of the row
@@ -444,7 +444,7 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 					return glyphs[start_pos].minx - glyph_offsets[start_pos]; // position at the end of the previous character
 				return glyphs[index].maxx - glyph_offsets[index]; // position at the end of the previous character
 			}
-			return X(absolute_position);
+			return absolute_position.x;
 		}();
 
 		// mark after using it to check if selection already started
@@ -504,15 +504,15 @@ void textbox_edit::draw(NVGcontext* vg)
 
 		// y_pos for line height
 		// multiply the number of previous newlines by line height
-		auto const y_pos = cursor_row * lineh + Y(absolute_position);
+		auto const y_pos = cursor_row * lineh + absolute_position.y;
 
 		auto const x_pos = [&]{
 			if(cursor_pos == 0)
-				return X(absolute_position); // may have no characters, position at the start.
+				return absolute_position.x; // may have no characters, position at the start.
 			else if(cursor_pos == num_glyphs) {
 				auto index = cursor_pos-1;
 				if(str[index] == '\n')
-					return X(absolute_position);
+					return absolute_position.x;
 				return glyphs[index].maxx - glyph_offsets[index];
 			}
 			return glyphs[cursor_pos].minx - glyph_offsets[cursor_pos]; // position at the end of the previous character

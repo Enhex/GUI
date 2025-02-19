@@ -397,7 +397,7 @@ int main()
 		auto& text_bg = root.create_child<panel>();
 		text_bg.color = nvgRGBA(0, 60, 180, 255);
 		text_bg.create_layout<gui::layout::box>().orient = layout::horizontal;
-		X(text_bg.min_size) = 60;
+		text_bg.min_size.x = 60;
 
 		auto& name = text_bg.create_child<text>();
 		name.set_text("focus");
@@ -421,7 +421,7 @@ int main()
 
 	// radio button test
 	{
-		auto make_radio_button = [&](vector2 pos, std::string group, std::string name){
+		auto make_radio_button = [&](nx::Vector2 pos, std::string group, std::string name){
 			auto& rb = app.root.create_child<radio_button>();
 			rb.position = pos;
 			rb.set_group(group);
@@ -485,7 +485,7 @@ int main()
 	});
 
 	// test focused hover events
-	app.input_manager.hover_start.subscribe(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](vector2 const& mouse_position) {
+	app.input_manager.hover_start.subscribe(root.children[0].get(), [el = static_cast<panel*>(root.children[0].get())](nx::Vector2 const& mouse_position) {
 		el->color = nvgRGBA(255,0,0,255);
 		std::cout << "hover start\n";
 	});

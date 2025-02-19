@@ -1,28 +1,28 @@
 #include "rectangle.h"
 
 // check if a point is inside the rectangle
-bool rectangle::is_inside(vector2 const& point)
+bool rectangle::is_inside(nx::Vector2 const& point)
 {
 	auto& min = position;
 	auto max = position + size;
 
-	if (X(point) >= X(min) &&
-		Y(point) >= Y(min) &&
-		X(point) <= X(max) &&
-		Y(point) <= Y(max))
+	if (point.x >= min.x &&
+		point.y >= min.y &&
+		point.x <= max.x &&
+		point.y <= max.y)
 		return true;
 	return false;
 }
 
-void rectangle::merge(vector2 const& point)
+void rectangle::merge(nx::Vector2 const& point)
 {
 	auto& min = position;
 	auto max = position + size;
 
-	X(min) = std::min(X(min), X(point));
-	X(max) = std::max(X(max), X(point));
-	Y(min) = std::min(Y(min), Y(point));
-	Y(max) = std::max(Y(max), Y(point));
+	min.x = std::min(min.x, point.x);
+	max.x = std::max(max.x, point.x);
+	min.y = std::min(min.y, point.y);
+	max.y = std::max(max.y, point.y);
 
 	size = max - position;
 }

@@ -42,9 +42,9 @@ namespace layout
 				// prevent expanding children from blowing up the size
 				auto non_expand_size = child->min_size;
 				if(child->expand[layout::horizontal] == false)
-					X(non_expand_size) = X(child->size);
+					non_expand_size.x = child->size.x;
 				if(child->expand[layout::vertical] == false)
-					Y(non_expand_size) = Y(child->size);
+					non_expand_size.y = child->size.y;
 
 				// fit around the child
 				if(shrink_position) {
@@ -52,8 +52,8 @@ namespace layout
 					parent_rect.merge(non_expand_size);
 				}
 				else {
-					X(parent_rect.size) = std::max(X(parent_rect.size), X(non_expand_size) + X(child->position));
-					Y(parent_rect.size) = std::max(Y(parent_rect.size), Y(non_expand_size) + Y(child->position));
+					parent_rect.size.x = std::max(parent_rect.size.x, non_expand_size.x + child->position.x);
+					parent_rect.size.y = std::max(parent_rect.size.y, non_expand_size.y + child->position.y);
 				}
 			}
 

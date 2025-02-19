@@ -19,12 +19,12 @@ namespace layout
 		// should the element expand to fill free space
 		std::array<bool, layout::orientation::count> expand{ false };
 
-		vector2 min_size{ 0,0 };
+		nx::Vector2 min_size{ 0,0 };
 
 		void apply_min_size()
 		{
-			X(size) = std::max(X(size), X(min_size));
-			Y(size) = std::max(Y(size), Y(min_size));
+			size.x = std::max(size.x, min_size.x);
+			size.y = std::max(size.y, min_size.y);
 		}
 
 		template <typename T>

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../event/base.h"
-#include "../math/vector.h"
+#include "../math/Vector2.h"
 
 namespace input
 {
@@ -14,7 +14,7 @@ namespace input
 		// args: key, mods
 		struct key_repeat : base<int,int>{};
 		// args: mouse_position
-		struct hover_start : base<vector2 const&>{};
+		struct hover_start : base<nx::Vector2 const&>{};
 		struct hover_end : base<>{};
 		// args: button, mods
 		struct mouse_press : base<int,int>{};

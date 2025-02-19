@@ -33,12 +33,12 @@ namespace layout
 			for (auto& child : visible_children)
 			{
 				if (child->expand[0]) {
-					child->size.a[0] = child->min_size.a[0];// reset expanders' size, so their expanded size won't be used.
-					child->size.a[0] = std::max(child->size.a[0], parent->size.a[0]);
+					child->size[0] = child->min_size[0];// reset expanders' size, so their expanded size won't be used.
+					child->size[0] = std::max(child->size[0], parent->size[0]);
 				}
 				if (child->expand[1]) {
-					child->size.a[1] = child->min_size.a[1];// reset expanders' size, so their expanded size won't be used.
-					child->size.a[1] = std::max(child->size.a[1], parent->size.a[1]);
+					child->size[1] = child->min_size[1];// reset expanders' size, so their expanded size won't be used.
+					child->size[1] = std::max(child->size[1], parent->size[1]);
 				}
 
 				if (child->child_layout != nullptr)

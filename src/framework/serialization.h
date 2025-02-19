@@ -104,13 +104,13 @@ namespace deco
 
 
 	template<typename Stream>
-	void serialize(Stream& stream, vector2& value)
+	void serialize(Stream& stream, nx::Vector2& value)
 	{
-		serialize(stream, value.a[0]);
-		serialize(stream, value.a[1]);
+		serialize(stream, value[0]);
+		serialize(stream, value[1]);
 	}
 
-	void read(EntryObject const& entry, vector2& value);
+	void read(EntryObject const& entry, nx::Vector2& value);
 
 
 	template<typename Stream>

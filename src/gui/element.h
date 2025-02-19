@@ -45,10 +45,10 @@ public:
 	void set_visible(bool new_visible) override;
 
 	// get absolute position. regular `position` variable being relative to the parent
-	vector2 get_position();
+	nx::Vector2 get_position();
 
 	rectangle get_abs_rect();
-	bool is_inside(vector2 const& point);
+	bool is_inside(nx::Vector2 const& point);
 
 	virtual void set_style(style::style_t const& style) {}
 

@@ -24,7 +24,7 @@ class GuiConan(ConanFile):
 	version = "master"
 	settings = "os", "compiler", "build_type", "arch"
 	options = {"shared": [True, False], "fPIC": [True, False]}
-	default_options = {"shared": False, "fPIC": True, "boost/*:without_stacktrace": True}
+	default_options = {"shared": False, "fPIC": True}
 	generators = "PremakeDeps"
 	exports_sources = "premake5.lua", "src/*"
 
@@ -34,9 +34,6 @@ class GuiConan(ConanFile):
 		"nanovg/master",
 		"deco/master"
 	)
-
-	def requirements(self):
-		self.requires("boost/1.86.0", transitive_headers=True)
 
 	def build(self):
 		run_premake(self)

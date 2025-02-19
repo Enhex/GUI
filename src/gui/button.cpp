@@ -16,7 +16,7 @@ void button::enable()
 {
 	auto& input_manager = context->input_manager;
 
-	input_manager.hover_start.subscribe(this, [this](vector2 const& mouse_position) {
+	input_manager.hover_start.subscribe(this, [this](nx::Vector2 const& mouse_position) {
 		color = hover_color;
 	});
 

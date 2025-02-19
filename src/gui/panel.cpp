@@ -26,7 +26,7 @@ void panel::draw(NVGcontext* vg)
 {
 	nvgBeginPath(vg);
 	auto absolute_position = get_position();
-	nvgRect(vg, X(absolute_position), Y(absolute_position), X(size), Y(size));
+	nvgRect(vg, absolute_position.x, absolute_position.y, size.x, size.y);
 	nvgFillColor(vg, color);
 	nvgFill(vg);
 }

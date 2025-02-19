@@ -5,7 +5,7 @@ void scissor::draw_recursive(NVGcontext* vg)
 {
 	nvgSave(vg);
 	auto absolute_position = get_position();
-	nvgIntersectScissor(vg, X(absolute_position), Y(absolute_position), X(size), Y(size));
+	nvgIntersectScissor(vg, absolute_position.x, absolute_position.y, size.x, size.y);
 
 	for (auto const& child : children)
 		child->draw_recursive(vg);

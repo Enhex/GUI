@@ -20,15 +20,15 @@ namespace deco
 		read_num(3);
 	}
 
-	void read(EntryObject const& entry, vector2& value)
+	void read(EntryObject const& entry, nx::Vector2& value)
 	{
 		auto read_num = [&](uint_fast8_t i)
 		{
 			auto const& content = entry.entries[i].content;
 #ifdef __GNUC__ // GCC doesn't support float from_chars()
-			value.a[i] = std::stof(std::string(content));
+			value[i] = std::stof(std::string(content));
 #else
-			std::from_chars(content.data(), content.data() + content.size(), value.a[i]);
+			std::from_chars(content.data(), content.data() + content.size(), value[i]);
 #endif
 		};
 		read_num(0);

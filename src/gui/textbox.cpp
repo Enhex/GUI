@@ -18,7 +18,7 @@ void textbox::update_glyph_positions()
 
 	auto const max_glyphs = str.size();
 	auto const absolute_position = get_position();
-	num_glyphs = nvgTextGlyphPositions(vg, X(absolute_position), Y(absolute_position), str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
+	num_glyphs = nvgTextGlyphPositions(vg, absolute_position.x, absolute_position.y, str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
 
 	// nvgTextGlyphPositions only works with single line so characters in a new line got wrong X position as if they're all in a single line,
 	// so fix the positions.
@@ -27,14 +27,14 @@ void textbox::update_glyph_positions()
 	glyph_offsets.resize(max_glyphs);
 	// offset the first line's newline
 	if(rows.size() > 1) { // at least 1 line and it isn't the last one
-		auto const glyph_x_offset = glyphs[rows[0].start - str.data()].minx - X(absolute_position);
+		auto const glyph_x_offset = glyphs[rows[0].start - str.data()].minx - absolute_position.x;
 		glyph_offsets[rows[0].end - str.data()] = glyph_x_offset;
 	}
 	// offset the rest of the lines
 	for (size_t i=0; i < rows.size(); ++i)
 	{
 		auto const& row = rows[i];
-		auto const glyph_x_offset = glyphs[row.start - str.data()].minx - X(absolute_position);
+		auto const glyph_x_offset = glyphs[row.start - str.data()].minx - absolute_position.x;
 		for(auto p = row.start; p < row.end; ++p) {
 			glyph_offsets[p - str.data()] = glyph_x_offset;
 		}
@@ -111,11 +111,11 @@ void textbox::update_bounds()
 	float ascender, descender, lineh;
 	nvgTextMetrics(vg, &ascender, &descender, &lineh);
 	if(str.empty()) {
-		Y(size) = Y(min_size) = lineh;
+		size.y = min_size.y = lineh;
 	}
 	else {
 		auto const abs_pos = get_position();
-		X(min_size) = glyphs[0].maxx - glyph_offsets[0] - X(abs_pos);
+		min_size.x = glyphs[0].maxx - glyph_offsets[0] - abs_pos.x;
 
 		for(auto const& row : rows) {
 			// if it's an empty row its width is 0
@@ -123,13 +123,13 @@ void textbox::update_bounds()
 				continue;
 
 			auto const glyph_index = row.end-1 - str.data();
-			auto const row_width = glyphs[glyph_index].maxx - glyph_offsets[glyph_index] - X(abs_pos);
+			auto const row_width = glyphs[glyph_index].maxx - glyph_offsets[glyph_index] - abs_pos.x;
 			// using local space with position 0, can directly use max point instead of calculating bounding box size
-			if(X(min_size) < row_width)
-				X(min_size) = row_width;
+			if(min_size.x < row_width)
+				min_size.x = row_width;
 		}
 
-		Y(min_size) = lineh * rows.size();
+		min_size.y = lineh * rows.size();
 
 		size = min_size;
 	}
@@ -147,7 +147,7 @@ void textbox::draw(NVGcontext* vg)
 	auto absolute_position = get_position();
 	for(size_t i=0; i < rows.size(); ++i) {
 		auto const& row = rows[i];
-		auto const y = i * lineh + Y(absolute_position) + ascender;
-		nvgText(vg, X(absolute_position), y, row.start, row.end);
+		auto const y = i * lineh + absolute_position.y + ascender;
+		nvgText(vg, absolute_position.x, y, row.start, row.end);
 	}
 }

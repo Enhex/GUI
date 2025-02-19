@@ -66,7 +66,7 @@ file_dialog::file_dialog() :
 		}
 		{
 			auto& spacer = container.create_child<element>();
-			X(spacer.min_size) = 32;
+			spacer.min_size.x = 32;
 		}
 		{
 			add_folder = &container.create_child<button>();
@@ -89,7 +89,7 @@ file_dialog::file_dialog() :
 			};
 			{
 				auto& spacer = folder_dialog->create_child<element>();
-				X(spacer.min_size) = 5;
+				spacer.min_size.x = 5;
 			}
 			auto& cancel_folder = folder_dialog->create_child<button>();
 			auto& cancel_folder_txt = cancel_folder.create_child<text>();
@@ -134,7 +134,7 @@ file_dialog::file_dialog() :
 	}
 	{
 		auto& spacer = horizontal_container.create_child<element>();
-		X(spacer.min_size) = 5;
+		spacer.min_size.x = 5;
 	}
 	{
 		confirm = &horizontal_container.create_child<button>();
@@ -415,12 +415,12 @@ void file_dialog::toggle_add_folder_dialog(bool show)
 
 	// make sure the file_dialog's width doesn't change
 	if(show) {
-		original_min_size = X(min_size);
-		X(min_size) = X(size);
+		original_min_size = min_size.x;
+		min_size.x = size.x;
 		folder_field->focus();
 	}
 	else {
-		X(min_size) = original_min_size;
+		min_size.x = original_min_size;
 		filename_field->focus();
 	}
 }

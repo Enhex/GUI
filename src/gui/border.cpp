@@ -33,8 +33,8 @@ void border::set_color(NVGcolor color)
 
 void border::set_border_size(float size)
 {
-	Y(top.min_size) = size;
-	Y(bottom.min_size) = size;
-	X(left.min_size) = size;
-	X(right.min_size) = size;
+	top.min_size.y = size;
+	bottom.min_size.y = size;
+	left.min_size.x = size;
+	right.min_size.x = size;
 }
