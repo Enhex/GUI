@@ -2,7 +2,7 @@
 
 if [ "$1" = 'r' ];
 then
-	py build.py -r && cd ./example/ && py build.py -r && cd ..
+	python build.py -r && cd ./example/ && python build.py -r && cd ..
 else
-	py build.py && cd ./example/ && py build.py && cd ..
+	python build.py && cd ./example/ && python build.py && cd ..
 fi
