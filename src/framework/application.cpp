@@ -117,6 +117,7 @@ void application::create_window(int width, int height, const char * title, GLFWm
 	glfwSetCharCallback(window, character_callback);
 
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
+	glfwSetCursorEnterCallback(window, cursor_enter_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 	glfwSetWindowSizeCallback(window, window_size_callback);
@@ -149,6 +150,12 @@ void application::cursor_pos_callback(GLFWwindow * window, double xpos, double y
 {
 	auto& app = *static_cast<application*>(glfwGetWindowUserPointer(window));
 	app.input_manager.mouse_pos = { (float)xpos, (float)ypos };
+}
+
+void application::cursor_enter_callback(GLFWwindow* window, int entered)
+{
+	auto& app = *static_cast<application*>(glfwGetWindowUserPointer(window));
+	app.input_manager.cursor_in_window = entered;
 }
 
 element* application::find_hovered_element(element& el)
@@ -190,7 +197,7 @@ element* application::find_hovered_element(element& el)
 
 void application::update_hoevered_element()
 {
-	auto hovered_el = find_hovered_element(root);
+	auto* hovered_el = input_manager.cursor_in_window ? find_hovered_element(root) : nullptr;
 	input_manager.set_hovered_element(hovered_el);
 }
 

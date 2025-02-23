@@ -14,6 +14,7 @@ namespace input
 	struct manager
 	{
 		nx::Vector2 mouse_pos;
+		bool cursor_in_window;
 
 		element* focused_element = nullptr; // keyboard focus
 		element* hovered_element = nullptr; // mouse focus
