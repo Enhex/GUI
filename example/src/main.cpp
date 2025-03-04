@@ -375,7 +375,7 @@ int main()
 		auto& border_ = container.create_child<border>();
 		border_.set_color({1.f, 0.f, 0.f, 1.f});
 		auto& label = border_.content.create_child<text>();
-		label.set_text("function:  ");
+		label.set_text("function: ");
 
 		auto& text_bg = container.create_child<panel>();
 		text_bg.color = nvgRGBA(0, 60, 180, 255);
