@@ -11,10 +11,6 @@ struct text_edit : text, text_edit_shared
 
 	std::type_info const& type_info() const override { return typeid(text_edit); }
 
-	// glyphs' absolute positions
-	std::unique_ptr<NVGglyphPosition[]> glyphs;
-	int num_glyphs = 0;
-
 	text_edit();
 
 	// what to do when the string changes.
@@ -22,10 +18,6 @@ struct text_edit : text, text_edit_shared
 	virtual void on_str_changed();
 
 	void update_glyph_positions();
-
-	void update_glyphs_no_bounds();
-
-	void update_glyphs();
 
 	void set_cursor_to_mouse_pos();
 

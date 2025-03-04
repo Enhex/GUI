@@ -47,33 +47,10 @@ void text_edit::on_str_changed()
 
 void text_edit::update_glyph_positions()
 {
-	auto& vg = context->vg;
-	nvgSave(vg);
-	init_font(vg); // for correct font size
-
-	auto const max_glyphs = str.size();
-	auto const absolute_position = get_position();
-	num_glyphs = nvgTextGlyphPositions(vg, absolute_position.x, absolute_position.y, str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
+	text::update_glyph_positions();
 
 	if(cursor_pos > num_glyphs)
 		cursor_pos = num_glyphs;
-
-	nvgRestore(vg);
-}
-
-void text_edit::update_glyphs_no_bounds()
-{
-	auto const max_glyphs = str.size();
-
-	glyphs = std::make_unique<NVGglyphPosition[]>(max_glyphs);
-
-	update_glyph_positions();
-}
-
-void text_edit::update_glyphs()
-{
-	update_glyphs_no_bounds();
-	update_bounds();
 }
 
 void text_edit::set_cursor_to_mouse_pos()
@@ -106,7 +83,7 @@ void text_edit::set_cursor_to_mouse_pos()
 
 	// if clicked past the last character, position the cursor at the end of the text
 	if(!glyph_clicked) {
-		auto const abs_text_end = get_position().x + text_bounds[2];
+		auto const abs_text_end = get_position().x + size.x;
 		if(mouse_x > abs_text_end) {
 			cursor_pos = str.size();
 		}

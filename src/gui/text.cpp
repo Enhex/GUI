@@ -27,7 +27,7 @@ void text::set_text(std::string const& new_str)
 
 void text::update_text()
 {
-	update_bounds();
+	update_glyphs();
 }
 
 void text::set_style(style::style_t const& style)
@@ -57,13 +57,37 @@ void text::set_style(style::style_t const& style)
 	}
 
 	if(bounds_need_update)
-		update_bounds();
+		update_glyphs();
 
 	read(color, "color");
 }
 
-void text::update_bounds()
+void text::update_glyph_positions()
 {
+	auto& vg = context->vg;
+	nvgSave(vg);
+	init_font(vg); // for correct font size
+
+	auto const max_glyphs = str.size();
+	auto const absolute_position = get_position();
+	num_glyphs = nvgTextGlyphPositions(vg, absolute_position.x, absolute_position.y, str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
+
+	nvgRestore(vg);
+}
+
+void text::update_glyphs_no_bounds()
+{
+	auto const max_glyphs = str.size();
+
+	glyphs = std::make_unique<NVGglyphPosition[]>(max_glyphs);
+
+	update_glyph_positions();
+}
+
+void text::update_glyphs()
+{
+	update_glyphs_no_bounds();
+
 	auto& vg = context->vg;
 	nvgSave(vg);
 
@@ -75,11 +99,10 @@ void text::update_bounds()
 		size.y = min_size.y = lineh;
 	}
 	else {
-		nvgTextBounds(vg, 0, 0, str.c_str(), nullptr, text_bounds);
-
-		// using local space with position 0, can directly use max point instead of calculating bounding box size
-		min_size.x = text_bounds[2];
-		min_size.y = text_bounds[3] + ascender;
+		//NOTE: nvgTextBounds doesn't handle spaces at the end of the string correctly. https://github.com/memononen/nanovg/issues/636
+		auto const abs_pos = get_position();
+		min_size.x = glyphs[str.size()-1].maxx - abs_pos.x;
+		min_size.y = lineh;
 
 		size = min_size;
 	}

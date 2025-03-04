@@ -188,7 +188,7 @@ namespace deco
 				// can only display a single line
 				value.str = lines[0].content;
 				// once done constructing the string, update the text size
-				value.update_bounds();
+				value.update_glyphs();
 			}
 		}
 	}

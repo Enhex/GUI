@@ -13,8 +13,10 @@ struct text : element
 	int font = -1;
 	float font_size = 12;
 	NVGcolor color = nvgRGBA(255, 255, 255, 255);
-	float text_bounds[4]; // local space
 
+	// glyphs' absolute positions
+	std::unique_ptr<NVGglyphPosition[]> glyphs;
+	int num_glyphs = 0;
 
 	text();
 
@@ -27,7 +29,11 @@ struct text : element
 
 	void set_style(style::style_t const& style) override;
 
-	void update_bounds();
+	void update_glyph_positions();
+
+	void update_glyphs_no_bounds();
+
+	void update_glyphs();
 
 	void init_font(NVGcontext* vg);
 
