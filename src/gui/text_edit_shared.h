@@ -9,7 +9,8 @@ struct text_edit_shared
 
 	NVGcolor selection_color{ 0,0.5,1,1 };
 
-	size_t cursor_pos = 0;
+	size_t const cursor_pos = 0;
+	size_t const last_cursor_pos = 0;
 	size_t selection_start_pos = 0;
 	size_t selection_end_pos = 0;
 
@@ -20,4 +21,7 @@ struct text_edit_shared
 	void clear_selection();
 
 	bool is_valid_character(unsigned const codepoint) const;
+
+	// if unique is true will only update last_cursor_pos if pos != cursor_pos
+	void set_cursor_pos(size_t const pos, bool unique=false);
 };

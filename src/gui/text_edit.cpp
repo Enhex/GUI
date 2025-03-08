@@ -50,7 +50,7 @@ void text_edit::update_glyph_positions()
 	text::update_glyph_positions();
 
 	if(cursor_pos > num_glyphs)
-		cursor_pos = num_glyphs;
+		set_cursor_pos(num_glyphs);
 }
 
 void text_edit::set_cursor_to_mouse_pos()
@@ -69,13 +69,13 @@ void text_edit::set_cursor_to_mouse_pos()
 		// check if the glyph was clicked
 		if (mouse_x >= glyph.minx &&
 			mouse_x <= x_mid) {
-			cursor_pos = i;
+			set_cursor_pos(i);
 			glyph_clicked = true;
 			break;
 		}
 		else if (mouse_x >= x_mid &&
 					mouse_x <= glyph.maxx) {
-			cursor_pos = i+1;
+			set_cursor_pos(i+1);
 			glyph_clicked = true;
 			break;
 		}
@@ -85,7 +85,7 @@ void text_edit::set_cursor_to_mouse_pos()
 	if(!glyph_clicked) {
 		auto const abs_text_end = get_position().x + size.x;
 		if(mouse_x > abs_text_end) {
-			cursor_pos = str.size();
+			set_cursor_pos(str.size());
 		}
 	}
 }
@@ -110,6 +110,10 @@ void text_edit::on_frame_start()
 
 void text_edit::on_double_click()
 {
+	if(cursor_pos != last_cursor_pos){
+		return;
+	}
+
 	// check if didn't start selecting already
 	if(selection_start_pos == selection_end_pos && !str.empty()){
 		// if double clicked whitespace select it and all the adjacent whitespaces
@@ -166,7 +170,7 @@ void text_edit::on_double_click()
 			}
 		}
 
-		cursor_pos = selection_end_pos;
+		set_cursor_pos(selection_end_pos);
 	}
 }
 
@@ -178,7 +182,8 @@ void text_edit::on_key_press(int key, int mods)
 			delete_selection();
 		}
 		else if (cursor_pos > 0) {
-			str.erase(--cursor_pos, 1);
+			set_cursor_pos(cursor_pos - 1);
+			str.erase(cursor_pos, 1);
 			on_str_changed();
 		}
 		break;
@@ -201,7 +206,7 @@ void text_edit::on_key_press(int key, int mods)
 				selection_start_pos = cursor_pos;
 			}
 
-			--cursor_pos;
+			set_cursor_pos(cursor_pos - 1);
 
 			if(select)
 				selection_end_pos = cursor_pos;
@@ -216,7 +221,7 @@ void text_edit::on_key_press(int key, int mods)
 				selection_start_pos = cursor_pos;
 			}
 
-			++cursor_pos;
+			set_cursor_pos(cursor_pos + 1);
 
 			if(select)
 				selection_end_pos = cursor_pos;
@@ -224,11 +229,11 @@ void text_edit::on_key_press(int key, int mods)
 		break;
 
 	case GLFW_KEY_HOME:
-		cursor_pos = 0;
+		set_cursor_pos(0);
 		break;
 
 	case GLFW_KEY_END:
-		cursor_pos = str.size();
+		set_cursor_pos(str.size());
 		break;
 
 	case GLFW_KEY_C:
@@ -246,7 +251,7 @@ void text_edit::on_key_press(int key, int mods)
 			auto& app = static_cast<application&>(*context);
 			auto const cstr = glfwGetClipboardString(app.window);
 			str.insert(cursor_pos, cstr);
-			cursor_pos += strlen(cstr);
+			set_cursor_pos(cursor_pos + strlen(cstr));
 			on_str_changed();
 		}
 		break;
@@ -267,7 +272,8 @@ void text_edit::on_character(unsigned codepoint)
 	if(has_selection()) {
 		delete_selection();
 	}
-	str.insert(str.begin() + cursor_pos++, codepoint);
+	str.insert(str.begin() + cursor_pos, codepoint);
+	set_cursor_pos(cursor_pos + 1);
 	on_str_changed();
 	//NOTE: no need to update glyphs when deleting since the deleted glyphs won't be accessed.
 }
@@ -343,7 +349,7 @@ void text_edit::delete_selection()
 	auto low_pos = std::min(selection_start_pos, selection_end_pos);
 	auto high_pos = std::max(selection_start_pos, selection_end_pos);
 	str.erase(low_pos, high_pos - low_pos);
-	cursor_pos = low_pos;
+	set_cursor_pos(low_pos);
 	clear_selection();
 	on_str_changed();
 }
@@ -352,10 +358,10 @@ void text_edit::select_all()
 {
 	selection_start_pos = 0;
 	selection_end_pos = str.size();
-	cursor_pos = selection_end_pos;
+	set_cursor_pos(selection_end_pos);
 }
 
 void text_edit::move_cursor_to_end()
 {
-	cursor_pos = str.size();
+	set_cursor_pos(str.size());
 }

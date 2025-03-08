@@ -21,7 +21,7 @@ struct textbox_edit : textbox, text_edit_shared
 
 	void update_glyph_positions();
 
-	void set_cursor_to_mouse_pos();
+	void set_cursor_to_mouse_pos(bool unique=false);
 	void on_mouse_press();
 
 	void on_frame_start();
@@ -46,6 +46,6 @@ struct textbox_edit : textbox, text_edit_shared
 	void move_cursor_to_end();
 	void move_cursor_to_start();
 
-	void set_cursor_pos(size_t pos);
+	void set_cursor_pos(size_t pos, bool unique=false);
 	size_t get_cursor_row();
 };

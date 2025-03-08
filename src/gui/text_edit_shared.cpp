@@ -22,3 +22,12 @@ bool text_edit_shared::is_valid_character(unsigned const codepoint) const
 
 	return false;
 }
+
+void text_edit_shared::set_cursor_pos(size_t const pos, bool unique)
+{
+	if(unique && pos == cursor_pos){
+		return;
+	}
+	const_cast<size_t&>(last_cursor_pos) = cursor_pos;
+	const_cast<size_t&>(cursor_pos) = pos;
+}
