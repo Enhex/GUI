@@ -31,7 +31,7 @@ workspace("GUI example")
 		kind "ConsoleApp"
 		language "C++"
 		cppdialect "C++17"
-		targetdir = "bin/%{cfg.buildcfg}"
+		targetdir(_OPTIONS["location"] .. "bin")
 
 		files{
 			"src/**",
@@ -64,5 +64,6 @@ workspace("GUI example")
 	externalproject "GUI"
 		print(_OPTIONS["gui-path"])
 		location(_OPTIONS["gui-path"])
+		targetdir(_OPTIONS["gui-path"] .. "bin")
 		kind "StaticLib"
 		language "C++"
