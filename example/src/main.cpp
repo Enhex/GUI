@@ -31,7 +31,7 @@ int main()
 		}
 	}
 
-
+	// set default style properties
 	{
 		auto const& font_name = app.style_manager.font_id_to_name(font);
 

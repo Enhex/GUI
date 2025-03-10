@@ -310,7 +310,6 @@ void textbox_edit::on_key_press(int key, int mods)
 				auto const next_row_end_pos = next_row.end - str.data();
 				set_cursor_pos(next_row_end_pos);
 			}
-			++cursor_row;
 		}
 		else {
 			move_cursor_to_end();
@@ -339,7 +338,6 @@ void textbox_edit::on_key_press(int key, int mods)
 				auto const prev_row_end_pos = prev_row.end - str.data();
 				set_cursor_pos(prev_row_end_pos);
 			}
-			--cursor_row;
 		}
 		else {
 			move_cursor_to_start();
