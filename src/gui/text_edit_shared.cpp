@@ -31,3 +31,11 @@ void text_edit_shared::set_cursor_pos(size_t const pos, bool unique)
 	const_cast<size_t&>(last_cursor_pos) = cursor_pos;
 	const_cast<size_t&>(cursor_pos) = pos;
 }
+
+void text_edit_shared::on_str_changed(size_t str_size)
+{
+	if(cursor_pos > str_size){
+		const_cast<size_t&>(cursor_pos) = str_size;
+		const_cast<size_t&>(last_cursor_pos) = cursor_pos;
+	}
+}

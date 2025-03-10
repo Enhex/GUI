@@ -41,6 +41,7 @@ text_edit::text_edit()
 
 void text_edit::on_str_changed()
 {
+	text_edit_shared::on_str_changed(str.size());
 	update_glyphs();
 	on_text_changed();
 }

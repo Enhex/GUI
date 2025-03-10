@@ -24,4 +24,6 @@ struct text_edit_shared
 
 	// if unique is true will only update last_cursor_pos if pos != cursor_pos
 	void set_cursor_pos(size_t const pos, bool unique=false);
+
+	void on_str_changed(size_t str_size);
 };

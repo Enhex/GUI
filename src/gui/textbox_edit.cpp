@@ -41,6 +41,7 @@ textbox_edit::textbox_edit()
 
 void textbox_edit::on_str_changed()
 {
+	text_edit_shared::on_str_changed(str.size());
 	update_rows();
 	update_glyphs();
 	on_text_changed();
