@@ -32,8 +32,10 @@ class GuiConan(ConanFile):
 		"glfw/3.4",
 		"glad/0.1.36",
 		"nanovg/master",
-		"deco/master"
 	)
+
+	def requirements(self):
+		self.requires("deco/master", transitive_headers=True)
 
 	def build(self):
 		run_premake(self)
