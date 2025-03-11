@@ -427,7 +427,7 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 	bool selection_ended = false;
 
 	// draw rectangle for each line
-	for(size_t i=0; i < rows.size(); ++i) {
+	auto process_row = [&](size_t i){
 		auto const& row = rows[i];
 		auto const start_ptr = str.data() + start_pos;
 		auto const end_ptr = str.data() + end_pos;
@@ -436,7 +436,7 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 		// include row end in the case of end being a newline
 		auto const is_start_in_row = start_ptr >= row.start && start_ptr <= row.end;
 		if(!is_start_in_row && !selection_started)
-			continue;
+			return;
 
 		auto const y_start = absolute_position.y + i * lineh;
 
@@ -470,7 +470,12 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 				auto const index = end_pos-1;
 				return glyphs[index].maxx - glyph_offsets[index]; // position at the end of the previous character
 			}
-			auto const row_end_pos = row.end-1 - str.data();
+			auto const row_end_pos = [&]{
+				if(row.start != row.end)
+					return row.end-1 - str.data();
+				else
+					return row.end - str.data();
+			}();
 			return glyphs[row_end_pos].maxx - glyph_offsets[row_end_pos]; // position at the end of the row
 		}();
 
@@ -480,10 +485,18 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 				x_end - x_start, lineh);
 		nvgFillColor(vg, selection_color);
 		nvgFill(vg);
+	};
 
+	for(size_t i=0; i < rows.size()-1; ++i){
+		process_row(i);
 		// skip rows after selection
 		if(selection_ended)
 			break;
+	}
+
+	// check if last row is empty
+	if(*rows.back().start != '\0'){
+		process_row(rows.size()-1);
 	}
 }
 
