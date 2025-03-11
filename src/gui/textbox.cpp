@@ -85,7 +85,7 @@ void textbox::update_rows()
 				}
 			}
 		}
-		auto const str_end = (&str.back()) + 1;
+		auto const str_end = str.data() + str.size();
 		// if string ending with newline add an empty row
 		if(str.back() == '\n') {
 			auto& last_row = rows.emplace_back();
