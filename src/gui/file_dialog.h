@@ -21,9 +21,9 @@ struct file_dialog : panel
 	};
 
 	inline static constexpr auto element_name{ "file_dialog" };
-	std::string get_element_name() override { return element_name; }
+	std::string get_element_name() noexcept override { return element_name; }
 
-	std::type_info const& type_info() const override { return typeid(file_dialog); }
+	std::type_info const& type_info() const noexcept override { return typeid(file_dialog); }
 
 	// use an ancestor element's visibility for showing/hiding the dialog
 	// if null `this` will be used

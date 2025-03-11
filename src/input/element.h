@@ -19,7 +19,7 @@ namespace input
 {
 	struct element : dynamic_destructor
 	{
-		virtual element* get_parent()
+		virtual element* get_parent() noexcept
 		{
 			return parent;
 		}

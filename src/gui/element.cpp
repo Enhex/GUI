@@ -51,18 +51,19 @@ void element::set_id(std::string_view const new_id)
 	id_to_element.emplace(id, *this);
 }
 
-std::string const& element::get_id()
+std::string const& element::get_id() noexcept
 {
 	return id;
 }
 
-element* element::get_parent()
+element* element::get_parent() noexcept
 {
 	return static_cast<element*>(parent);
 }
 
 // get absolute position. regular `position` variable being relative to the parent
-nx::Vector2 element::get_position() {
+nx::Vector2 element::get_position() noexcept
+{
 	return parent != nullptr ? get_parent()->get_position() + position : position;
 }
 
@@ -78,17 +79,18 @@ void element::set_visible(bool new_visible)
 	}
 }
 
-rectangle element::get_abs_rect()
+rectangle element::get_abs_rect() noexcept
 {
 	return rectangle{get_position(), size};
 }
 
-bool element::is_inside(nx::Vector2 const& point) {
+bool element::is_inside(nx::Vector2 const& point) noexcept
+{
 	auto absolute_rectangle = get_abs_rect();
 	return absolute_rectangle.is_inside(point);
 }
 
-void element::apply_style()
+void element::apply_style() noexcept
 {
 	{
 		auto iter = context->style_manager.styles.find(style);

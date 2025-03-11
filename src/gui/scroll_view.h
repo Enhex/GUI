@@ -12,9 +12,9 @@ struct scrollbar;
 struct scroll_view : element
 {
 	inline static constexpr auto element_name{ "scroll_view" };
-	std::string get_element_name() override { return element_name; }
+	std::string get_element_name() noexcept override { return element_name; }
 
-	std::type_info const& type_info() const override { return typeid(scroll_view); }
+	std::type_info const& type_info() const noexcept override { return typeid(scroll_view); }
 
 	element& vertical_container;
 	scissor& view;

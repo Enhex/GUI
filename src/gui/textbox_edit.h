@@ -7,9 +7,9 @@
 struct textbox_edit : textbox, text_edit_shared
 {
 	inline static constexpr auto element_name{ "textbox_edit" };
-	std::string get_element_name() override { return element_name; }
+	std::string get_element_name() noexcept override { return element_name; }
 
-	std::type_info const& type_info() const override { return typeid(textbox_edit); }
+	std::type_info const& type_info() const noexcept override { return typeid(textbox_edit); }
 
 	textbox_edit();
 

@@ -6,9 +6,9 @@
 struct radio_button : button
 {
 	inline static constexpr auto element_name{ "radio_button" };
-	std::string get_element_name() override { return element_name; }
+	std::string get_element_name() noexcept override { return element_name; }
 
-	std::type_info const& type_info() const override { return typeid(radio_button); }
+	std::type_info const& type_info() const noexcept override { return typeid(radio_button); }
 
 	// group -> buttons
 	//NOTE: using vector because unlikely to remove elements

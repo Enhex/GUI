@@ -5,7 +5,7 @@
 struct button : panel
 {
 	inline static constexpr auto element_name{ "button" };
-	std::string get_element_name() override { return element_name; }
+	std::string get_element_name() noexcept override { return element_name; }
 
 	NVGcolor background_color{ 0.1,0.1,0.1,1 };
 	NVGcolor hover_color{ 0.32,0.32,0.32,1 };

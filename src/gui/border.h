@@ -10,9 +10,9 @@ struct panel;
 struct border : element
 {
 	inline static constexpr auto element_name{ "border" };
-	std::string get_element_name() override { return element_name; }
+	std::string get_element_name() noexcept override { return element_name; }
 
-	std::type_info const& type_info() const override { return typeid(border); }
+	std::type_info const& type_info() const noexcept override { return typeid(border); }
 
 
 	//NOTE: initialization order is set by declaration order

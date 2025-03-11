@@ -17,9 +17,9 @@ T& emplace_back_derived(Container& container, Args& ... args)
 struct element : layout::element<element>, input::element
 {
 	inline static constexpr auto element_name{ "element" };
-	virtual std::string get_element_name() { return element_name; }
+	virtual std::string get_element_name() noexcept { return element_name; }
 
-	virtual std::type_info const& type_info() const { return typeid(element); }
+	virtual std::type_info const& type_info() const noexcept { return typeid(element); }
 
 	inline static gui::context* context = nullptr;
 
@@ -38,21 +38,21 @@ public:
 
 	static element* get_by_id(std::string const& id);
 	void set_id(std::string_view const new_id);
-	std::string const& get_id();
+	std::string const& get_id() noexcept;
 
-	element* get_parent() override;
+	element* get_parent() noexcept override;
 
 	void set_visible(bool new_visible) override;
 
 	// get absolute position. regular `position` variable being relative to the parent
-	nx::Vector2 get_position();
+	nx::Vector2 get_position() noexcept;
 
-	rectangle get_abs_rect();
-	bool is_inside(nx::Vector2 const& point);
+	rectangle get_abs_rect() noexcept;
+	bool is_inside(nx::Vector2 const& point) noexcept;
 
 	virtual void set_style(style::style_t const& style) {}
 
-	void apply_style();
+	void apply_style() noexcept;
 
 	template<typename T, typename... Args>
 	T& create_child(Args&&... args) {
