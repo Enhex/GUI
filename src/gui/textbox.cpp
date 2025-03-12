@@ -7,7 +7,8 @@ textbox::textbox()
 
 void textbox::update_text()
 {
-	update_bounds();
+	update_rows();
+	update_glyphs();
 }
 
 void textbox::update_glyph_positions()
@@ -100,9 +101,6 @@ void textbox::update_rows()
 
 void textbox::update_bounds()
 {
-	update_rows();
-	update_glyphs_no_bounds();
-
 	auto& vg = context->vg;
 	nvgSave(vg);
 

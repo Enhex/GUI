@@ -43,6 +43,7 @@ void textbox_edit::on_str_changed()
 {
 	text_edit_shared::on_str_changed(str.size());
 	update_rows();
+	cursor_row = get_cursor_row(); // must be done after update_rows()
 	update_glyphs();
 	on_text_changed();
 }
@@ -391,7 +392,6 @@ void textbox_edit::on_key_press(int key, int mods)
 
 	case GLFW_KEY_ENTER:
 		on_character('\n');
-		++cursor_row;
 		break;
 	}
 }
@@ -542,12 +542,6 @@ void textbox_edit::draw(NVGcontext* vg)
 		nvgStrokeWidth(vg, 1.0f);
 		nvgStroke(vg);
 	}
-}
-
-void textbox_edit::set_cursor_pos(size_t pos, bool unique)
-{
-	text_edit_shared::set_cursor_pos(pos, unique);
-	cursor_row = get_cursor_row();
 }
 
 size_t textbox_edit::get_cursor_row()
