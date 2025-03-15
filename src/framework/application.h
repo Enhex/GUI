@@ -30,20 +30,11 @@ struct application : gui::context
 	// return true if the key is pressed
 	bool key_pressed(int key) const;
 
-protected:
 	static inline double_clickable double_clickable_;
 
+protected:
 	void initialize();
 	void create_window(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share);
-
-	static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-	static void character_callback(GLFWwindow* window, unsigned int codepoint);
-
-	static void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos);
-	static void cursor_enter_callback(GLFWwindow* window, int entered);
-	static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-	static void window_size_callback(GLFWwindow* window, int width, int height);
 
 	element* find_hovered_element(element& el);
 	void update_hoevered_element();

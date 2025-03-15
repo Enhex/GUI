@@ -6,6 +6,89 @@
 #include <fstream>
 #include <stdexcept>
 
+
+static void character_callback(GLFWwindow * window, unsigned int codepoint)
+{
+	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
+	input_manager.character.send_event(input_manager.focused_element, codepoint);
+}
+
+static void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
+{
+	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
+
+	switch (action) {
+	case GLFW_RELEASE:
+		input_manager.key_release.send_event(input_manager.focused_element, key, mods);
+		break;
+	case GLFW_PRESS:
+		input_manager.key_press.send_event(input_manager.focused_element, key, mods);
+		break;
+	case GLFW_REPEAT:
+		input_manager.key_repeat.send_event(input_manager.focused_element, key, mods);
+		break;
+	}
+}
+
+static void cursor_pos_callback(GLFWwindow * window, double xpos, double ypos)
+{
+	auto& app = *static_cast<application*>(glfwGetWindowUserPointer(window));
+	app.input_manager.mouse_pos = { (float)xpos, (float)ypos };
+}
+
+static void cursor_enter_callback(GLFWwindow* window, int entered)
+{
+	auto& app = *static_cast<application*>(glfwGetWindowUserPointer(window));
+	app.input_manager.cursor_in_window = entered;
+}
+
+static void mouse_button_callback(GLFWwindow * window, int button, int action, int mods)
+{
+	using namespace input;
+
+	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
+
+	// hovered element only gains focus on mouse press (not release)
+	if (action == GLFW_PRESS && input_manager.hovered_element != nullptr) {
+		//TODO allow controlling if an element auto gains focus on click
+		input_manager.set_focused_element(input_manager.hovered_element);
+		input_manager.pressed_element = input_manager.hovered_element;
+	}
+
+	if (action == GLFW_RELEASE){
+		// send double click first so the user can know it for the upcoming mouse release
+		if(application::double_clickable_.on_mouse_release(input_manager.hovered_element)){
+			input_manager.double_click.send_event(input_manager.hovered_element, button, mods);
+		}
+		input_manager.mouse_release.send_event(input_manager.hovered_element, button, mods);
+	}
+	if (action == GLFW_PRESS){
+		input_manager.mouse_press.send_event(input_manager.hovered_element, button, mods);
+		application::double_clickable_.on_mouse_press(input_manager.hovered_element);
+	}
+
+	// reset pressed element after release event was sent, so the callback can know which element was pressed
+	if (action == GLFW_RELEASE)
+		input_manager.pressed_element = nullptr;
+}
+
+static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
+	input_manager.scroll.send_event(input_manager.hovered_element, xoffset, yoffset);
+}
+
+static void window_size_callback(GLFWwindow* window, int width, int height)
+{
+	// use a callback to avoid resizing every frame, which is useful if layout is only updated when needed.
+	auto& root = static_cast<application*>(glfwGetWindowUserPointer(window))->root;
+	root.size = root.min_size = {(float)width, (float)height};
+
+	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
+	input_manager.window_size.send_global_event(width, height);
+}
+
+
 application::application(int width, int height, const char* title, GLFWmonitor* monitor, GLFWwindow* share)
 {
 	initialize();
@@ -123,41 +206,6 @@ void application::create_window(int width, int height, const char * title, GLFWm
 	glfwSetWindowSizeCallback(window, window_size_callback);
 }
 
-void application::key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
-{
-	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
-
-	switch (action) {
-	case GLFW_RELEASE:
-		input_manager.key_release.send_event(input_manager.focused_element, key, mods);
-		break;
-	case GLFW_PRESS:
-		input_manager.key_press.send_event(input_manager.focused_element, key, mods);
-		break;
-	case GLFW_REPEAT:
-		input_manager.key_repeat.send_event(input_manager.focused_element, key, mods);
-		break;
-	}
-}
-
-void application::character_callback(GLFWwindow * window, unsigned int codepoint)
-{
-	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
-	input_manager.character.send_event(input_manager.focused_element, codepoint);
-}
-
-void application::cursor_pos_callback(GLFWwindow * window, double xpos, double ypos)
-{
-	auto& app = *static_cast<application*>(glfwGetWindowUserPointer(window));
-	app.input_manager.mouse_pos = { (float)xpos, (float)ypos };
-}
-
-void application::cursor_enter_callback(GLFWwindow* window, int entered)
-{
-	auto& app = *static_cast<application*>(glfwGetWindowUserPointer(window));
-	app.input_manager.cursor_in_window = entered;
-}
-
 element* application::find_hovered_element(element& el)
 {
 	/*
@@ -199,50 +247,4 @@ void application::update_hoevered_element()
 {
 	auto* hovered_el = input_manager.cursor_in_window ? find_hovered_element(root) : nullptr;
 	input_manager.set_hovered_element(hovered_el);
-}
-
-void application::mouse_button_callback(GLFWwindow * window, int button, int action, int mods)
-{
-	using namespace input;
-
-	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
-
-	// hovered element only gains focus on mouse press (not release)
-	if (action == GLFW_PRESS && input_manager.hovered_element != nullptr) {
-		//TODO allow controlling if an element auto gains focus on click
-		input_manager.set_focused_element(input_manager.hovered_element);
-		input_manager.pressed_element = input_manager.hovered_element;
-	}
-
-	if (action == GLFW_RELEASE){
-		// send double click first so the user can know it for the upcoming mouse release
-		if(double_clickable_.on_mouse_release(input_manager.hovered_element)){
-			input_manager.double_click.send_event(input_manager.hovered_element, button, mods);
-		}
-		input_manager.mouse_release.send_event(input_manager.hovered_element, button, mods);
-	}
-	if (action == GLFW_PRESS){
-		input_manager.mouse_press.send_event(input_manager.hovered_element, button, mods);
-		double_clickable_.on_mouse_press(input_manager.hovered_element);
-	}
-
-	// reset pressed element after release event was sent, so the callback can know which element was pressed
-	if (action == GLFW_RELEASE)
-		input_manager.pressed_element = nullptr;
-}
-
-void application::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
-	input_manager.scroll.send_event(input_manager.hovered_element, xoffset, yoffset);
-}
-
-void application::window_size_callback(GLFWwindow* window, int width, int height)
-{
-	// use a callback to avoid resizing every frame, which is useful if layout is only updated when needed.
-	auto& root = static_cast<application*>(glfwGetWindowUserPointer(window))->root;
-	root.size = root.min_size = {(float)width, (float)height};
-
-	auto& input_manager = static_cast<application*>(glfwGetWindowUserPointer(window))->input_manager;
-	input_manager.window_size.send_global_event(width, height);
 }
