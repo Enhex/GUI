@@ -47,4 +47,6 @@ struct textbox_edit : textbox, text_edit_shared
 	void move_cursor_to_start();
 
 	size_t get_cursor_row();
+
+	void set_cursor_pos_and_row(size_t const pos, bool unique=false);
 };

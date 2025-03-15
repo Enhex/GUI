@@ -122,20 +122,20 @@ void textbox_edit::set_cursor_to_mouse_pos(bool unique)
 				if (mouse_x >= minx &&
 					mouse_x <= x_mid)
 				{
-					set_cursor_pos(glyph_index, unique);
+					set_cursor_pos_and_row(glyph_index, unique);
 					goto glyph_found;
 				}
 				// or right side
 				else if(mouse_x >= x_mid &&
 						mouse_x <= maxx)
 				{
-					set_cursor_pos(glyph_index+1, unique);
+					set_cursor_pos_and_row(glyph_index+1, unique);
 					goto glyph_found;
 				}
 			}
 
 			// place at the end of the row
-			set_cursor_pos(row_end);
+			set_cursor_pos_and_row(row_end);
 			glyph_found:
 			// if inside this row can't be inside other rows
 			break;
@@ -274,7 +274,7 @@ void textbox_edit::on_key_press(int key, int mods)
 
 		if (cursor_pos > 0)
 		{
-			set_cursor_pos(cursor_pos-1);
+			set_cursor_pos_and_row(cursor_pos-1);
 
 			if(select)
 				selection_end_pos = cursor_pos;
@@ -287,7 +287,7 @@ void textbox_edit::on_key_press(int key, int mods)
 
 		if (cursor_pos < str.size())
 		{
-			set_cursor_pos(cursor_pos+1);
+			set_cursor_pos_and_row(cursor_pos+1);
 
 			if(select)
 				selection_end_pos = cursor_pos;
@@ -306,11 +306,11 @@ void textbox_edit::on_key_press(int key, int mods)
 			auto const next_row_size = next_row.end - next_row.start;
 			if(pos_in_row <= next_row_size) {
 				auto const next_row_start_pos = next_row.start - str.data();
-				set_cursor_pos(next_row_start_pos + pos_in_row);
+				set_cursor_pos_and_row(next_row_start_pos + pos_in_row);
 			}
 			else {
 				auto const next_row_end_pos = next_row.end - str.data();
-				set_cursor_pos(next_row_end_pos);
+				set_cursor_pos_and_row(next_row_end_pos);
 			}
 		}
 		else {
@@ -334,11 +334,11 @@ void textbox_edit::on_key_press(int key, int mods)
 			auto const prev_row_size = prev_row.end - prev_row.start;
 			if(pos_in_row <= prev_row_size) {
 				auto const prev_row_start_pos = prev_row.start - str.data();
-				set_cursor_pos(prev_row_start_pos + pos_in_row);
+				set_cursor_pos_and_row(prev_row_start_pos + pos_in_row);
 			}
 			else {
 				auto const prev_row_end_pos = prev_row.end - str.data();
-				set_cursor_pos(prev_row_end_pos);
+				set_cursor_pos_and_row(prev_row_end_pos);
 			}
 		}
 		else {
@@ -353,14 +353,14 @@ void textbox_edit::on_key_press(int key, int mods)
 	case GLFW_KEY_HOME:
 		if(!rows.empty()) {
 			auto const row_start_pos = rows[cursor_row].start - str.data();
-			set_cursor_pos(row_start_pos);
+			set_cursor_pos(row_start_pos); //NOTE: cursor_row doesn't change
 		}
 		break;
 
 	case GLFW_KEY_END:
 		if(!rows.empty()) {
 			auto const row_end_pos = rows[cursor_row].end - str.data();
-			set_cursor_pos(row_end_pos);
+			set_cursor_pos(row_end_pos); //NOTE: cursor_row doesn't change
 		}
 		break;
 
@@ -602,4 +602,10 @@ void textbox_edit::move_cursor_to_start()
 {
 	set_cursor_pos(0);
 	cursor_row = 0;
+}
+
+void textbox_edit::set_cursor_pos_and_row(size_t const pos, bool unique)
+{
+	set_cursor_pos(pos, unique);
+	cursor_row = get_cursor_row();
 }
