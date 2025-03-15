@@ -1,4 +1,4 @@
-import os
+from os import path
 from conan import ConanFile
 from conan.tools.files import copy
 
@@ -42,12 +42,12 @@ class GuiConan(ConanFile):
 		self.run('build')
 
 	def package(self):
-		copy(self, "*.h", os.path.join(self.source_folder, "src"), os.path.join(self.package_folder, "include"))
-		copy(self, "*.a", self.build_folder, os.path.join(self.package_folder, "lib"), keep_path=False)
-		copy(self, "*.so", self.build_folder, os.path.join(self.package_folder, "lib"), keep_path=False)
-		copy(self, "*.lib", self.build_folder, os.path.join(self.package_folder, "lib"), keep_path=False)
-		copy(self, "*.dll", self.build_folder, os.path.join(self.package_folder, "bin"), keep_path=False)
-		copy(self, "*.dylib", self.build_folder, os.path.join(self.package_folder, "lib"), keep_path=False)
+		copy(self, "*.h", path.join(self.source_folder, "src"), path.join(self.package_folder, "include"))
+		copy(self, "*.a", self.build_folder, path.join(self.package_folder, "lib"), keep_path=False)
+		copy(self, "*.so", self.build_folder, path.join(self.package_folder, "lib"), keep_path=False)
+		copy(self, "*.lib", self.build_folder, path.join(self.package_folder, "lib"), keep_path=False)
+		copy(self, "*.dll", self.build_folder, path.join(self.package_folder, "bin"), keep_path=False)
+		copy(self, "*.dylib", self.build_folder, path.join(self.package_folder, "lib"), keep_path=False)
 
 	def package_info(self):
 		self.cpp_info.libs = ["GUI"]
