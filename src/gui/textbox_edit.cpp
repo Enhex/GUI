@@ -457,19 +457,26 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 
 		auto const x_end = [&]{
 			// if not the last row include the end pointer (should be a newline)
-			bool is_in_row;
-			if(i != rows.size()-1) {
-				is_in_row = end_ptr >= row.start && end_ptr <= row.end;
+			bool is_end_in_row;
+			if(i != rows.size()-1){
+				is_end_in_row = end_ptr >= row.start && end_ptr <= row.end;
 			}
-			else {
-				is_in_row = end_ptr >= row.start && end_ptr < row.end;
+			else{
+				is_end_in_row = end_ptr >= row.start && end_ptr < row.end;
 			}
-			if(is_in_row && selection_started)
+
+			if(is_end_in_row && selection_started)
 				selection_ended = true;
-			if(is_in_row && end_pos > 0) {
-				auto const index = end_pos-1;
-				return glyphs[index].maxx - glyph_offsets[index]; // position at the end of the previous character
+
+			if(is_end_in_row && end_pos > 0){
+				auto index = end_pos;
+				// if row isn't just a newline
+				if(row.start != row.end){
+					--index; // position at the end of the previous character
+				}
+				return glyphs[index].maxx - glyph_offsets[index];
 			}
+
 			auto const row_end_pos = [&]{
 				if(row.start != row.end)
 					return row.end-1 - str.data();
