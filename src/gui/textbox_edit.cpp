@@ -495,7 +495,7 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 	}
 
 	// check if last row is empty
-	if(*rows.back().start != '\0'){
+	if(!selection_ended && *rows.back().start != '\0'){
 		process_row(rows.size()-1);
 	}
 }
