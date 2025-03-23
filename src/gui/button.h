@@ -12,8 +12,8 @@ struct button : panel
 	NVGcolor press_color{ 0.25,0.25,0.25,1 };
 	NVGcolor focus_color{ 0.3,0.3,0.3,1 };
 
-	std::function<void()> callback;
-	std::function<void()> double_click_callback;
+	std::function<void()> callback = []{};
+	std::function<void()> double_click_callback = []{};
 
 	button();
 
