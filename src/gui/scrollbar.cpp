@@ -1,6 +1,9 @@
 #include "scrollbar.h"
 
 #include "button.h"
+#include "triangle.h"
+
+static auto const arrow_color = nvgRGBA(135, 135, 135, 255);
 
 scrollbar::scrollbar(layout::orientation const orient) :
 	scroll_up(create_child<button>()),
@@ -21,6 +24,29 @@ scrollbar::scrollbar(layout::orientation const orient) :
 
 	scroll_up.min_size = { 20,20 };
 	color_scroll_button(scroll_up);
+	{
+		auto& arrow = scroll_up.create_child<triangle>();
+		arrow.min_size = { 20,20 };
+		arrow.color = arrow_color;
+		if(orient == layout::orientation::vertical){
+			// up
+			arrow.vertices[0].x = arrow.min_size.x / 2;
+			arrow.vertices[0].y = arrow.min_size.y / 3;
+			arrow.vertices[1].x = arrow.min_size.x / 4;
+			arrow.vertices[1].y = (arrow.min_size.y / 3) * 2;
+			arrow.vertices[2].x = (arrow.min_size.x / 4) * 3;
+			arrow.vertices[2].y = (arrow.min_size.y / 3) * 2;
+		}
+		else{
+			// left
+			arrow.vertices[0].x = arrow.min_size.x / 3;
+			arrow.vertices[0].y = arrow.min_size.y / 2;
+			arrow.vertices[1].x = (arrow.min_size.x / 3) * 2;
+			arrow.vertices[1].y = arrow.min_size.y / 4;
+			arrow.vertices[2].x = (arrow.min_size.x / 3) * 2;
+			arrow.vertices[2].y = (arrow.min_size.y / 4) * 3;
+		}
+	}
 
 	track.min_size = { 20,20 };
 	track.color = track.background_color = nvgRGBA(50, 50, 50, 255);
@@ -36,6 +62,29 @@ scrollbar::scrollbar(layout::orientation const orient) :
 
 	scroll_down.min_size = { 20,20 };
 	color_scroll_button(scroll_down);
+	{
+		auto& arrow = scroll_down.create_child<triangle>();
+		arrow.min_size = { 20,20 };
+		arrow.color = arrow_color;
+		if(orient == layout::orientation::vertical){
+			// down
+			arrow.vertices[0].x = arrow.min_size.x / 2;
+			arrow.vertices[0].y = (arrow.min_size.y / 3) * 2;
+			arrow.vertices[1].x = arrow.min_size.x / 4;
+			arrow.vertices[1].y = arrow.min_size.y / 3;
+			arrow.vertices[2].x = (arrow.min_size.x / 4) * 3;
+			arrow.vertices[2].y = arrow.min_size.y / 3;
+		}
+		else{
+			// right
+			arrow.vertices[0].x = (arrow.min_size.x / 3) * 2;
+			arrow.vertices[0].y = arrow.min_size.y / 2;
+			arrow.vertices[1].x = arrow.min_size.x / 3;
+			arrow.vertices[1].y = arrow.min_size.y / 4;
+			arrow.vertices[2].x = arrow.min_size.x / 3;
+			arrow.vertices[2].y = (arrow.min_size.y / 4) * 3;
+		}
+	}
 
 	/*TODO
 	expand depends on the scrollbar's orientation
