@@ -103,7 +103,7 @@ void text::update_size()
 		size.y = min_size.y = lineh;
 	}
 	else {
-		//NOTE: nvgTextBounds doesn't handle spaces at the end of the string correctly. https://github.com/memononen/nanovg/issues/636
+		//NOTE: nvgTextBounds doesn't handle spaces at the end of the string correctly. https://github.com/memononen/nanovg/issues/636 https://github.com/memononen/nanovg/issues/225
 		auto const abs_pos = get_position();
 		min_size.x = glyphs[str.size()-1].maxx - abs_pos.x;
 		min_size.y = lineh;
