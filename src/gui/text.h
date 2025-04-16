@@ -31,9 +31,12 @@ struct text : element
 
 	void update_glyph_positions();
 
-	void update_glyphs_no_bounds();
-
 	void update_glyphs();
+
+	void update_glyphs_and_size();
+
+	// both size and min_size
+	void update_size();
 
 	void init_font(NVGcontext* vg);
 

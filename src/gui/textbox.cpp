@@ -8,7 +8,7 @@ textbox::textbox()
 void textbox::update_text()
 {
 	update_rows();
-	update_glyphs();
+	update_glyphs_and_size();
 }
 
 void textbox::update_glyph_positions()
@@ -49,7 +49,7 @@ void textbox::update_glyph_positions()
 	nvgRestore(vg);
 }
 
-void textbox::update_glyphs_no_bounds()
+void textbox::update_glyphs()
 {
 	auto const max_glyphs = str.size();
 
@@ -58,10 +58,10 @@ void textbox::update_glyphs_no_bounds()
 	update_glyph_positions();
 }
 
-void textbox::update_glyphs()
+void textbox::update_glyphs_and_size()
 {
-	update_glyphs_no_bounds();
-	update_bounds();
+	update_glyphs();
+	update_size();
 }
 
 void textbox::update_rows()
@@ -99,7 +99,7 @@ void textbox::update_rows()
 	}
 }
 
-void textbox::update_bounds()
+void textbox::update_size()
 {
 	auto& vg = context->vg;
 	nvgSave(vg);

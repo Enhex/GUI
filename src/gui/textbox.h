@@ -35,10 +35,10 @@ struct textbox : text
 	void update_text() override;
 
 	void update_glyph_positions();
-	void update_glyphs_no_bounds();
 	void update_glyphs();
+	void update_glyphs_and_size();
 
 	void update_rows();
-	void update_bounds();
+	void update_size();
 	void draw(NVGcontext* vg) override;
 };

@@ -42,7 +42,7 @@ text_edit::text_edit()
 void text_edit::on_str_changed()
 {
 	text_edit_shared::on_str_changed(str.size());
-	update_glyphs();
+	update_glyphs_and_size();
 	on_text_changed();
 }
 
@@ -285,7 +285,7 @@ void text_edit::draw(NVGcontext* vg)
 	if(has_selection())
 	{
 		if (glyphs == nullptr)
-			update_glyphs();
+			update_glyphs_and_size();
 
 		auto const absolute_position = get_position();
 
@@ -313,7 +313,7 @@ void text_edit::draw(NVGcontext* vg)
 	if (this == input_manager.focused_element)
 	{
 		if (glyphs == nullptr)
-			update_glyphs();
+			update_glyphs_and_size();
 
 		auto const absolute_position = get_position();
 

@@ -44,7 +44,7 @@ void textbox_edit::on_str_changed()
 	text_edit_shared::on_str_changed(str.size());
 	update_rows();
 	cursor_row = get_cursor_row(); // must be done after update_rows()
-	update_glyphs();
+	update_glyphs_and_size();
 	on_text_changed();
 }
 
@@ -416,7 +416,7 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 		return;
 
 	if (glyphs == nullptr)
-		update_glyphs();
+		update_glyphs_and_size();
 
 	// sort positions
 	auto start_pos = selection_start_pos > selection_end_pos ? selection_end_pos : selection_start_pos;
@@ -523,7 +523,7 @@ void textbox_edit::draw(NVGcontext* vg)
 	if (this == input_manager.focused_element)
 	{
 		if (glyphs == nullptr)
-			update_glyphs();
+			update_glyphs_and_size();
 
 		auto const absolute_position = get_position();
 

@@ -27,7 +27,7 @@ void text::set_text(std::string const& new_str)
 
 void text::update_text()
 {
-	update_glyphs();
+	update_glyphs_and_size();
 }
 
 void text::set_style(style::style_t const& style)
@@ -57,7 +57,7 @@ void text::set_style(style::style_t const& style)
 	}
 
 	if(bounds_need_update)
-		update_glyphs();
+		update_glyphs_and_size();
 
 	read(color, "color");
 }
@@ -75,7 +75,7 @@ void text::update_glyph_positions()
 	nvgRestore(vg);
 }
 
-void text::update_glyphs_no_bounds()
+void text::update_glyphs()
 {
 	auto const max_glyphs = str.size();
 
@@ -84,10 +84,14 @@ void text::update_glyphs_no_bounds()
 	update_glyph_positions();
 }
 
-void text::update_glyphs()
+void text::update_glyphs_and_size()
 {
-	update_glyphs_no_bounds();
+	update_glyphs();
+	update_size();
+}
 
+void text::update_size()
+{
 	auto& vg = context->vg;
 	nvgSave(vg);
 
