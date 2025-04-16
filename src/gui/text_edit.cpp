@@ -262,6 +262,10 @@ void text_edit::on_key_press(int key, int mods)
 			select_all();
 		}
 		break;
+
+	case GLFW_KEY_TAB:
+		on_character('\t');
+		break;
 	}
 }
 

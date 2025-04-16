@@ -393,6 +393,10 @@ void textbox_edit::on_key_press(int key, int mods)
 	case GLFW_KEY_ENTER:
 		on_character('\n');
 		break;
+
+	case GLFW_KEY_TAB:
+		on_character('\t');
+		break;
 	}
 }
 
