@@ -50,7 +50,7 @@ void text_edit::update_glyph_positions()
 {
 	auto const abs_pos = get_position();
 	for(auto& span : spans){
-		span.update_glyph_positions(abs_pos);
+		span.update_glyph_positions(context->vg, abs_pos);
 	}
 
 	if(cursor_pos > str.size())

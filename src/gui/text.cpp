@@ -30,20 +30,6 @@ void text::update_text()
 	update_spans_and_size();
 }
 
-void text::span_t::update_glyphs(nx::Vector2 const& absolute_position)
-{
-	auto const max_glyphs = size();
-	glyphs = std::make_unique<NVGglyphPosition[]>(max_glyphs);
-
-	update_glyph_positions(absolute_position);
-}
-
-void text::span_t::update_glyph_positions(nx::Vector2 const& absolute_position)
-{
-	auto const max_glyphs = size();
-	num_glyphs = nvgTextGlyphPositions(context->vg, absolute_position.x + offset, absolute_position.y, start, end, glyphs.get(), (int)max_glyphs);
-}
-
 void text::update_spans()
 {
 	spans.clear();
@@ -92,7 +78,7 @@ void text::update_spans()
 				// advance the offset by the span's width
 				// need to use the span's glyphs (without the tabs as they'll result wrong glyph positions)
 				span.offset = offset; // must be set before updating the span's glyphs
-				span.update_glyphs(abs_pos);
+				span.update_glyphs(vg, abs_pos);
 				auto const span_width = span.glyphs[span.num_glyphs-1].maxx -span.offset - abs_pos.x;
 				offset += span_width;
 			}

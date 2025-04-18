@@ -2,6 +2,8 @@
 
 #include "element.h"
 
+#include "text_span.h"
+
 struct text : element
 {
 	inline static constexpr auto element_name{ "text" };
@@ -14,25 +16,7 @@ struct text : element
 	float font_size = 12;
 	NVGcolor color = nvgRGBA(255, 255, 255, 255);
 
-	struct span_t{
-		const char* start = nullptr;
-		const char* end = nullptr; // either tab or string end (one past the last character)
-		float offset = 0; // offset in the line relative to its start
-		size_t leading_tabs;
-
-		// glyphs' absolute positions
-		std::unique_ptr<NVGglyphPosition[]> glyphs;
-		int num_glyphs = 0;
-
-		size_t size() const{
-			return end - start;
-		}
-
-		void update_glyphs(nx::Vector2 const& absolute_position);
-		void update_glyph_positions(nx::Vector2 const& absolute_position);
-	};
-
-	std::vector<span_t> spans;
+	std::vector<text_span_t> spans;
 	float tab_width = 0;
 
 	text();
