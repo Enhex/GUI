@@ -228,35 +228,27 @@ void text_edit::on_key_press(int key, int mods)
 		break;
 
 	case GLFW_KEY_LEFT:
-		if (cursor_pos > 0)
-		{
-			auto const select = mods & GLFW_MOD_SHIFT;
-			if(select && !has_selection()) {
-				selection_start_pos = cursor_pos;
-			}
-
+	{
+		auto const select = shared_select_code(mods);
+		if(cursor_pos > 0){
 			set_cursor_pos(cursor_pos - 1);
 
 			if(select)
 				selection_end_pos = cursor_pos;
 		}
 		break;
-
+	}
 	case GLFW_KEY_RIGHT:
-		if (cursor_pos < str.size())
-		{
-			auto const select = mods & GLFW_MOD_SHIFT;
-			if(select && !has_selection()) {
-				selection_start_pos = cursor_pos;
-			}
-
+	{
+		auto const select = shared_select_code(mods);
+		if(cursor_pos < str.size()){
 			set_cursor_pos(cursor_pos + 1);
 
 			if(select)
 				selection_end_pos = cursor_pos;
 		}
 		break;
-
+	}
 	case GLFW_KEY_HOME:
 		set_cursor_pos(0);
 		break;

@@ -10,6 +10,18 @@ void text_edit_shared::clear_selection()
 	selection_start_pos = selection_end_pos = 0;
 }
 
+int text_edit_shared::shared_select_code(int mods)
+{
+	auto const select = mods & GLFW_MOD_SHIFT;
+	if(select && !has_selection()) {
+		selection_start_pos = cursor_pos;
+	}
+	if(!select && has_selection()) {
+		clear_selection();
+	}
+	return select;
+}
+
 bool text_edit_shared::is_valid_character(unsigned const codepoint) const
 {
 	if(valid_characters == nullptr)

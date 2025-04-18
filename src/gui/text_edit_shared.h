@@ -19,6 +19,7 @@ struct text_edit_shared
 
 	bool has_selection() const;
 	void clear_selection();
+	int shared_select_code(int mods);
 
 	bool is_valid_character(unsigned const codepoint) const;
 
