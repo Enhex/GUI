@@ -188,7 +188,7 @@ namespace deco
 				// can only display a single line
 				value.str = lines[0].content;
 				// once done constructing the string, update the text size
-				value.update_glyphs_and_size();
+				value.update_spans_and_size();
 			}
 		}
 	}
@@ -197,7 +197,7 @@ namespace deco
 	void read(deco::EntryObject & entry, text_edit & value)
 	{
 		read(entry, static_cast<text&>(value));
-		value.update_glyphs_and_size();
+		value.update_spans_and_size();
 	}
 
 

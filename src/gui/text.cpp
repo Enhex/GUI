@@ -27,7 +27,88 @@ void text::set_text(std::string const& new_str)
 
 void text::update_text()
 {
-	update_glyphs_and_size();
+	update_spans_and_size();
+}
+
+void text::span_t::update_glyphs(nx::Vector2 const& absolute_position)
+{
+	auto const max_glyphs = size();
+	glyphs = std::make_unique<NVGglyphPosition[]>(max_glyphs);
+
+	update_glyph_positions(absolute_position);
+}
+
+void text::span_t::update_glyph_positions(nx::Vector2 const& absolute_position)
+{
+	auto const max_glyphs = size();
+	num_glyphs = nvgTextGlyphPositions(context->vg, absolute_position.x + offset, absolute_position.y, start, end, glyphs.get(), (int)max_glyphs);
+}
+
+void text::update_spans()
+{
+	spans.clear();
+	if(!str.empty()){
+		auto abs_pos = get_position();
+
+		// init_font for both tab width and updating spans' glyphs
+		auto& vg = context->vg;
+		nvgSave(vg);
+		init_font(vg); // for correct font size
+
+		// calculate tab width
+		NVGglyphPosition glyph;
+		nvgTextGlyphPositions(vg, 0, 0, " ", nullptr, &glyph, 1);
+		auto const space_width = glyph.maxx;
+		tab_width = space_width * 4;
+
+		float offset = 0;
+		size_t leading_tabs = 0;
+
+		for(size_t i=0; i < str.size(); ++i){
+			if(str[i] == '\t'){
+				offset += tab_width;
+				++leading_tabs;
+			}
+			else{
+				// start a new span
+				auto& span = spans.emplace_back();
+				span.start = &str[i];
+				// find the span's end
+				for(; i < str.size(); ++i){
+					auto const& c = str[i];
+					if(c == '\t'){
+						span.end = &c;
+						--i;
+						break;
+					}
+				}
+				if(span.end == nullptr){
+					span.end = str.data() + str.size();
+				}
+
+				span.leading_tabs = leading_tabs;
+				leading_tabs = 0;
+
+				// advance the offset by the span's width
+				// need to use the span's glyphs (without the tabs as they'll result wrong glyph positions)
+				span.offset = offset; // must be set before updating the span's glyphs
+				span.update_glyphs(abs_pos);
+				auto const span_width = span.glyphs[span.num_glyphs-1].maxx -span.offset - abs_pos.x;
+				offset += span_width;
+			}
+		}
+
+		// if text ends with tabs
+		if(leading_tabs != 0){
+			auto& span = spans.emplace_back();
+			span.leading_tabs = leading_tabs;
+			span.offset = offset;
+			span.start = str.data() + str.size();
+			span.end = span.start;
+		}
+
+		nvgRestore(vg);
+	}
 }
 
 void text::set_style(style::style_t const& style)
@@ -57,36 +138,14 @@ void text::set_style(style::style_t const& style)
 	}
 
 	if(bounds_need_update)
-		update_glyphs_and_size();
+		update_spans_and_size();
 
 	read(color, "color");
 }
 
-void text::update_glyph_positions()
+void text::update_spans_and_size()
 {
-	auto& vg = context->vg;
-	nvgSave(vg);
-	init_font(vg); // for correct font size
-
-	auto const max_glyphs = str.size();
-	auto const absolute_position = get_position();
-	num_glyphs = nvgTextGlyphPositions(vg, absolute_position.x, absolute_position.y, str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
-
-	nvgRestore(vg);
-}
-
-void text::update_glyphs()
-{
-	auto const max_glyphs = str.size();
-
-	glyphs = std::make_unique<NVGglyphPosition[]>(max_glyphs);
-
-	update_glyph_positions();
-}
-
-void text::update_glyphs_and_size()
-{
-	update_glyphs();
+	update_spans();
 	update_size();
 }
 
@@ -105,7 +164,13 @@ void text::update_size()
 	else {
 		//NOTE: nvgTextBounds doesn't handle spaces at the end of the string correctly. https://github.com/memononen/nanovg/issues/636 https://github.com/memononen/nanovg/issues/225
 		auto const abs_pos = get_position();
-		min_size.x = glyphs[str.size()-1].maxx - abs_pos.x;
+		auto const& span = spans.back();
+		if(span.size() == 0){
+			min_size.x = span.offset;
+		}
+		else{
+			min_size.x = span.glyphs[span.size()-1].maxx - abs_pos.x;
+		}
 		min_size.y = lineh;
 
 		size = min_size;
@@ -129,5 +194,7 @@ void text::draw(NVGcontext* vg)
 	float ascender, descender, lineh;
 	nvgTextMetrics(vg, &ascender, &descender, &lineh);
 	auto absolute_position = get_position();
-	nvgText(vg, absolute_position.x, absolute_position.y + ascender, str.c_str(), nullptr);
+	for(auto const& span : spans){
+		nvgText(vg, absolute_position.x + span.offset, absolute_position.y + ascender, span.start, span.end);
+	}
 }

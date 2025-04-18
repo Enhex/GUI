@@ -14,9 +14,26 @@ struct text : element
 	float font_size = 12;
 	NVGcolor color = nvgRGBA(255, 255, 255, 255);
 
-	// glyphs' absolute positions
-	std::unique_ptr<NVGglyphPosition[]> glyphs;
-	int num_glyphs = 0;
+	struct span_t{
+		const char* start = nullptr;
+		const char* end = nullptr; // either tab or string end (one past the last character)
+		float offset = 0; // offset in the line relative to its start
+		size_t leading_tabs;
+
+		// glyphs' absolute positions
+		std::unique_ptr<NVGglyphPosition[]> glyphs;
+		int num_glyphs = 0;
+
+		size_t size() const{
+			return end - start;
+		}
+
+		void update_glyphs(nx::Vector2 const& absolute_position);
+		void update_glyph_positions(nx::Vector2 const& absolute_position);
+	};
+
+	std::vector<span_t> spans;
+	float tab_width = 0;
 
 	text();
 
@@ -29,11 +46,9 @@ struct text : element
 
 	void set_style(style::style_t const& style) override;
 
-	void update_glyph_positions();
+	void update_spans();
 
-	void update_glyphs();
-
-	void update_glyphs_and_size();
+	void update_spans_and_size();
 
 	// both size and min_size
 	void update_size();

@@ -42,16 +42,19 @@ text_edit::text_edit()
 void text_edit::on_str_changed()
 {
 	text_edit_shared::on_str_changed(str.size());
-	update_glyphs_and_size();
+	update_spans_and_size();
 	on_text_changed();
 }
 
 void text_edit::update_glyph_positions()
 {
-	text::update_glyph_positions();
+	auto const abs_pos = get_position();
+	for(auto& span : spans){
+		span.update_glyph_positions(abs_pos);
+	}
 
-	if(cursor_pos > num_glyphs)
-		set_cursor_pos(num_glyphs);
+	if(cursor_pos > str.size())
+		set_cursor_pos(str.size());
 }
 
 void text_edit::set_cursor_to_mouse_pos()
@@ -60,27 +63,52 @@ void text_edit::set_cursor_to_mouse_pos()
 	auto& input_manager = context->input_manager;
 	auto const mouse_x = input_manager.mouse_pos.x;
 
+	size_t pos = 0;
 	bool glyph_clicked = false;
-
-	for (auto i = num_glyphs; i-- > 0;)
-	{
-		auto const& glyph = glyphs[i];
-		auto const x_mid = glyph.x + (glyph.maxx - glyph.minx) / 2;
-
-		// check if the glyph was clicked
-		if (mouse_x >= glyph.minx &&
-			mouse_x <= x_mid) {
-			set_cursor_pos(i);
+	// check if the glyph was clicked
+	auto check_clicked = [&](float x_min, float x_max, float x_mid){
+		if(mouse_x >= x_min &&
+		   mouse_x <= x_mid)
+		{
+			set_cursor_pos(pos);
 			glyph_clicked = true;
-			break;
+			return true;
 		}
-		else if (mouse_x >= x_mid &&
-					mouse_x <= glyph.maxx) {
-			set_cursor_pos(i+1);
+		else if(mouse_x >= x_mid &&
+		        mouse_x <= x_max)
+		{
+			set_cursor_pos(pos+1);
 			glyph_clicked = true;
-			break;
+			return true;
+		}
+		return false;
+	};
+
+	auto const abs_pos = get_position();
+
+	for(auto const& span : spans){
+		// tabs
+		for(size_t i=1; i <= span.leading_tabs; ++i){
+			auto const x_min = (abs_pos.x + span.offset) - tab_width * i;
+			auto const x_max = x_min + tab_width;
+			auto const x_mid = x_min + (tab_width / 2);
+			if(check_clicked(x_min, x_max, x_mid)){
+				goto label_clicked;
+			}
+			++pos;
+		}
+		// glyphs
+		for(size_t i=0; i < span.num_glyphs; ++i){
+			auto const& glyph = span.glyphs[i];
+			auto const x_mid = glyph.x + (glyph.maxx - glyph.minx) / 2;
+			if(check_clicked(glyph.minx, glyph.maxx, x_mid)){
+				goto label_clicked;
+			}
+			++pos;
 		}
 	}
+
+	label_clicked:
 
 	// if clicked past the last character, position the cursor at the end of the text
 	if(!glyph_clicked) {
@@ -283,23 +311,43 @@ void text_edit::on_character(unsigned codepoint)
 	//NOTE: no need to update glyphs when deleting since the deleted glyphs won't be accessed.
 }
 
+float text_edit::get_char_pos_x(size_t char_pos, nx::Vector2 const& absolute_position)
+{
+	if(char_pos == 0){
+		return absolute_position.x; // may have no characters, position at the start.
+	}
+	else{
+		size_t pos = 0;
+		for(auto const& span : spans){
+			// tabs
+			pos += span.leading_tabs;
+			if(char_pos <= pos){
+				auto const tabs = pos - char_pos;
+				return span.offset - (tabs * tab_width) + absolute_position.x;
+			}
+			// glyphs
+			auto const start_pos = pos;
+			pos += span.size();
+			if(char_pos <= pos){
+				auto const glyph_index = (char_pos-1) - start_pos;
+				return span.glyphs[glyph_index].maxx;
+			}
+		}
+	}
+	// error: char_pos is outside string bounds
+	return 0;
+}
+
 void text_edit::draw(NVGcontext* vg)
 {
 	// draw selection background
 	if(has_selection())
 	{
-		if (glyphs == nullptr)
-			update_glyphs_and_size();
+		update_spans_and_size();
 
 		auto const absolute_position = get_position();
-
-		auto const x_start = selection_start_pos == 0 ?
-			absolute_position.x : // may have no characters, position at the start.
-			glyphs[selection_start_pos-1].maxx; // position at the end of the previous character
-
-		auto const x_end = selection_end_pos == 0 ?
-			absolute_position.x :
-			glyphs[selection_end_pos-1].maxx;
+		auto const x_start = get_char_pos_x(selection_start_pos, absolute_position);
+		auto const x_end = get_char_pos_x(selection_end_pos, absolute_position);
 
 		nvgBeginPath(vg);
 		nvgRect(vg,
@@ -316,14 +364,10 @@ void text_edit::draw(NVGcontext* vg)
 	// draw cursor
 	if (this == input_manager.focused_element)
 	{
-		if (glyphs == nullptr)
-			update_glyphs_and_size();
+		update_spans_and_size();
 
 		auto const absolute_position = get_position();
-
-		auto const x_pos = cursor_pos == 0 ?
-			absolute_position.x : // may have no characters, position at the start.
-			glyphs[cursor_pos-1].maxx; // position at the end of the previous character
+		auto const x_pos = get_char_pos_x(cursor_pos, absolute_position);
 
 		nvgBeginPath(vg);
 		nvgMoveTo(vg, x_pos, absolute_position.y);
@@ -344,8 +388,7 @@ void text_edit::update_text()
 void text_edit::post_layout()
 {
 	// glyph positions may change
-	if (glyphs != nullptr)
-		update_glyph_positions();
+	update_glyph_positions();
 }
 
 void text_edit::delete_selection()
