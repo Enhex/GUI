@@ -13,37 +13,29 @@ void textbox::update_text()
 
 void textbox::update_glyph_positions()
 {
+	num_glyphs = 0;
+	if(rows.empty()){
+		return;
+	}
+
 	auto& vg = context->vg;
 	nvgSave(vg);
 	init_font(vg); // for correct font size
 
-	auto const max_glyphs = str.size();
-	auto const absolute_position = get_position();
-	num_glyphs = nvgTextGlyphPositions(vg, absolute_position.x, absolute_position.y, str.c_str(), nullptr, glyphs.get(), (int)max_glyphs);
-
 	// nvgTextGlyphPositions only works with single line so characters in a new line got wrong X position as if they're all in a single line,
-	// so fix the positions.
-	//NOTE: can't edit positions directly otherwise nanovg crashes.
-	//NOTE: starting from i=1 because first line doesn't need offsetting, except the newline of the first line.
-	glyph_offsets.resize(max_glyphs);
-	// offset the first line's newline
-	if(rows.size() > 1) { // at least 1 line and it isn't the last one
-		auto const glyph_x_offset = glyphs[rows[0].start - str.data()].minx - absolute_position.x;
-		glyph_offsets[rows[0].end - str.data()] = glyph_x_offset;
-	}
-	// offset the rest of the lines
-	for (size_t i=0; i < rows.size(); ++i)
-	{
+	// so call it for each line separately
+	auto const absolute_position = get_position();
+	size_t glpyhs_i = 0; // offset of each row
+	for(size_t i=0; i < rows.size()-1; ++i){
 		auto const& row = rows[i];
-		auto const glyph_x_offset = glyphs[row.start - str.data()].minx - absolute_position.x;
-		for(auto p = row.start; p < row.end; ++p) {
-			glyph_offsets[p - str.data()] = glyph_x_offset;
-		}
-		// newline also gets a glyph, excluding the last row since it doesn't have newline.
-		//last row actually doesn't have a newline?
-		if(i < rows.size()-1) {
-			glyph_offsets[row.end - str.data()] = glyph_x_offset;
-		}
+		auto const chars_count = row.size()+1;
+		num_glyphs += nvgTextGlyphPositions(vg, absolute_position.x, absolute_position.y, row.start, row.end+1, glyphs.get()+glpyhs_i, (int)chars_count);
+		glpyhs_i += chars_count;
+	}
+	// last row doesn't have a newline at the end
+	{
+		auto const& row = rows.back();
+		num_glyphs += nvgTextGlyphPositions(vg, absolute_position.x, absolute_position.y, row.start, row.end, glyphs.get()+glpyhs_i, (int)row.size());
 	}
 
 	nvgRestore(vg);
@@ -112,16 +104,16 @@ void textbox::update_size()
 		size.y = min_size.y = lineh;
 	}
 	else {
-		auto const abs_pos = get_position();
-		min_size.x = glyphs[0].maxx - glyph_offsets[0] - abs_pos.x;
+		min_size.x = glyphs[0].maxx - glyphs[0].minx;
 
 		for(auto const& row : rows) {
 			// if it's an empty row its width is 0
 			if(row.size() == 0)
 				continue;
 
-			auto const glyph_index = row.end-1 - str.data();
-			auto const row_width = glyphs[glyph_index].maxx - glyph_offsets[glyph_index] - abs_pos.x;
+			auto const last_glyph_i = row.end-1 - str.data();
+			auto const first_glyph_i = row.start - str.data();
+			auto const row_width = glyphs[last_glyph_i].maxx - glyphs[first_glyph_i].minx;;
 			// using local space with position 0, can directly use max point instead of calculating bounding box size
 			if(min_size.x < row_width)
 				min_size.x = row_width;

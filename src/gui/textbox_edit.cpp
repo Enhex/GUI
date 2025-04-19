@@ -110,13 +110,11 @@ void textbox_edit::set_cursor_to_mouse_pos(bool unique)
 			for(auto glyph_index = row.start - str.data(); glyph_index != row_end; ++glyph_index)
 			{
 				auto const& glyph = glyphs[glyph_index];
-				auto const& x_offset = glyph_offsets[glyph_index];
-				auto const glyph_x = glyph.x - x_offset;
-				auto const minx = glyph.minx - x_offset;
-				auto const maxx = glyph.maxx - x_offset;
+				auto const& minx = glyph.minx;
+				auto const& maxx = glyph.maxx;
 
 				// clicking on the left side of a glyph positions the cursor before it, and right side after it.
-				auto const x_mid = glyph_x + (maxx - minx) / 2;
+				auto const x_mid = minx + (maxx - minx) / 2;
 
 				// check if the glyph was clicked on its left side
 				if (mouse_x >= minx &&
@@ -433,10 +431,10 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 			// if selection already started highlight from the start of the row
 			if(!selection_started && is_start_in_row && start_pos > 0) {
 				auto const index = start_pos-1;
-				// if the previous character is a newline, use the current character's min
+				// if the previous character is a newline, use the current character's min which is absolute position X (first char in the row)
 				if(str[index] == '\n')
-					return glyphs[start_pos].minx - glyph_offsets[start_pos]; // position at the end of the previous character
-				return glyphs[index].maxx - glyph_offsets[index]; // position at the end of the previous character
+					return absolute_position.x;
+				return glyphs[index].maxx; // position at the end of the previous character
 			}
 			return absolute_position.x;
 		}();
@@ -463,7 +461,7 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 				if(row.start != row.end){
 					--index; // position at the end of the previous character
 				}
-				return glyphs[index].maxx - glyph_offsets[index];
+				return glyphs[index].maxx;
 			}
 
 			auto const row_end_pos = [&]{
@@ -472,7 +470,7 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 				else
 					return row.end - str.data();
 			}();
-			return glyphs[row_end_pos].maxx - glyph_offsets[row_end_pos]; // position at the end of the row
+			return glyphs[row_end_pos].maxx; // position at the end of the row
 		}();
 
 		nvgBeginPath(vg);
@@ -526,10 +524,12 @@ void textbox_edit::draw(NVGcontext* vg)
 			else if(cursor_pos == num_glyphs) {
 				auto index = cursor_pos-1;
 				if(str[index] == '\n')
-					return absolute_position.x;
-				return glyphs[index].maxx - glyph_offsets[index];
+					return glyphs[index].minx;
+					//return absolute_position.x;
+				// cursor_pos-1 is in the same row as cursor_pos because if it was in the previous row the char would've been newline
+				return glyphs[index].maxx;
 			}
-			return glyphs[cursor_pos].minx - glyph_offsets[cursor_pos]; // position at the end of the previous character
+			return glyphs[cursor_pos-1].maxx; // position at the end of the previous character
 		}();
 		nvgBeginPath(vg);
 		nvgMoveTo(vg, x_pos, y_pos);

@@ -28,7 +28,6 @@ struct textbox : text
 	// glyphs' absolute positions
 	std::unique_ptr<NVGglyphPosition[]> glyphs;
 	int num_glyphs = 0;
-	std::vector<float> glyph_offsets; // used to correct nanovg's X positions after newlines
 
 	textbox();
 
