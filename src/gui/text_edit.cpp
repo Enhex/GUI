@@ -64,21 +64,18 @@ void text_edit::set_cursor_to_mouse_pos()
 	auto const mouse_x = input_manager.mouse_pos.x;
 
 	size_t pos = 0;
-	bool glyph_clicked = false;
 	// check if the glyph was clicked
 	auto check_clicked = [&](float x_min, float x_max, float x_mid){
 		if(mouse_x >= x_min &&
 		   mouse_x <= x_mid)
 		{
 			set_cursor_pos(pos);
-			glyph_clicked = true;
 			return true;
 		}
 		else if(mouse_x >= x_mid &&
 		        mouse_x <= x_max)
 		{
 			set_cursor_pos(pos+1);
-			glyph_clicked = true;
 			return true;
 		}
 		return false;
@@ -108,15 +105,18 @@ void text_edit::set_cursor_to_mouse_pos()
 		}
 	}
 
-	label_clicked:
-
-	// if clicked past the last character, position the cursor at the end of the text
-	if(!glyph_clicked) {
+	// if got here no glyph was clicked (otherwise would go to label_clicked)
+	{
+		// if clicked past the last character, position the cursor at the end of the text
 		auto const abs_text_end = get_position().x + size.x;
 		if(mouse_x > abs_text_end) {
 			set_cursor_pos(str.size());
 		}
+		return; // not clicked
 	}
+
+	label_clicked:
+	return;
 }
 
 void text_edit::on_mouse_press()
