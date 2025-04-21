@@ -88,8 +88,8 @@ void text_edit::set_cursor_to_mouse_pos()
 
 	for(auto const& span : spans){
 		// tabs
-		for(size_t i=1; i <= span.leading_tabs; ++i){
-			auto const x_min = (abs_pos.x + span.offset) - tab_width * i;
+		for(size_t i=0; i < span.leading_tabs; ++i){
+			auto const x_min = (abs_pos.x + span.offset) - (tab_width * (span.leading_tabs-i));
 			auto const x_max = x_min + tab_width;
 			auto const x_mid = x_min + (tab_width / 2);
 			if(check_clicked(x_min, x_max, x_mid)){
