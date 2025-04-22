@@ -2,7 +2,7 @@
 
 textbox::textbox()
 {
-	style = element_name;
+	apply_style();
 }
 
 void textbox::update_text()

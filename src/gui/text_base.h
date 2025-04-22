@@ -13,6 +13,8 @@ struct text_base : element
 
 	float tab_width = 0;
 
+	text_base();
+
 	void setup(int new_font, float new_font_size, std::string const& new_str);
 
 	void setup(NVGcontext* vg, int new_font, float new_font_size, std::string const& new_str);

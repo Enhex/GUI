@@ -1,5 +1,10 @@
 #include "text_base.h"
 
+text_base::text_base()
+{
+	style = "text";
+}
+
 void text_base::setup(int new_font, float new_font_size, std::string const& new_str)
 {
 	setup(context->vg, new_font, new_font_size, new_str);

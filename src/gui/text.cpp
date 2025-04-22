@@ -2,7 +2,6 @@
 
 text::text()
 {
-	style = element_name;
 	apply_style();
 }
 
