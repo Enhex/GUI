@@ -1,16 +1,17 @@
 #pragma once
 
-#include "text.h"
+#include "text_base.h"
 
 /* a multi-line text.
 unlike single line text that updates its size based on the text, here the text may auto-split
 across lines so the size isn't derived from the text.
 */
-struct textbox : text
+struct textbox : text_base
 {
 	struct Row {
 		const char* start = nullptr;
 		const char* end = nullptr; // either newline or string end (one past the last character)
+		std::vector<text_span_t> spans;
 
 		size_t size() const
 		{
@@ -25,19 +26,14 @@ struct textbox : text
 
 	std::vector<Row> rows;
 
-	// glyphs' absolute positions
-	std::unique_ptr<NVGglyphPosition[]> glyphs;
-	int num_glyphs = 0;
-
 	textbox();
 
 	void update_text() override;
 
-	void update_glyph_positions();
-	void update_glyphs();
-	void update_glyphs_and_size();
+	void update_spans_and_size();
 
 	void update_rows();
+	void update_spans(); // must be done after update_rows()
 	void update_size();
 	void draw(NVGcontext* vg) override;
 };

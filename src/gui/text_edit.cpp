@@ -66,15 +66,12 @@ void text_edit::set_cursor_to_mouse_pos()
 	size_t pos = 0;
 	// check if the glyph was clicked
 	auto check_clicked = [&](float x_min, float x_max, float x_mid){
-		if(mouse_x >= x_min &&
-		   mouse_x <= x_mid)
-		{
+		auto const result = text_edit_shared::check_clicked(mouse_x, x_min, x_max, x_mid);
+		if(result == text_edit_shared::glyph_click_result_t::left){
 			set_cursor_pos(pos);
 			return true;
 		}
-		else if(mouse_x >= x_mid &&
-		        mouse_x <= x_max)
-		{
+		else if(result == text_edit_shared::glyph_click_result_t::right){
 			set_cursor_pos(pos+1);
 			return true;
 		}
@@ -97,7 +94,7 @@ void text_edit::set_cursor_to_mouse_pos()
 		// glyphs
 		for(size_t i=0; i < span.num_glyphs; ++i){
 			auto const& glyph = span.glyphs[i];
-			auto const x_mid = glyph.x + (glyph.maxx - glyph.minx) / 2;
+			auto const x_mid = glyph.minx + (glyph.maxx - glyph.minx) / 2;
 			if(check_clicked(glyph.minx, glyph.maxx, x_mid)){
 				goto label_clicked;
 			}
@@ -305,28 +302,10 @@ void text_edit::on_character(unsigned codepoint)
 
 float text_edit::get_char_pos_x(size_t char_pos, nx::Vector2 const& absolute_position)
 {
-	if(char_pos == 0){
-		return absolute_position.x; // may have no characters, position at the start.
+	auto const opt = text_edit_shared::get_char_pos_x(char_pos, absolute_position, spans, tab_width);
+	if(opt){
+		return opt.value();
 	}
-	else{
-		size_t pos = 0;
-		for(auto const& span : spans){
-			// tabs
-			pos += span.leading_tabs;
-			if(char_pos <= pos){
-				auto const tabs = pos - char_pos;
-				return span.offset - (tabs * tab_width) + absolute_position.x;
-			}
-			// glyphs
-			auto const start_pos = pos;
-			pos += span.size();
-			if(char_pos <= pos){
-				auto const glyph_index = (char_pos-1) - start_pos;
-				return span.glyphs[glyph_index].maxx;
-			}
-		}
-	}
-	// error: char_pos is outside string bounds
 	return 0;
 }
 

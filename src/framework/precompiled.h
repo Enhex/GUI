@@ -12,6 +12,7 @@
 #include <map>
 #include <memory>
 #include <nanovg.h>
+#include <optional>
 #include <strong_type.h>
 #include <typeinfo>
 #include <unordered_map>

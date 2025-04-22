@@ -1,5 +1,7 @@
 #pragma once
 
+#include "text_span.h"
+
 // for code reuse between text_edit and textbox_edit
 //NOTE: should be inherited after text
 struct text_edit_shared
@@ -25,6 +27,19 @@ struct text_edit_shared
 
 	// if unique is true will only update last_cursor_pos if pos != cursor_pos
 	void set_cursor_pos(size_t const pos, bool unique=false);
+
+	// for a single line represented by spans
+	// 'char_pos' is relative to the first span's start
+	// if char_pos is not in the spans return empty optional
+	std::optional<float> get_char_pos_x(size_t char_pos, nx::Vector2 const& absolute_position, spans_t const& spans, float const tab_width);
+
+	enum glyph_click_result_t : uint_least8_t{
+		not_clicked,
+		left,
+		right
+	};
+
+	glyph_click_result_t check_clicked(float mouse_x, float x_min, float x_max, float x_mid) const;
 
 	void on_str_changed(size_t str_size);
 };

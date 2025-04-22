@@ -31,6 +31,8 @@ struct textbox_edit : textbox, text_edit_shared
 	void on_key_press(int key, int mods);
 	void on_character(unsigned codepoint);
 
+	float get_char_pos_x(size_t char_pos, nx::Vector2 const& absolute_position, Row const& row);
+
 	void draw_selection_background(NVGcontext* vg, float const lineh);
 	void draw(NVGcontext* vg) override;
 

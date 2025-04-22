@@ -44,15 +44,21 @@ void textbox_edit::on_str_changed()
 	text_edit_shared::on_str_changed(str.size());
 	update_rows();
 	cursor_row = get_cursor_row(); // must be done after update_rows()
-	update_glyphs_and_size();
+	update_spans_and_size();
 	on_text_changed();
 }
 
 void textbox_edit::update_glyph_positions()
 {
-	textbox::update_glyph_positions();
-	if(cursor_pos > num_glyphs)
-		set_cursor_pos(num_glyphs);
+	auto const abs_pos = get_position();
+	for(auto& row : rows){
+		for(auto& span : row.spans){
+			span.update_glyph_positions(context->vg, abs_pos);
+		}
+	}
+
+	if(cursor_pos > str.size())
+		set_cursor_pos(str.size());
 }
 
 void textbox_edit::set_cursor_to_mouse_pos(bool unique)
@@ -103,38 +109,51 @@ void textbox_edit::set_cursor_to_mouse_pos(bool unique)
 						mouse_y <= row_y + lineh;
 		}
 
-		if (is_in_row)
-		{
-			// check if inside a glyph
-			auto const row_end = row.end - str.data();
-			for(auto glyph_index = row.start - str.data(); glyph_index != row_end; ++glyph_index)
-			{
-				auto const& glyph = glyphs[glyph_index];
-				auto const& minx = glyph.minx;
-				auto const& maxx = glyph.maxx;
+		if(is_in_row){
+			size_t pos = row.start - str.data();
 
+			// check if the glyph was clicked
+			auto check_clicked = [&](float x_min, float x_max, float x_mid){
+				auto const result = text_edit_shared::check_clicked(mouse_x, x_min, x_max, x_mid);
 				// clicking on the left side of a glyph positions the cursor before it, and right side after it.
-				auto const x_mid = minx + (maxx - minx) / 2;
-
-				// check if the glyph was clicked on its left side
-				if (mouse_x >= minx &&
-					mouse_x <= x_mid)
-				{
-					set_cursor_pos_and_row(glyph_index, unique);
-					goto glyph_found;
+				if(result == text_edit_shared::glyph_click_result_t::left){
+					set_cursor_pos_and_row(pos, unique);
+					return true;
 				}
-				// or right side
-				else if(mouse_x >= x_mid &&
-						mouse_x <= maxx)
-				{
-					set_cursor_pos_and_row(glyph_index+1, unique);
-					goto glyph_found;
+				else if(result == text_edit_shared::glyph_click_result_t::right){
+					set_cursor_pos_and_row(pos+1, unique);
+					return true;
+				}
+				return false;
+			};
+
+			// check if inside a glyph
+			for(auto const& span : row.spans){
+				// tabs
+				for(size_t i=0; i < span.leading_tabs; ++i){
+					auto const x_min = (abs_pos.x + span.offset) - (tab_width * (span.leading_tabs-i));
+					auto const x_max = x_min + tab_width;
+					auto const x_mid = x_min + (tab_width / 2);
+					if(check_clicked(x_min, x_max, x_mid)){
+						goto label_clicked;
+					}
+					++pos;
+				}
+				// glyphs
+				for(size_t i=0; i < span.size(); ++i){
+					auto const& glyph = span.glyphs[i];
+					auto const x_mid = glyph.minx + (glyph.maxx - glyph.minx) / 2;
+					if(check_clicked(glyph.minx, glyph.maxx, x_mid)){
+						goto label_clicked;
+					}
+					++pos;
 				}
 			}
 
+			// if got here no glyph was clicked (otherwise would go to label_clicked)
 			// place at the end of the row
-			set_cursor_pos_and_row(row_end);
-			glyph_found:
+			set_cursor_pos_and_row(row.end - str.data());
+			label_clicked:
 			// if inside this row can't be inside other rows
 			break;
 		}
@@ -397,13 +416,21 @@ void textbox_edit::on_character(unsigned codepoint)
 	//NOTE: no need to update glyphs when deleting since the deleted glyphs won't be accessed.
 }
 
+float textbox_edit::get_char_pos_x(size_t char_pos, nx::Vector2 const& absolute_position, Row const& row)
+{
+	auto const opt = text_edit_shared::get_char_pos_x(char_pos, absolute_position, row.spans, tab_width);
+	if(opt){
+		return opt.value();
+	}
+	return 0;
+}
+
 void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 {
 	if(!has_selection())
 		return;
 
-	if (glyphs == nullptr)
-		update_glyphs_and_size();
+	update_spans_and_size();
 
 	// sort positions
 	auto start_pos = selection_start_pos > selection_end_pos ? selection_end_pos : selection_start_pos;
@@ -418,6 +445,11 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 		auto const& row = rows[i];
 		auto const start_ptr = str.data() + start_pos;
 		auto const end_ptr = str.data() + end_pos;
+
+		auto const row_start_pos = row.start - str.data();
+		auto const row_end_pos = row.end - str.data();
+		auto const rel_start_pos = start_pos - row_start_pos;
+		auto const rel_end_pos = end_pos - row_start_pos;
 
 		// skip rows before selection
 		// include row end in the case of end being a newline
@@ -434,7 +466,7 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 				// if the previous character is a newline, use the current character's min which is absolute position X (first char in the row)
 				if(str[index] == '\n')
 					return absolute_position.x;
-				return glyphs[index].maxx; // position at the end of the previous character
+				return get_char_pos_x(rel_start_pos, absolute_position, row); // position at the end of the previous character
 			}
 			return absolute_position.x;
 		}();
@@ -456,12 +488,12 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 				selection_ended = true;
 
 			if(is_end_in_row && end_pos > 0){
-				auto index = end_pos;
 				// if row isn't just a newline
 				if(row.start != row.end){
-					--index; // position at the end of the previous character
+					// position at the end of the previous character
+					return get_char_pos_x(rel_end_pos, absolute_position, row);
 				}
-				return glyphs[index].maxx;
+				return get_char_pos_x(rel_end_pos+1, absolute_position, row);
 			}
 
 			auto const row_end_pos = [&]{
@@ -470,7 +502,9 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 				else
 					return row.end - str.data();
 			}();
-			return glyphs[row_end_pos].maxx; // position at the end of the row
+			assert(!row.spans.empty());
+			auto const& last_span = row.spans.back();
+			return last_span.glyphs[last_span.size()-1].maxx; // position at the end of the row
 		}();
 
 		nvgBeginPath(vg);
@@ -509,8 +543,7 @@ void textbox_edit::draw(NVGcontext* vg)
 	// draw cursor
 	if (this == input_manager.focused_element)
 	{
-		if (glyphs == nullptr)
-			update_glyphs_and_size();
+		update_spans_and_size();
 
 		auto const absolute_position = get_position();
 
@@ -518,19 +551,16 @@ void textbox_edit::draw(NVGcontext* vg)
 		// multiply the number of previous newlines by line height
 		auto const y_pos = cursor_row * lineh + absolute_position.y;
 
-		auto const x_pos = [&]{
-			if(cursor_pos == 0)
-				return absolute_position.x; // may have no characters, position at the start.
-			else if(cursor_pos == num_glyphs) {
-				auto index = cursor_pos-1;
-				if(str[index] == '\n')
-					return glyphs[index].minx;
-					//return absolute_position.x;
-				// cursor_pos-1 is in the same row as cursor_pos because if it was in the previous row the char would've been newline
-				return glyphs[index].maxx;
-			}
-			return glyphs[cursor_pos-1].maxx; // position at the end of the previous character
-		}();
+		float x_pos;
+		if(rows.empty()){
+			x_pos = absolute_position.x;
+		}
+		else{
+			auto const row_start_pos = rows[cursor_row].start - str.data();
+			auto const rel_cursor_pos = cursor_pos - row_start_pos;
+			x_pos = get_char_pos_x(rel_cursor_pos, absolute_position, rows[cursor_row]);
+		}
+
 		nvgBeginPath(vg);
 		nvgMoveTo(vg, x_pos, y_pos);
 		nvgLineTo(vg, x_pos, y_pos + lineh);
@@ -566,8 +596,7 @@ void textbox_edit::update_text()
 void textbox_edit::post_layout()
 {
 	// glyph positions may change
-	if (glyphs != nullptr)
-		update_glyph_positions();
+	update_glyph_positions();
 }
 
 void textbox_edit::delete_selection()
