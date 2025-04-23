@@ -16,6 +16,7 @@ struct text_edit : text, text_edit_shared
 	// what to do when the string changes.
 	// default is to update the glyphs and call a callback.
 	virtual void on_str_changed();
+	void on_str_changed_no_callback();
 
 	void update_glyph_positions();
 

@@ -41,9 +41,14 @@ text_edit::text_edit()
 
 void text_edit::on_str_changed()
 {
+	on_str_changed_no_callback();
+	on_text_changed();
+}
+
+void text_edit::on_str_changed_no_callback()
+{
 	text_edit_shared::on_str_changed(str.size());
 	update_spans_and_size();
-	on_text_changed();
 }
 
 void text_edit::update_glyph_positions()
