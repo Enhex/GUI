@@ -13,7 +13,7 @@ struct text : text_base
 
 	text();
 
-	virtual void update_text();
+	void update_text() override;
 
 	void update_spans();
 
