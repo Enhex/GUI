@@ -30,7 +30,6 @@ class GuiConan(ConanFile):
 
 	requires = (
 		"glfw/3.4",
-		"glad/0.1.36",
 		"nanovg/master",
 	)
 

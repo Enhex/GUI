@@ -1,6 +1,6 @@
 #include "application.h"
 
-#define NANOVG_GL2_IMPLEMENTATION
+#define NANOVG_GL3_IMPLEMENTATION
 #include <nanovg_gl.h>
 
 #include <fstream>
@@ -97,7 +97,7 @@ application::application(int width, int height, const char* title, GLFWmonitor* 
 
 	root.min_size = { (float)width, (float)height };
 
-	vg = nvgCreateGL2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
+	vg = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 
 	input_manager.key_pressed = [this](int key){
 		return key_pressed(key);
