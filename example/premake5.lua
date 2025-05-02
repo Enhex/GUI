@@ -57,9 +57,11 @@ workspace("GUI example")
 		filter "configurations:Release"
 			defines { "NDEBUG" }
 			optimize "On"
-			linktimeoptimization "On"
 			buildoptions{"-fdata-sections -ffunction-sections"} -- needed for -gc-sections
 			linkoptions{"-s -Wl,--gc-sections -Wl,--as-needed"}
+			if not _OPTIONS["mingw"] then
+				linktimeoptimization "On"
+			end
 
 	externalproject "GUI"
 		print(_OPTIONS["gui-path"])
