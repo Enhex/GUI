@@ -498,7 +498,7 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 					// position at the end of the previous character
 					return get_char_pos_x(rel_end_pos, absolute_position, row);
 				}
-				return get_char_pos_x(rel_end_pos+1, absolute_position, row);
+				return absolute_position.x;
 			}
 
 			auto const row_end_pos = [&]{
