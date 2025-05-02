@@ -507,9 +507,13 @@ void textbox_edit::draw_selection_background(NVGcontext* vg, float const lineh)
 				else
 					return row.end - str.data();
 			}();
-			assert(!row.spans.empty());
-			auto const& last_span = row.spans.back();
-			return last_span.glyphs[last_span.size()-1].maxx; // position at the end of the row
+			if(!row.spans.empty()){
+				auto const& last_span = row.spans.back();
+				return last_span.glyphs[last_span.size()-1].maxx; // position at the end of the row
+			}
+			else{
+				return absolute_position.x;
+			}
 		}();
 
 		nvgBeginPath(vg);
