@@ -22,11 +22,17 @@ namespace input
 			typename std::unordered_map<element*, callback_t>::iterator active_callback_global_unfocused_iter;
 
 			// focused
+			template<bool first=false>
 			typename callbacks_t::iterator subscribe(element* subscriber, callback_t&& callback)
 			{
 				// subscribe
 				auto& callbacks = focused_events[subscriber];
-				callbacks.emplace_back(std::move(callback));
+				if constexpr(first){
+					callbacks.emplace_front(std::move(callback));
+				}
+				else{
+					callbacks.emplace_back(std::move(callback));
+				}
 
 				// add removal callback
 				subscriber->destructor_callbacks.emplace_back([this, subscriber]() {
