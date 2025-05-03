@@ -10,5 +10,7 @@ namespace input
 
 		// used to handle deleting subsription while iterating
 		element* active_callback_element = nullptr;
+
+		bool stop_callbacks = false;
 	}
 }

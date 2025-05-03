@@ -10,6 +10,8 @@ namespace input
 	{
 		extern element* callback_element;
 		extern element* active_callback_element;
+		// used to stop propagating to the rest of the callbacks
+		extern bool stop_callbacks;
 
 		template<typename... Args>
 		struct base
@@ -194,10 +196,15 @@ namespace input
 					// call the callbacks
 					callback_element = &element;
 					for(auto& callback : event_iter->second) {
+						stop_callbacks = false;
 						callback(args...);
 						// stop calling callbacks if the element was deleted
 						if(callback_element == nullptr)
 							return nullptr;
+						// stop callbacks if the called callback requested it
+						if(stop_callbacks){
+							break;
+						}
 					}
 					return &element;
 				}
