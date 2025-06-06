@@ -1,6 +1,6 @@
 #include "application.h"
 
-#define NANOVG_GL3_IMPLEMENTATION
+#define NANOVG_GLES2_IMPLEMENTATION
 #include <nanovg_gl.h>
 
 #include <fstream>
@@ -97,7 +97,7 @@ application::application(int width, int height, const char* title, GLFWmonitor* 
 
 	root.min_size = { (float)width, (float)height };
 
-	vg = nvgCreateGL3(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
+	vg = nvgCreateGLES2(NVG_ANTIALIAS | NVG_STENCIL_STROKES | NVG_DEBUG);
 
 	input_manager.key_pressed = [this](int key){
 		return key_pressed(key);
@@ -191,7 +191,7 @@ void application::create_window(int width, int height, const char * title, GLFWm
 	// Make the window's context current
 	glfwMakeContextCurrent(window);
 
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	if (!gladLoadGLES2Loader((GLADloadproc)glfwGetProcAddress))
 		throw std::runtime_error("GLAD loading failed.");
 
 	glfwSetWindowUserPointer(window, this);
