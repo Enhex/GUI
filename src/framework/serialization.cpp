@@ -8,11 +8,7 @@ namespace deco
 		auto read_num = [&](uint_fast8_t i)
 		{
 			auto const& content = entry.entries[i].content;
-#ifdef __GNUC__ // GCC doesn't support float from_chars()
-			value.rgba[i] = std::stof(std::string(content));
-#else
 			std::from_chars(content.data(), content.data() + content.size(), value.rgba[i]);
-#endif
 		};
 		read_num(0);
 		read_num(1);
@@ -25,11 +21,7 @@ namespace deco
 		auto read_num = [&](uint_fast8_t i)
 		{
 			auto const& content = entry.entries[i].content;
-#ifdef __GNUC__ // GCC doesn't support float from_chars()
-			value[i] = std::stof(std::string(content));
-#else
 			std::from_chars(content.data(), content.data() + content.size(), value[i]);
-#endif
 		};
 		read_num(0);
 		read_num(1);
