@@ -4,6 +4,9 @@
 
 #include "text_span.h"
 
+namespace gui
+{
+
 struct text_base : element
 {
 	std::string str;
@@ -28,3 +31,5 @@ struct text_base : element
 
 	void init_font(NVGcontext* vg);
 };
+
+}

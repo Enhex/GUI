@@ -3,14 +3,14 @@
 #include "base.h"
 #include "orientation.h"
 
-namespace layout
+namespace gui::layout
 {
 	// automatically lays out children vertically/horizontally, with an option for them to expand.
 	// expansion space is divides equally between the expanders.
 	template <typename derived_element>
-	struct box : base<derived_element>
+	struct box_t : base<derived_element>
 	{
-		std::type_info const& type_info() const override { return typeid(box); }
+		std::type_info const& type_info() const override { return typeid(box_t); }
 
 		orientation orient = vertical;
 

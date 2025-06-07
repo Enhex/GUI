@@ -6,6 +6,8 @@
 #include <fstream>
 #include <stdexcept>
 
+namespace gui
+{
 
 static void character_callback(GLFWwindow * window, unsigned int codepoint)
 {
@@ -247,4 +249,6 @@ void application::update_hoevered_element()
 {
 	auto* hovered_el = input_manager.cursor_in_window ? find_hovered_element(root) : nullptr;
 	input_manager.set_hovered_element(hovered_el);
+}
+
 }

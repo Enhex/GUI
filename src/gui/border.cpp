@@ -2,6 +2,9 @@
 
 #include "panel.h"
 
+namespace gui
+{
+
 border::border() :
 	top(create_child<panel>()),
 	middle(create_child<element>()),
@@ -37,4 +40,6 @@ void border::set_border_size(float size)
 	bottom.min_size.y = size;
 	left.min_size.x = size;
 	right.min_size.x = size;
+}
+
 }

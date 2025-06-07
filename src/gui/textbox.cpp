@@ -1,5 +1,8 @@
 #include "textbox.h"
 
+namespace gui
+{
+
 textbox::textbox()
 {
 	apply_style();
@@ -131,4 +134,6 @@ void textbox::draw(NVGcontext* vg)
 			nvgText(vg, absolute_position.x + span.offset, y, span.start, span.end);
 		}
 	}
+}
+
 }

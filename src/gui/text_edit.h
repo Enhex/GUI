@@ -3,6 +3,9 @@
 #include "text.h"
 #include "text_edit_shared.h"
 
+namespace gui
+{
+
 // editable text
 struct text_edit : text, text_edit_shared
 {
@@ -47,3 +50,5 @@ struct text_edit : text, text_edit_shared
 
 	void move_cursor_to_end();
 };
+
+}

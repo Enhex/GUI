@@ -3,6 +3,9 @@
 #include "textbox.h"
 #include "text_edit_shared.h"
 
+namespace gui
+{
+
 // editable text
 struct textbox_edit : textbox, text_edit_shared
 {
@@ -53,3 +56,5 @@ struct textbox_edit : textbox, text_edit_shared
 
 	void set_cursor_pos_and_row(size_t const pos, bool unique=false);
 };
+
+}

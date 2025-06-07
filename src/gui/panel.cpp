@@ -1,5 +1,8 @@
 #include "panel.h"
 
+namespace gui
+{
+
 panel::panel()
 {
 	style = element_name;
@@ -29,4 +32,6 @@ void panel::draw(NVGcontext* vg)
 	nvgRect(vg, absolute_position.x, absolute_position.y, size.x, size.y);
 	nvgFillColor(vg, color);
 	nvgFill(vg);
+}
+
 }

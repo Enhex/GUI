@@ -4,6 +4,9 @@
 
 #include "file_dialog.h"
 
+namespace gui
+{
+
 /*
 file_dialog with built-in modal
 */
@@ -18,3 +21,5 @@ struct file_dialog_modal : modal
 
 	file_dialog_modal();
 };
+
+}

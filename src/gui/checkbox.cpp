@@ -2,6 +2,9 @@
 
 #include "border.h"
 
+namespace gui
+{
+
 checkbox::checkbox()
 {
 	style = element_name;
@@ -59,4 +62,6 @@ bool checkbox::get_state() const
 void checkbox::toggle()
 {
 	set_state(!state);
+}
+
 }

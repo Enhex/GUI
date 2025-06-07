@@ -2,6 +2,9 @@
 
 #include "../math/Vector2.h"
 
+namespace gui
+{
+
 struct text_span_t{
 	const char* start = nullptr;
 	const char* end = nullptr; // either tab or string end (one past the last character)
@@ -21,3 +24,5 @@ struct text_span_t{
 };
 
 using spans_t = std::vector<text_span_t>;
+
+}

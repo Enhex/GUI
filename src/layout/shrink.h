@@ -2,13 +2,13 @@
 
 #include "base.h"
 
-namespace layout
+namespace gui::layout
 {
 	// shrinks the parent to fit around its children, without positioning them.
 	template <typename derived_element>
-	struct shrink : base<derived_element>
+	struct shrink_t : base<derived_element>
 	{
-		std::type_info const& type_info() const override { return typeid(shrink); }
+		std::type_info const& type_info() const override { return typeid(shrink_t); }
 
 		// should the parent change its position too, or only its size?
 		bool shrink_position = true;
@@ -18,7 +18,7 @@ namespace layout
 		void fit() override
 		{
 			auto& parent = *this->parent; // conformance: https://isocpp.org/wiki/faq/templates#nondependent-name-lookup-members
-			auto& parent_rect = static_cast<rectangle&>(parent);
+			auto& parent_rect = static_cast<nx::rectangle&>(parent);
 
 			// nothing to fit around
 			if(parent.children.size() == 0)

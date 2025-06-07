@@ -1,5 +1,8 @@
 #include "text_edit_shared.h"
 
+namespace gui
+{
+
 bool text_edit_shared::has_selection() const
 {
 	return selection_start_pos != selection_end_pos;
@@ -94,4 +97,6 @@ void text_edit_shared::on_str_changed(size_t str_size)
 		const_cast<size_t&>(cursor_pos) = str_size;
 		const_cast<size_t&>(last_cursor_pos) = cursor_pos;
 	}
+}
+
 }

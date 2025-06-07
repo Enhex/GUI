@@ -2,6 +2,9 @@
 
 #include "element.h"
 
+namespace gui
+{
+
 struct button;
 
 struct scrollbar : element
@@ -18,3 +21,5 @@ struct scrollbar : element
 
 	scrollbar(layout::orientation const orient);
 };
+
+}

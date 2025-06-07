@@ -2,6 +2,9 @@
 
 #include "button.h"
 
+namespace gui
+{
+
 struct checkbox : button
 {
 	inline static constexpr auto element_name{ "checkbox" };
@@ -24,3 +27,5 @@ struct checkbox : button
 protected:
 	bool state = false;
 };
+
+}

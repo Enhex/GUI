@@ -2,6 +2,9 @@
 
 #include "button.h"
 
+namespace gui
+{
+
 // exclusive selection
 struct radio_button : button
 {
@@ -32,3 +35,5 @@ protected:
 
 	void deselect();
 };
+
+}

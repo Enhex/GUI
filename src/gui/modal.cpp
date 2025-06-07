@@ -1,5 +1,8 @@
 #include "modal.h"
 
+namespace gui
+{
+
 modal::modal()
 {
 	style = element_name;
@@ -20,4 +23,6 @@ modal::modal()
 			visible = false;
 		}
 	});
+}
+
 }

@@ -1,5 +1,8 @@
 #include "text_base.h"
 
+namespace gui
+{
+
 text_base::text_base()
 {
 	style = "text";
@@ -119,4 +122,6 @@ void text_base::init_font(NVGcontext* vg)
 	nvgFontSize(vg, font_size);
 	nvgFontFaceId(vg, font);
 	//nvgTextAlign(vg, NVG_ALIGN_LEFT | NVG_ALIGN_BASELINE);
+}
+
 }

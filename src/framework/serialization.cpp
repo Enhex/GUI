@@ -1,5 +1,6 @@
 #include "serialization.h"
 
+using namespace gui;
 
 namespace deco
 {
@@ -27,7 +28,7 @@ namespace deco
 		read_num(1);
 	}
 
-	void read(deco::EntryObject& entry, rectangle& value)
+	void read(deco::EntryObject& entry, nx::rectangle& value)
 	{
 		/*
 		- need to dynamically choose type based on property name.
@@ -93,7 +94,7 @@ namespace deco
 
 	void read(deco::EntryObject& entry, element& value)
 	{
-		read(entry, static_cast<rectangle&>(value));
+		read(entry, static_cast<nx::rectangle&>(value));
 
 		for (auto& entry : entry.entries)
 		{

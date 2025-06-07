@@ -15,7 +15,7 @@ struct dynamic_destructor
 	}
 };
 
-namespace input
+namespace gui::input
 {
 	struct element : dynamic_destructor
 	{

@@ -1,5 +1,7 @@
 #include "element.h"
 
+namespace gui
+{
 
 std::unordered_map<std::string, element&> element::id_to_element;
 
@@ -79,9 +81,9 @@ void element::set_visible(bool new_visible)
 	}
 }
 
-rectangle element::get_abs_rect() noexcept
+nx::rectangle element::get_abs_rect() noexcept
 {
-	return rectangle{get_position(), size};
+	return nx::rectangle{get_position(), size};
 }
 
 bool element::is_inside(nx::Vector2 const& point) noexcept
@@ -159,4 +161,6 @@ bool element::is_hovered() const
 void element::focus()
 {
 	context->input_manager.set_focused_element(this);
+}
+
 }

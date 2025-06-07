@@ -2,13 +2,13 @@
 
 #include "base.h"
 
-namespace layout
+namespace gui::layout
 {
 	// continue recursing to chilren's layouts without doing anything
 	template <typename derived_element>
-	struct forward : base<derived_element>
+	struct forward_t : base<derived_element>
 	{
-		std::type_info const& type_info() const override { return typeid(forward); }
+		std::type_info const& type_info() const override { return typeid(forward_t); }
 
 		void fit() override
 		{

@@ -4,6 +4,9 @@
 #include "../include_glfw.h"
 #include "serialization.h"
 
+namespace gui
+{
+
 /*
 for now should only create 1 instance since it initializes libraries.
 */
@@ -76,4 +79,6 @@ inline void application::run(F loop_function)
 		glfwPollEvents();
 		//TODO use glfwWaitEventsTimeout(framerate); instead?
 	}
+}
+
 }

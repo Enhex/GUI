@@ -5,6 +5,8 @@
 #include "context.h"
 #include <nanovg.h>
 
+namespace gui
+{
 
 // return reference to the original type instead of the base class
 template <typename T, typename Container, typename... Args>
@@ -47,7 +49,7 @@ public:
 	// get absolute position. regular `position` variable being relative to the parent
 	nx::Vector2 get_position() noexcept;
 
-	rectangle get_abs_rect() noexcept;
+	nx::rectangle get_abs_rect() noexcept;
 	bool is_inside(nx::Vector2 const& point) noexcept;
 
 	virtual void set_style(style::style_t const& style) {}
@@ -87,9 +89,11 @@ public:
 	void focus();
 };
 
-namespace gui::layout
+namespace layout
 {
-	using box = ::layout::box<::element>;
-	using shrink = ::layout::shrink<::element>;
-	using forward = ::layout::forward<::element>;
+	using box = gui::layout::box_t<gui::element>;
+	using shrink = gui::layout::shrink_t<gui::element>;
+	using forward = gui::layout::forward_t<gui::element>;
+}
+
 }

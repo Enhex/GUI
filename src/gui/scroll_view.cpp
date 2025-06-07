@@ -5,6 +5,9 @@
 #include "scissor.h"
 #include "scrollbar.h"
 
+namespace gui
+{
+
 //NOTE: using namespace layout causes name collision between layout::element and gui::element
 constexpr auto vertical = layout::vertical;
 constexpr auto horizontal = layout::horizontal;
@@ -175,4 +178,6 @@ void scroll_view::post_layout()
 {
 	update_handle_size(horizontal);
 	update_handle_size(vertical);
+}
+
 }

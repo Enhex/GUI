@@ -7,6 +7,8 @@
 constexpr int window_width = 800;
 constexpr int window_height = 800;
 
+using namespace gui;
+
 auto rand_bright() {
 	return rand() % 128 + 127;
 };

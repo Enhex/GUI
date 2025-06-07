@@ -2,7 +2,7 @@
 
 #include "element.h"
 
-namespace layout
+namespace gui::layout
 {
 	// layout base class
 	template <typename derived_element>

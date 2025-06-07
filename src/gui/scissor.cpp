@@ -1,5 +1,8 @@
 #include "scissor.h"
 
+namespace gui
+{
+
 // scissors child elements
 void scissor::draw_recursive(NVGcontext* vg)
 {
@@ -12,4 +15,6 @@ void scissor::draw_recursive(NVGcontext* vg)
 
 	// using save and restore to handle nested scissor elements, so one a child scissor is done it will restore its parent's scissor.
 	nvgRestore(vg);
+}
+
 }

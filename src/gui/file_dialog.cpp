@@ -9,6 +9,9 @@
 
 namespace fs = std::filesystem;
 
+namespace gui
+{
+
 file_dialog::file_dialog() :
 	title(create_child<text>()),
 	filename_container(create_child<element>())
@@ -449,4 +452,6 @@ void file_dialog::refresh()
 	else if(mode == Mode::save) {
 		save_change_dir(current_dir);
 	}
+}
+
 }

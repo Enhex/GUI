@@ -1,5 +1,8 @@
 #include "text.h"
 
+namespace gui
+{
+
 text::text()
 {
 	apply_style();
@@ -70,4 +73,6 @@ void text::draw(NVGcontext* vg)
 	for(auto const& span : spans){
 		nvgText(vg, absolute_position.x + span.offset, absolute_position.y + ascender, span.start, span.end);
 	}
+}
+
 }

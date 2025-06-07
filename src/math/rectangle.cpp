@@ -1,7 +1,7 @@
 #include "rectangle.h"
 
 // check if a point is inside the rectangle
-bool rectangle::is_inside(nx::Vector2 const& point)
+bool nx::rectangle::is_inside(nx::Vector2 const& point)
 {
 	auto& min = position;
 	auto max = position + size;
@@ -14,7 +14,7 @@ bool rectangle::is_inside(nx::Vector2 const& point)
 	return false;
 }
 
-void rectangle::merge(nx::Vector2 const& point)
+void nx::rectangle::merge(nx::Vector2 const& point)
 {
 	auto& min = position;
 	auto max = position + size;
@@ -27,7 +27,7 @@ void rectangle::merge(nx::Vector2 const& point)
 	size = max - position;
 }
 
-void rectangle::merge(rectangle const& other)
+void nx::rectangle::merge(nx::rectangle const& other)
 {
 	merge(other.position);
 	merge(other.position + other.size);

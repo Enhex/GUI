@@ -1,7 +1,10 @@
 #include "style.h"
 #include <filesystem>
 
-int style::manager::create_font(NVGcontext * vg, const char * file_name)
+namespace gui::style
+{
+
+int manager::create_font(NVGcontext * vg, const char * file_name)
 {
 	std::filesystem::path path{file_name};
 
@@ -17,12 +20,14 @@ int style::manager::create_font(NVGcontext * vg, const char * file_name)
 	return font_id;
 }
 
-int style::manager::font_name_to_id(std::string & name)
+int manager::font_name_to_id(std::string & name)
 {
 	return font_name_to_id_map.at(name);
 }
 
-std::string const & style::manager::font_id_to_name(int id)
+std::string const & manager::font_id_to_name(int id)
 {
 	return font_id_to_name_map.at(id);
+}
+
 }

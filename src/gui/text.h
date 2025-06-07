@@ -2,6 +2,9 @@
 
 #include "text_base.h"
 
+namespace gui
+{
+
 struct text : text_base
 {
 	inline static constexpr auto element_name{ "text" };
@@ -24,3 +27,5 @@ struct text : text_base
 
 	void draw(NVGcontext* vg) override;
 };
+
+}

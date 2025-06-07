@@ -3,6 +3,9 @@
 #include "button.h"
 #include "triangle.h"
 
+namespace gui
+{
+
 static auto const arrow_color = nvgRGBA(135, 135, 135, 255);
 
 scrollbar::scrollbar(layout::orientation const orient) :
@@ -96,4 +99,6 @@ scrollbar::scrollbar(layout::orientation const orient) :
 
 	TODO arrow buttons
 	*/
+}
+
 }

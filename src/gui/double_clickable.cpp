@@ -2,6 +2,9 @@
 
 using namespace std::chrono;
 
+namespace gui
+{
+
 double_clickable::double_clickable()
 {
 	// initialize with a time point furthest away from now()
@@ -26,4 +29,6 @@ bool double_clickable::on_mouse_release(input::element const* el)
 	auto const time_passed = duration_cast<milliseconds>(steady_clock::now() - press_time[!press_time_index]).count();
 	auto const double_click_ready = (time_passed < double_click_time) & (time_passed >= 0);
 	return double_click_ready;
+}
+
 }

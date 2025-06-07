@@ -2,6 +2,9 @@
 
 #include "element.h"
 
+namespace gui
+{
+
 struct panel : element
 {
 	inline static constexpr auto element_name{ "panel" };
@@ -17,3 +20,5 @@ struct panel : element
 
 	void draw(NVGcontext* vg) override;
 };
+
+}

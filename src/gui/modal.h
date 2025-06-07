@@ -2,6 +2,9 @@
 
 #include "panel.h"
 
+namespace gui
+{
+
 // background that listens to clicks, usually to close a popup menu.
 struct modal : panel
 {
@@ -15,3 +18,5 @@ struct modal : panel
 protected:
 	bool is_pressed = false;
 };
+
+}

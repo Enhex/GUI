@@ -1,5 +1,8 @@
 #include "button.h"
 
+namespace gui
+{
+
 button::button()
 {
 	color = background_color;
@@ -97,4 +100,6 @@ void button::set_style(style::style_t const& style)
 
 	read(hover_color, "hover_color");
 	read(press_color, "press_color");
+}
+
 }

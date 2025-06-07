@@ -4,6 +4,9 @@
 
 #include <filesystem>
 
+namespace gui
+{
+
 struct scroll_view;
 struct text;
 struct text_edit;
@@ -75,3 +78,5 @@ protected:
 	void confirm_folder_dialog();
 	void refresh();
 };
+
+}

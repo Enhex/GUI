@@ -4,7 +4,7 @@
 #include "element.h"
 #include "events.h"
 
-namespace input
+namespace gui::input
 {
 	struct element;
 

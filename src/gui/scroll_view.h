@@ -2,6 +2,9 @@
 
 #include "element.h"
 
+namespace gui
+{
+
 struct scissor;
 struct scrollbar;
 
@@ -48,3 +51,5 @@ struct scroll_view : element
 
 	void post_layout() override;
 };
+
+}

@@ -7,7 +7,7 @@
 #include <strong_type.h>
 #include <unordered_map>
 
-namespace style
+namespace gui::style
 {
 	// property name to value
 	using style_t = std::unordered_map<std::string, std::any>;

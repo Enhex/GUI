@@ -2,6 +2,9 @@
 
 #include <chrono>
 
+namespace gui
+{
+
 namespace input{
 	struct element;
 }
@@ -22,3 +25,5 @@ protected:
 	std::array<input::element const*, 2> pressed_el{nullptr, nullptr}; // pressed element
 	uint_fast8_t press_time_index = 0;
 };
+
+}

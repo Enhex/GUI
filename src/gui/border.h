@@ -2,6 +2,9 @@
 
 #include "element.h"
 
+namespace gui
+{
+
 struct panel;
 
 /*
@@ -28,3 +31,5 @@ struct border : element
 	void set_color(NVGcolor color);
 	void set_border_size(float size);
 };
+
+}

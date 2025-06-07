@@ -2,6 +2,9 @@
 
 #include "Vector2.h"
 
+namespace nx
+{
+
 struct rectangle
 {
 	nx::Vector2 position{ 0,0 };
@@ -15,3 +18,5 @@ struct rectangle
 	// merge with another rectangle into a new rectangle that fits around both
 	void merge(rectangle const& other);
 };
+
+}

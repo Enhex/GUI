@@ -2,6 +2,9 @@
 
 #include "border.h"
 
+namespace gui
+{
+
 radio_button::radio_button()
 {
 	style = element_name;
@@ -74,4 +77,6 @@ void radio_button::set_group(std::string const& new_group)
 	// add to new group
 	group = new_group;
 	groups[group].emplace_back(this);
+}
+
 }

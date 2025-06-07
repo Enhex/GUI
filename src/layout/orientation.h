@@ -1,8 +1,8 @@
 #pragma once
 
-namespace layout
+namespace gui::layout
 {
-	enum orientation {
+	enum orientation{
 		horizontal,
 		vertical,
 		count

@@ -4,6 +4,9 @@
 
 #include "../math/Vector2.h"
 
+namespace gui
+{
+
 struct triangle : element
 {
 	inline static constexpr auto element_name{ "triangle" };
@@ -20,3 +23,5 @@ struct triangle : element
 
 	void draw(NVGcontext* vg) override;
 };
+
+}

@@ -3,6 +3,9 @@
 #include "../framework/application.h"
 #include "../include_glfw.h"
 
+namespace gui
+{
+
 textbox_edit::textbox_edit()
 {
 	style = element_name;
@@ -641,4 +644,6 @@ void textbox_edit::set_cursor_pos_and_row(size_t const pos, bool unique)
 {
 	set_cursor_pos(pos, unique);
 	cursor_row = get_cursor_row();
+}
+
 }

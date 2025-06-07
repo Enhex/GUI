@@ -36,7 +36,7 @@ namespace deco
 	void read(EntryObject const& entry, NVGcolor& value);
 
 	template<typename Stream>
-	void write(Stream& stream, style::style_st& value)
+	void write(Stream& stream, gui::style::style_st& value)
 	{
 		for (auto&[name, value] : value)
 		{
@@ -63,7 +63,7 @@ namespace deco
 	}
 
 	template<typename Stream>
-	void read(Stream& stream, style::style_st& value)
+	void read(Stream& stream, gui::style::style_st& value)
 	{
 		std::string name;
 		std::any property_value;
@@ -134,16 +134,16 @@ namespace deco
 
 
 	template<typename Stream>
-	void write(Stream& stream, rectangle& value)
+	void write(Stream& stream, nx::rectangle& value)
 	{
-		if(value.position != rectangle().position)
+		if(value.position != nx::rectangle().position)
 			serialize(stream, make_list("position", value.position));
-		if (value.size != rectangle().size)
+		if (value.size != nx::rectangle().size)
 			serialize(stream, make_list("size", value.size));
 	}
 
 	template<typename Stream>
-	void read(Stream& stream, rectangle& value)
+	void read(Stream& stream, nx::rectangle& value)
 	{
 		/*
 		- need to dynamically choose type based on property name.
@@ -165,7 +165,7 @@ namespace deco
 		}
 	}
 
-	void read(deco::EntryObject& entry, rectangle& value);
+	void read(deco::EntryObject& entry, nx::rectangle& value);
 
 
 	template<typename Stream>
@@ -177,13 +177,15 @@ namespace deco
 
 	void read(deco::EntryObject& entry, gui::layout::box& value);
 
-	void read_element(deco::EntryObject& entry, element& parent);
+	void read_element(deco::EntryObject& entry, gui::element& parent);
 
 	// elements
 	template<typename Stream>
-	void write(Stream& stream, element& value)
+	void write(Stream& stream, gui::element& value)
 	{
-		serialize(stream, static_cast<rectangle&>(value));
+		using namespace gui;
+
+		serialize(stream, static_cast<nx::rectangle&>(value));
 
 		if (!value.get_id().empty())
 			serialize(stream, make_list("id", value.get_id()));
@@ -232,78 +234,78 @@ namespace deco
 		}
 	}
 
-	void read(deco::EntryObject& entry, element& value);
+	void read(deco::EntryObject& entry, gui::element& value);
 
 
 	template<typename Stream>
-	void serialize(Stream& stream, scissor& value)
+	void serialize(Stream& stream, gui::scissor& value)
 	{
-		serialize(stream, static_cast<element&>(value));
+		serialize(stream, static_cast<gui::element&>(value));
 	}
 
-	void read(deco::EntryObject& entry, scissor& value);
+	void read(deco::EntryObject& entry, gui::scissor& value);
 
 
 	template<typename Stream>
-	void serialize(Stream& stream, scroll_view& value)
+	void serialize(Stream& stream, gui::scroll_view& value)
 	{
-		serialize(stream, static_cast<element&>(value));
+		serialize(stream, static_cast<gui::element&>(value));
 	}
 
-	void read(deco::EntryObject& entry, scroll_view& value);
+	void read(deco::EntryObject& entry, gui::scroll_view& value);
 
 
 	template<typename Stream>
-	void serialize(Stream& stream, panel& value)
+	void serialize(Stream& stream, gui::panel& value)
 	{
-		serialize(stream, static_cast<element&>(value));
+		serialize(stream, static_cast<gui::element&>(value));
 	}
 
-	void read(deco::EntryObject& entry, panel& value);
+	void read(deco::EntryObject& entry, gui::panel& value);
 
 
 	template<typename Stream>
-	void serialize(Stream& stream, button& value)
+	void serialize(Stream& stream, gui::button& value)
 	{
-		serialize(stream, static_cast<element&>(value));
+		serialize(stream, static_cast<gui::element&>(value));
 	}
 
-	void read(deco::EntryObject& entry, button& value);
+	void read(deco::EntryObject& entry, gui::button& value);
 
 
 	template<typename Stream>
-	void serialize(Stream& stream, text& value)
-	{
-		if (value.style != value.get_element_name())
-			serialize(stream, make_list("style", value.style));
-		if(value.position != text().position)
-			serialize(stream, make_list("position", value.position));
-		if (value.str != text().str)
-			serialize(stream, make_list("string", value.str));
-	}
-
-	void read(deco::EntryObject& entry, text& value);
-
-
-	template<typename Stream>
-	void serialize(Stream& stream, text_edit& value)
-	{
-		serialize(stream, static_cast<text&>(value));
-	}
-
-	void read(deco::EntryObject& entry, text_edit& value);
-
-
-	template<typename Stream>
-	void serialize(Stream& stream, textbox& value)
+	void serialize(Stream& stream, gui::text& value)
 	{
 		if (value.style != value.get_element_name())
 			serialize(stream, make_list("style", value.style));
-		if(value.position != text().position)
+		if(value.position != gui::text().position)
 			serialize(stream, make_list("position", value.position));
-		if (value.str != text().str)
+		if (value.str != gui::text().str)
 			serialize(stream, make_list("string", value.str));
 	}
 
-	void read(deco::EntryObject& entry, textbox& value);
+	void read(deco::EntryObject& entry, gui::text& value);
+
+
+	template<typename Stream>
+	void serialize(Stream& stream, gui::text_edit& value)
+	{
+		serialize(stream, static_cast<gui::text&>(value));
+	}
+
+	void read(deco::EntryObject& entry, gui::text_edit& value);
+
+
+	template<typename Stream>
+	void serialize(Stream& stream, gui::textbox& value)
+	{
+		if (value.style != value.get_element_name())
+			serialize(stream, make_list("style", value.style));
+		if(value.position != gui::text().position)
+			serialize(stream, make_list("position", value.position));
+		if (value.str != gui::text().str)
+			serialize(stream, make_list("string", value.str));
+	}
+
+	void read(deco::EntryObject& entry, gui::textbox& value);
 }

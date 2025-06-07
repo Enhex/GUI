@@ -1,5 +1,8 @@
 #include "triangle.h"
 
+namespace gui
+{
+
 triangle::triangle()
 {
 	style = element_name;
@@ -31,4 +34,6 @@ void triangle::draw(NVGcontext* vg)
 	nvgLineTo(vg, abs_pos.x + vertices[2].x, abs_pos.y + vertices[2].y);
 	nvgFillColor(vg, color);
 	nvgFill(vg);
+}
+
 }

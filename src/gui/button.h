@@ -2,6 +2,9 @@
 
 #include "panel.h"
 
+namespace gui
+{
+
 struct button : panel
 {
 	inline static constexpr auto element_name{ "button" };
@@ -25,3 +28,5 @@ struct button : panel
 protected:
 	bool is_pressed = false;
 };
+
+}

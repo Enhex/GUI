@@ -1,6 +1,6 @@
 #include "manager.h"
 
-namespace input
+namespace gui::input
 {
 	void manager::set_hovered_element(element* new_element)
 	{

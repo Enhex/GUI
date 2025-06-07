@@ -2,6 +2,9 @@
 
 #include "element.h"
 
+namespace gui
+{
+
 struct scissor : element
 {
 	inline static constexpr auto element_name{ "scissor" };
@@ -12,3 +15,5 @@ struct scissor : element
 	// scissors child elements
 	void draw_recursive(NVGcontext* vg) override;
 };
+
+}

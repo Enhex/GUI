@@ -6,13 +6,13 @@
 #include <memory>
 #include <vector>
 
-namespace layout
+namespace gui::layout
 {
 	template <typename derived_element>
 	struct base;
 
 	template <typename derived>
-	struct element : rectangle
+	struct element : nx::rectangle
 	{
 		std::vector<std::unique_ptr<derived>> children;
 		std::unique_ptr<layout::base<derived>> child_layout;

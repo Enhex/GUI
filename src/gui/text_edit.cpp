@@ -3,6 +3,9 @@
 #include "../include_glfw.h"
 #include "../framework/application.h"
 
+namespace gui
+{
+
 text_edit::text_edit()
 {
 	style = element_name;
@@ -388,4 +391,6 @@ void text_edit::select_all()
 void text_edit::move_cursor_to_end()
 {
 	set_cursor_pos(str.size());
+}
+
 }

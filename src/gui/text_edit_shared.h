@@ -2,6 +2,9 @@
 
 #include "text_span.h"
 
+namespace gui
+{
+
 // for code reuse between text_edit and textbox_edit
 //NOTE: should be inherited after text
 struct text_edit_shared
@@ -43,3 +46,5 @@ struct text_edit_shared
 
 	void on_str_changed(size_t str_size);
 };
+
+}
