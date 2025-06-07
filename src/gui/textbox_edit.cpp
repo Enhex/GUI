@@ -2,7 +2,6 @@
 
 #include "../framework/application.h"
 #include "../include_glfw.h"
-#include "nvgTextBoxRows.h"
 
 textbox_edit::textbox_edit()
 {
