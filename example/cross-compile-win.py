@@ -11,7 +11,6 @@ os.chdir('../../example-build/mingw-' + build_type)
 
 os.environ['CHOST'] = 'x86_64-w64-mingw32'
 os.environ['AR'] = 'x86_64-w64-mingw32-ar'
-os.environ['AR'] = 'x86_64-w64-mingw32-ar'
 os.environ['AS'] = 'x86_64-w64-mingw32-as'
 os.environ['RANLIB'] = 'x86_64-w64-mingw32-ranlib'
 os.environ['CC'] = 'x86_64-w64-mingw32-gcc'

@@ -5,6 +5,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--release", help="Generate release build (debug by default).", action="store_true")
 parser.add_argument("-lw", "--linux_to_win64", help="Cross compile to Windows.", action="store_true")
+parser.add_argument("-a8", "--armv8", help="Cross compile to ARM v8.", action="store_true")
 args = parser.parse_args()
 
 build_type = 'Release' if args.release else 'Debug'
@@ -22,7 +23,15 @@ def create_symlink(src, dst):
         pass
 
 def build(source, build_type, symlinks = [], symlink_pairs = []):
-    cross_compile_dir = 'mingw-' if args.linux_to_win64 else ''
+    cross_compile_dir = ''
+    cross_compile_arg = ''
+    if args.linux_to_win64:
+        cross_compile_dir = 'mingw-'
+        cross_compile_arg = ' --mingw'
+    elif args.armv8:
+        cross_compile_dir = 'armv8-'
+        cross_compile_arg = ' --armv8'
+
     build_dir = '../../example-build/' + cross_compile_dir + build_type + '/'
     gui_dir = '../../build/' + cross_compile_dir + build_type + '/'
 
@@ -39,7 +48,6 @@ def build(source, build_type, symlinks = [], symlink_pairs = []):
 
     # choose premake generator based on OS
     os.chdir(source)
-    cross_compile_arg = ' --mingw' if args.linux_to_win64 else ''
 
     def premake_generate(generator):
         os.system('premake5 ' + generator + ' --location="' + build_dir + '" --gui-path="' + gui_dir + '"' + cross_compile_arg)

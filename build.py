@@ -5,6 +5,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-r", "--release", help="Generate release build (debug by default).", action="store_true")
 parser.add_argument("-lw", "--linux_to_win64", help="Cross compile to Windows.", action="store_true")
+parser.add_argument("-a8", "--armv8", help="Cross compile to ARM v8.", action="store_true")
 args = parser.parse_args()
 
 build_type = 'Release' if args.release else 'Debug'
@@ -22,7 +23,18 @@ def create_symlink(src, dst):
         pass
 
 def build(source, build_type, symlinks = [], symlink_pairs = []):
-    cross_compile_dir = 'mingw-' if args.linux_to_win64 else ''
+    cross_compile_dir = ''
+    conan_profile = ''
+    cross_compile_arg = ''
+    if args.linux_to_win64:
+        cross_compile_dir = 'mingw-'
+        conan_profile = ' -pr:h=linux_to_win64 -pr:b=default'
+        cross_compile_arg = ' --mingw'
+    elif args.armv8:
+        cross_compile_dir = 'armv8-'
+        conan_profile = ' -pr:h=armv8 -pr:b=default'
+        cross_compile_arg = ' --armv8'
+
     build_dir = '../build/' + cross_compile_dir + build_type + '/'
 
     # create build directory
@@ -38,12 +50,9 @@ def build(source, build_type, symlinks = [], symlink_pairs = []):
 
     # conan
     os.chdir(source)
-    conan_profile = ' -pr:h=linux_to_win64 -pr:b=default' if args.linux_to_win64 else ''
-    os.system('conan install . --output-folder="' + build_dir + '" --build=missing -s arch=x86_64 -s build_type=' + build_type + conan_profile)
+    os.system('conan install . --output-folder="' + build_dir + '" --build=missing -s build_type=' + build_type + conan_profile)
 
     # choose premake generator based on OS
-    cross_compile_arg = ' --mingw' if args.linux_to_win64 else ''
-
     def premake_generate(generator):
         os.system('premake5 ' + generator + ' --location="' + build_dir + '"' + cross_compile_arg)
 

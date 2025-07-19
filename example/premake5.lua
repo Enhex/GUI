@@ -18,9 +18,13 @@ newoption {
 	trigger     = "mingw",
 	description = "MinGW is being used to cross compile.",
 }
+newoption {
+	trigger     = "armv8",
+	description = "cross compile to ARM v8.",
+}
 
 -- include GUI lib's dependencies
-include(_OPTIONS["gui-path"] .. "/conandeps.premake5.lua")
+include(_OPTIONS["gui-path"] .. "conandeps.premake5.lua")
 
 workspace("GUI example")
 	location(_OPTIONS["location"])
@@ -36,6 +40,11 @@ workspace("GUI example")
 		files{
 			"src/**",
 		}
+
+		if _OPTIONS["armv8"] then
+			libdirs {"/usr/aarch64-linux-gnu/lib"}
+			linkoptions{"-static"}
+		end
 
 		-- needed to cross compile
 		if _OPTIONS["mingw"] then
