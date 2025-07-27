@@ -1,5 +1,5 @@
 #include <math/rectangle.h>
 
 int main(){
-	rectangle x;
+	nx::rectangle x;
 }
