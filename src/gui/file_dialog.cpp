@@ -216,12 +216,16 @@ void file_dialog::add_path_pick(fs::path const& path, std::string str)
 			auto const path_copy = path;
 			pick_change_dir(path_copy);
 		};
+		//NOTE: in case a button is reused it may be double clicked
+		btn.double_click_callback = btn.callback;
 	}
 	else {
 		btn.callback = [this, path]{
 			show(false);
 			current_callback(path);
 		};
+		//NOTE: in case a button is reused it may be double clicked
+		btn.double_click_callback = btn.callback;
 	}
 }
 void file_dialog::add_path_save(fs::path const& path, std::string str)
@@ -236,6 +240,8 @@ void file_dialog::add_path_save(fs::path const& path, std::string str)
 			auto const path_copy = path;
 			save_change_dir(path_copy);
 		};
+		//NOTE: in case a button is reused it may be double clicked
+		btn.double_click_callback = btn.callback;
 	}
 	// set filename to clicked file
 	else {
