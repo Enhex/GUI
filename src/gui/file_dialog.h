@@ -39,6 +39,7 @@ struct file_dialog : panel
 	text_edit* folder_field;
 	text_edit* filename_field;
 	button* confirm;
+	element* add_folder_spacer;
 	button* add_folder;
 	element* folder_dialog;
 
@@ -74,6 +75,7 @@ protected:
 	void add_path_pick(std::filesystem::path const& path, std::string str = "");
 	void add_path_save(std::filesystem::path const& path, std::string str = "");
 
+	// show UI to create a new folder
 	void toggle_add_folder_dialog(bool show);
 	void confirm_folder_dialog();
 	void refresh();

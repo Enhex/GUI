@@ -68,8 +68,8 @@ file_dialog::file_dialog() :
 			});
 		}
 		{
-			auto& spacer = container.create_child<element>();
-			spacer.min_size.x = 32;
+			add_folder_spacer = &container.create_child<element>();
+			add_folder_spacer->min_size.x = 32;
 		}
 		{
 			add_folder = &container.create_child<button>();
@@ -275,6 +275,7 @@ void file_dialog::pick_file(fs::path dir, std::function<void(fs::path)> callback
 	show(true);
 	filename_container.set_visible(false);
 	confirm->set_visible(false);
+	add_folder_spacer->set_visible(false);
 	add_folder->set_visible(false);
 
 	path_field->focus();
@@ -346,6 +347,7 @@ void file_dialog::save_file(fs::path dir, std::function<void(fs::path)> callback
 	show(true);
 	filename_container.set_visible(true);
 	confirm->set_visible(true);
+	add_folder_spacer->set_visible(true);
 	add_folder->set_visible(true);
 
 	filename_field->focus();
@@ -416,6 +418,7 @@ void file_dialog::change_dir_end()
 void file_dialog::toggle_add_folder_dialog(bool show)
 {
 	path_field->set_visible(!show);
+	add_folder_spacer->set_visible(!show);
 	add_folder->set_visible(!show);
 	folder_field->set_visible(show);
 	folder_dialog->set_visible(show);
