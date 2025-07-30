@@ -291,6 +291,13 @@ void text_edit::on_key_press(int key, int mods)
 	case GLFW_KEY_TAB:
 		on_character('\t');
 		break;
+
+	case GLFW_KEY_ENTER:
+	case GLFW_KEY_ESCAPE:
+		if(get_parent()){
+			get_parent()->focus();
+		}
+		break;
 	}
 }
 
