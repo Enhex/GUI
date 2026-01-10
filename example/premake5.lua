@@ -22,6 +22,10 @@ newoption {
 	trigger     = "armv8",
 	description = "cross compile to ARM v8.",
 }
+newoption {
+	trigger     = "sysroot",
+	description = "sysroot's path",
+}
 
 -- include GUI lib's dependencies
 include(_OPTIONS["gui-path"] .. "conandeps.premake5.lua")
@@ -43,7 +47,8 @@ workspace("GUI example")
 
 		if _OPTIONS["armv8"] then
 			libdirs {"/usr/aarch64-linux-gnu/lib"}
-			linkoptions{"-static"}
+			buildoptions {"-Wl,-rpath-link=" .. _OPTIONS["sysroot"] .. "/usr/lib/aarch64-linux-gnu/"}
+			libdirs {_OPTIONS["sysroot"] .. "/usr/lib/aarch64-linux-gnu"}
 		end
 
 		-- needed to cross compile
