@@ -186,6 +186,9 @@ void application::initialize()
 void application::create_window(int width, int height, const char * title, GLFWmonitor * monitor, GLFWwindow * share)
 {
 	// Create a windowed mode window and its OpenGL context
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	window = glfwCreateWindow(width, height, title, NULL, NULL);
 	if (!window)
 		throw std::runtime_error("Window or OpenGL context creation failed.");
