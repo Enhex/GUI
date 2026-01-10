@@ -612,6 +612,11 @@ void textbox_edit::post_layout()
 
 void textbox_edit::delete_selection()
 {
+	if(selection_start_pos == selection_end_pos){
+		// no selection
+		return;
+	}
+
 	//NOTE: if there's no selection 0 chars will be erased
 	auto low_pos = std::min(selection_start_pos, selection_end_pos);
 	auto high_pos = std::max(selection_start_pos, selection_end_pos);
