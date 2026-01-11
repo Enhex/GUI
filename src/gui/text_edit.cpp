@@ -236,9 +236,16 @@ void text_edit::on_key_press(int key, int mods)
 	{
 		auto const select = shared_select_code(mods);
 		if(cursor_pos > 0){
-			set_cursor_pos(cursor_pos - 1);
+			if(select != select_result_t::stop){
+				set_cursor_pos(cursor_pos - 1);
+			}
+			else{
+				auto const lower_pos = selection_start_pos < selection_end_pos ? selection_start_pos: selection_end_pos;
+				set_cursor_pos(lower_pos);
+				clear_selection();
+			}
 
-			if(select)
+			if(select == select_result_t::start || select == select_result_t::selecting)
 				selection_end_pos = cursor_pos;
 		}
 		break;
@@ -247,9 +254,16 @@ void text_edit::on_key_press(int key, int mods)
 	{
 		auto const select = shared_select_code(mods);
 		if(cursor_pos < str.size()){
-			set_cursor_pos(cursor_pos + 1);
+			if(select != select_result_t::stop){
+				set_cursor_pos(cursor_pos + 1);
+			}
+			else{
+				auto const higher_pos = selection_start_pos > selection_end_pos ? selection_start_pos: selection_end_pos;
+				set_cursor_pos(higher_pos);
+				clear_selection();
+			}
 
-			if(select)
+			if(select == select_result_t::start || select == select_result_t::selecting)
 				selection_end_pos = cursor_pos;
 		}
 		break;

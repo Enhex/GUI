@@ -5,6 +5,13 @@
 namespace gui
 {
 
+enum class select_result_t{
+	start, // start selecting
+	stop, // stop selecting
+	selecting, // continue selecting (already started)
+	not_selecting // not selecting (didn't start)
+};
+
 // for code reuse between text_edit and textbox_edit
 //NOTE: should be inherited after text
 struct text_edit_shared
@@ -24,7 +31,7 @@ struct text_edit_shared
 
 	bool has_selection() const;
 	void clear_selection();
-	int shared_select_code(int mods);
+	select_result_t shared_select_code(int mods);
 
 	bool is_valid_character(unsigned const codepoint) const;
 

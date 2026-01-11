@@ -13,16 +13,27 @@ void text_edit_shared::clear_selection()
 	selection_start_pos = selection_end_pos = 0;
 }
 
-int text_edit_shared::shared_select_code(int mods)
+select_result_t text_edit_shared::shared_select_code(int mods)
 {
 	auto const select = mods & GLFW_MOD_SHIFT;
-	if(select && !has_selection()) {
-		selection_start_pos = cursor_pos;
+	if(select){
+		if(!has_selection()){
+			selection_start_pos = cursor_pos;
+			return select_result_t::start;
+		}
+		else{
+			return select_result_t::selecting;
+		}
 	}
-	if(!select && has_selection()) {
-		clear_selection();
+	else{
+		if(has_selection()){
+			// calling code should clear selection
+			return select_result_t::stop;
+		}
+		else{
+			return select_result_t::not_selecting;
+		}
 	}
-	return select;
 }
 
 bool text_edit_shared::is_valid_character(unsigned const codepoint) const
