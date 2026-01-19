@@ -1,9 +1,15 @@
 #include "../include_glfw.h"
+#include <nanovg.h>
+
+#include <deco/all.h>
+#include <strong_type.h>
+
 #include <algorithm>
 #include <any>
+#include <array>
 #include <charconv>
 #include <chrono>
-#include <deco/all.h>
+#include <cstdint>
 #include <filesystem>
 #include <fstream>
 #include <functional>
@@ -11,9 +17,10 @@
 #include <list>
 #include <map>
 #include <memory>
-#include <nanovg.h>
 #include <optional>
-#include <strong_type.h>
+#include <string>
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
+
+#include <math/Vector2.h>

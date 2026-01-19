@@ -2,8 +2,6 @@
 
 #include "panel.h"
 
-#include <filesystem>
-
 namespace gui
 {
 

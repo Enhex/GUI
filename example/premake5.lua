@@ -62,6 +62,8 @@ workspace("GUI example")
 		}
 		links{"GUI"}
 
+		forceincludes  { "../src/framework/precompiled.h" }
+
 		defines{"_SILENCE_ALL_CXX17_DEPRECATION_WARNINGS"}
 
 		filter "configurations:Debug"
