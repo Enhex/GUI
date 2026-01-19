@@ -55,14 +55,8 @@ workspace("GUI")
 		end
 
 		pchsource "src/framework/precompiled.cpp"
-
-		filter "toolset:gcc"
-			pchheader "src/framework/precompiled.h"
-			forceincludes  { "src/framework/precompiled.h" }
-
-		filter "toolset:not gcc"
-			pchheader "precompiled.h"
-			forceincludes { "precompiled.h" }
+		pchheader "src/framework/precompiled.h"
+		forceincludes  { "src/framework/precompiled.h" }
 
 		filter "configurations:Debug"
 			defines { "DEBUG" }
