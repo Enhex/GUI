@@ -61,7 +61,7 @@ def build(source, build_type, symlinks = [], symlink_pairs = []):
     else:
         premake_generate('gmake')
         premake_generate('vscode')
-        premake_generate('export-compile-commands')
+        premake_generate('compile-commands')
 
 
 build(source, build_type)
