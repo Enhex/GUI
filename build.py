@@ -59,8 +59,9 @@ def build(source, build_type, symlinks = [], symlink_pairs = []):
     if platform == 'win32':
         premake_generate('vs2019')
     else:
-        premake_generate('gmake2')
+        premake_generate('gmake')
         premake_generate('vscode')
+        premake_generate('export-compile-commands')
 
 
 build(source, build_type)
